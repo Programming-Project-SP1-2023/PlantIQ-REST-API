@@ -23,4 +23,5 @@ Uses Java JDBC to connect to the database through a Repository interface.
 - Animal
 -
     - GET /api/v1/animal
+    - GET /api/v1/animal/{id}
 
