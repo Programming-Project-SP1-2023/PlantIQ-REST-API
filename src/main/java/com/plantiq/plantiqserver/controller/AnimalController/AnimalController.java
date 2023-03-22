@@ -1,14 +1,40 @@
 package com.plantiq.plantiqserver.controller.AnimalController;
 
 import com.plantiq.plantiqserver.model.Animal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.plantiq.plantiqserver.service.AnimalService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class AnimalController {
-	@GetMapping("/animal")
-	public Animal getAnimal() {
-		Animal animal = new Animal("Molly", "Dog", 15);
-		return animal;
+	AnimalService animalService;
+
+	public AnimalController(AnimalService animalService) {
+		this.animalService = animalService;
+	}
+
+	@GetMapping("/animal/all")
+	public List<Animal> getAnimal() {
+		List<Animal> animals = (List<Animal>) animalService.getAll();
+		return animals;
+	}
+
+	@GetMapping("/animal/{id}")
+	public Animal getAnimalById(@PathVariable String id) {
+		Optional<Animal> animal = animalService.get(Long.parseLong(id));
+		if (animal.isPresent()) {
+			return animal.get();
+		}
+		return null;
+	}
+
+	//	user send name and type and age to the server
+	@PutMapping("/animal")
+	public ResponseEntity<Animal> updateAnimal(@RequestBody Animal animal) {
+		Animal updatedAnimal = animalService.save(animal);
+		return ResponseEntity.ok(updatedAnimal);
 	}
 }
