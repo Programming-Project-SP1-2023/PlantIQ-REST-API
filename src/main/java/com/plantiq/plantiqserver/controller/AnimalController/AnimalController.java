@@ -17,18 +17,34 @@ public class AnimalController {
 		this.animalService = animalService;
 	}
 
+	/**
+	 * Get all animals from the service -> repository.
+	 *
+	 * @return List of animals from the repository Iterable
+	 */
 	@GetMapping("/all")
 	public List<Animal> getAnimal() {
 		return (List<Animal>) animalService.getAll();
 	}
 
+	/**
+	 * Get an animal by id from the service -> repository.
+	 *
+	 * @param id
+	 * @return
+	 */
 	@GetMapping("/{id}")
 	public Animal getAnimalById(@PathVariable String id) {
 		Optional<Animal> animal = animalService.get(Long.parseLong(id));
 		return animal.orElse(null);
 	}
 
-	//	user send name and type and age to the server
+	/**
+	 * Create a new animal from json data in the request body.
+	 *
+	 * @param animal
+	 * @return
+	 */
 	@PutMapping("/")
 	public ResponseEntity<Animal> updateAnimal(@RequestBody Animal animal) {
 		Animal updatedAnimal = animalService.save(animal);
