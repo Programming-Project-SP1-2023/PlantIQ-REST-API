@@ -15,6 +15,12 @@ Uses Java JDBC to connect to the database through a Repository interface.
 4. Run the application
 5. Enjoy!
 
+## Work Flow
+
+1. Pull the latest code from the repository branch
+2. maven clean install
+3. Run the application in dev profile
+
 ## API Documentation
 
 ### Endpoints
