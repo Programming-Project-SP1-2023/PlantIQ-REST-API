@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/animal")
 public class AnimalController {
 	AnimalService animalService;
 
@@ -16,23 +17,19 @@ public class AnimalController {
 		this.animalService = animalService;
 	}
 
-	@GetMapping("/animal/all")
+	@GetMapping("/all")
 	public List<Animal> getAnimal() {
-		List<Animal> animals = (List<Animal>) animalService.getAll();
-		return animals;
+		return (List<Animal>) animalService.getAll();
 	}
 
-	@GetMapping("/animal/{id}")
+	@GetMapping("/{id}")
 	public Animal getAnimalById(@PathVariable String id) {
 		Optional<Animal> animal = animalService.get(Long.parseLong(id));
-		if (animal.isPresent()) {
-			return animal.get();
-		}
-		return null;
+		return animal.orElse(null);
 	}
 
 	//	user send name and type and age to the server
-	@PutMapping("/animal")
+	@PutMapping("/")
 	public ResponseEntity<Animal> updateAnimal(@RequestBody Animal animal) {
 		Animal updatedAnimal = animalService.save(animal);
 		return ResponseEntity.ok(updatedAnimal);

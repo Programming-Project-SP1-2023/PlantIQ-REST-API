@@ -1,7 +1,7 @@
 package com.plantiq.plantiqserver.service;
 
+import com.plantiq.plantiqserver.controller.AnimalController.AnimalRepository;
 import com.plantiq.plantiqserver.model.Animal;
-import com.plantiq.plantiqserver.model.AnimalRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

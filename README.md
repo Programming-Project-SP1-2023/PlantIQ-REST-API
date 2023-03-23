@@ -20,8 +20,15 @@ Uses Java JDBC to connect to the database through a Repository interface.
 
 ### Endpoints
 
-- Animal
+H2 Console
 -
-    - GET /api/v1/animal
+
+    - http://localhost:8080/api/v1/h2-console
+
+Animal
+-
+
+    - GET /api/v1/animal/all
     - GET /api/v1/animal/{id}
+    - GET /api/v1/animal?name={name}&type={type}&age={age}
 
