@@ -6,6 +6,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Use to offload business logic from the controller.
+ * Interacts with the repository to get data from the database.
+ */
 @Service
 public class AnimalService {
 	private final AnimalRepository animalRepository;
