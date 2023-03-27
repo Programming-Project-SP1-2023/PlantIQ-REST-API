@@ -5,16 +5,12 @@ import java.util.HashMap;
 
 public class Model {
 
-    protected HashMap<String,String> data;
+    protected HashMap<String,Object> data;
 
-    public Model(HashMap<String, String> data){
+    public Model(HashMap<String, Object> data){
         this.data = data;
     }
 
-
-    //|================================================|
-    //|              STATIC CRUD METHODS               |
-    //|================================================|
 
     //Our static CRUD methods map to the crud actions of
     //create, read, update and delete, these are all assigned
@@ -25,10 +21,10 @@ public class Model {
     //This method accepts a hash map of data and will validate
     //that the keys are present in the model object, if so
     //then it will build a query to update then
-    public boolean update(HashMap<String,String> data){
+    public boolean update(HashMap<String,Object> data){
 
         //Create our query string and initialize it to the starting value
-        StringBuilder query = new StringBuilder("UPDATE "+data.get("_table")+" SET");
+        StringBuilder query = new StringBuilder("UPDATE "+this.data.get("_table")+" SET");
 
         data.forEach((key,value)->{
 
@@ -47,7 +43,7 @@ public class Model {
         return Database.getAndResetRowsAffected() != 0;
     }
 
-    public void patch(HashMap<String,String> date){
+    public void patch(HashMap<String,Object> date){
 
     }
 
