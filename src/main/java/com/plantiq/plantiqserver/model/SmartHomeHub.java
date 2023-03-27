@@ -35,24 +35,24 @@ public class SmartHomeHub extends Model {
     //The date
 
     //Constructor
-    public SmartHomeHub(HashMap<String, String> data) {
+    public SmartHomeHub(HashMap<String, Object> data) {
         super(data);
     }
 
     public String getId(){
-        return this.data.get("id");
+        return (String)this.data.get("id");
     }
 
     public String getUserId(){
-        return this.data.get("user_id");
+       return (String)this.data.get("user_id");
     }
 
     public int getDataRegistred(){
-        return Integer.parseInt(this.data.get("date_registred"));
+        return (int)this.data.get("date_registred");
     }
 
     public String getName(){
-        return this.data.get("name");
+        return (String)this.data.get("name");
     }
 
 }

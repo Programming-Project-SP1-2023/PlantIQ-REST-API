@@ -31,27 +31,27 @@ public class Sensor extends Model {
     //|================================================|
 
     //Constructor
-    public Sensor(HashMap<String, String> data){
+    public Sensor(HashMap<String, Object> data){
         super(data);
     }
 
     //Get ID Method
     public String getId(){
-        return this.data.get("id");
+        return (String)this.data.get("id");
     }
 
     //Get Smart Hub ID Method
     public String getSmartHubId(){
-        return this.data.get("smarthub_id");
+        return (String)this.data.get("smarthub_id");
     }
 
     //Get User Method
     public String getUser_id(){
-        return this.data.get("user_id");
+        return (String)this.data.get("user_id");
     }
 
     //Get Sensor Type Method
     public String getSensorType(){
-        return this.data.get("sensor_type");
+        return (String)this.data.get("sensor_type");
     }
 }
