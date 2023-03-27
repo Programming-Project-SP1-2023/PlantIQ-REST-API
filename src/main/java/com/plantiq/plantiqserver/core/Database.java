@@ -42,6 +42,7 @@ public class Database{
             throwables.printStackTrace();
         }
 
+        System.out.println("[DATABASE] Performed query '"+query+"'");
 
         return data;
     }
