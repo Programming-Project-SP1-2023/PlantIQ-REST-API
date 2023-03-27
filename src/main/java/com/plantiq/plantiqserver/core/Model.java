@@ -43,10 +43,6 @@ public class Model {
         return Database.getAndResetRowsAffected() != 0;
     }
 
-    public void patch(HashMap<String,Object> date){
-
-    }
-
     public void delete(){
 
     }
