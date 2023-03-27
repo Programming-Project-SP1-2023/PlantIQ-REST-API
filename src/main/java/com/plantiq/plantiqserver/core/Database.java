@@ -1,10 +1,13 @@
 package com.plantiq.plantiqserver.core;
 
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Database{
+
+    private static int rowsAffected;
 
     public static ArrayList<HashMap<String, String>> query(String query){
 
@@ -22,16 +25,17 @@ public class Database{
             resultSet = statement.executeQuery(query);
 
             while(resultSet.next()){
-                HashMap<String, String> data2 = new HashMap<>();
+                HashMap<String, String> row = new HashMap<>();
                 int i = 1;
                 while(i < resultSet.getMetaData().getColumnCount()+1){
-                    data2.put(resultSet.getMetaData().getColumnName(i),resultSet.getString(i));
+                    row.put(resultSet.getMetaData().getColumnName(i),resultSet.getString(i));
                     i++;
                 }
-
-                data.add(data2);
+                row.put("_table",resultSet.getMetaData().getTableName(1));
+                data.add(row);
             }
 
+            Database.rowsAffected = statement.getUpdateCount();
             connection.close();
 
         } catch (SQLException throwables) {
@@ -41,5 +45,13 @@ public class Database{
 
         return data;
     }
+
+    public static int getAndResetRowsAffected(){
+        int rows =  Database.rowsAffected;
+        Database.rowsAffected = 0;
+        return rows;
+    }
+
+
 
 }
