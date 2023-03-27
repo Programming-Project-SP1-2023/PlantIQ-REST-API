@@ -10,15 +10,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ModelCollection<T> {
     private int limit;
     private int offset;
-    private HashMap<String,String> where;
+    private final HashMap<String,String> where;
     private ArrayList<String> orderBy;
     private String query;
     private final Class<T> type;
 
     public ModelCollection(Class<T> type){
         this.where=new HashMap<>();
-        this.limit=0;
-        this.offset=0;
+        this.limit=-1;
+        this.offset=-1;
         this.type = type;
     }
     public ModelCollection<T> where(String key,String value){
@@ -62,11 +62,11 @@ public class ModelCollection<T> {
         
         //this.orderBy.forEach();
 
-        if (this.limit!=0){
+        if (this.limit!=-1){
             this.query+=" LIMIT "+this.limit;
         }
 
-        if (this.offset!=0){
+        if (this.offset!=-1){
             this.query+=" OFFSET "+this.offset;
         }
 
