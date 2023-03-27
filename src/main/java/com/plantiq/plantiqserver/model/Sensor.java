@@ -8,14 +8,27 @@ import java.util.HashMap;
 
 public class Sensor extends Model {
 
-    //******************* STATIC CRUD OPERATIONS *******************\\
+    //|================================================|
+    //|              STATIC CRUD METHODS               |
+    //|================================================|
+
+    //Our collection method is the only method that has to be
+    //present in the child classes as it must inject the child
+    //class type to ensure they are returned correctly.
+
+    //This method will create a ModelCollection object using
+    //the current type via generics and by providing the class
+    //directly into the constructor, this collection object
+    //allows us to build our SQL query and return our values.
 
     public static ModelCollection<Sensor> collection(){
         return new ModelCollection<>(Sensor.class);
     }
 
 
-    //******************* Class Methods *******************\\
+    //|================================================|
+    //|                  CLASS METHODS                 |
+    //|================================================|
 
     //Constructor
     public Sensor(HashMap<String, String> data){
