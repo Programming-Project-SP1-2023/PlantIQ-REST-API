@@ -2,6 +2,7 @@ package com.plantiq.plantiqserver.controllers;
 
 import com.plantiq.plantiqserver.model.User;
 import com.plantiq.plantiqserver.rules.LoginRequestRule;
+import com.plantiq.plantiqserver.service.SessionService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +37,7 @@ public class AuthenticationController {
 
         if(user != null){
             response.put("outcome","true");
+            response.put("session", SessionService.create(user.getId()));
         }else{
             response.put("outcome","false");
             response.put("error","Login failed, please check your email and password");
