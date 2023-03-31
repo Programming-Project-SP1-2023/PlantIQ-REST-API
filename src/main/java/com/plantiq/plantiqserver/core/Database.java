@@ -13,12 +13,13 @@ public class Database{
 
         ArrayList<HashMap<String,String>> data = new ArrayList<>();
 
+
         Connection connection = null;
         ResultSet resultSet = null;
 
         try{
 
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/plantiq?user=root&password=");
+            connection = DriverManager.getConnection("jdbc:sqlserver://db-plantiq.database.windows.net:1433;database=plantiq-backend;user=spring@db-plantiq;password={PASSWORD};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30");
 
             Statement statement = connection.createStatement();
 
@@ -42,7 +43,9 @@ public class Database{
             throwables.printStackTrace();
         }
 
-        System.out.println("[DATABASE] Performed query '"+query+"'");
+        System.out.println("[DATABASE] Performed query "+query);
+
+
 
         return data;
     }
