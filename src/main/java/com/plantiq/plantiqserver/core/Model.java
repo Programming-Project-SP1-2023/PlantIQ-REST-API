@@ -45,6 +45,9 @@ public class Model {
 
     public void delete(){
 
+        String query = "DELETE FROM "+this.data.get("_table")+" WHERE id='"+this.data.get("id")+"'";
+
+        Database.query(query);
     }
 
 }
