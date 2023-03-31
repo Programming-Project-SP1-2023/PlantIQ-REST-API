@@ -40,13 +40,22 @@ public class ModelCollection<T> {
         return this;
     }
 
+    public T getFirst(){
+        ArrayList<T> outcome = this.get();
+        if(outcome.size() > 0){
+            return outcome.get(0);
+        }else{
+            return null;
+        }
+    }
+
     public ArrayList<T> get(){
 
         ArrayList<T> output = new ArrayList<>();
 
         String table = this.type.getSimpleName();
 
-        this.query = "SELECT * FROM "+table;
+        this.query = "SELECT * FROM [dbo].["+table+"]";
 
         AtomicInteger whereCount = new AtomicInteger(0);
 
