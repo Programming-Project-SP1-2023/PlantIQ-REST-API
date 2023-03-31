@@ -18,6 +18,7 @@ public class LoginRequestRule extends Rule {
 
         password.add("required");
         password.add("min:8");
+        password.add("max:25");
 
         this.rules.put("email",email);
         this.rules.put("password",password);
