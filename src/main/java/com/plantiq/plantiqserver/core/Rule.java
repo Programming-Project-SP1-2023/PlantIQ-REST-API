@@ -87,6 +87,20 @@ public abstract class Rule {
             //them one by one.
             rules.forEach((rule)->{
 
+                //Firstly we get the first char at position 0, this allows
+                //us to detect a not call.
+                char first = rule.charAt(0);
+
+                //now we set a boolean to indicate if we are running in
+                //not mode.
+                boolean not = first == '!';
+
+                //if not is active then we trim the "!" from the start of
+                //the rule.
+                if(not){
+                    rule = rule.substring(1);
+                }
+
                 //If our rule has a variable then split it at the ":" character
                 List<String> stringList = Pattern.compile(":")
                         .splitAsStream(rule).toList();
@@ -142,14 +156,13 @@ public abstract class Rule {
                             if(!this.isInteger(variable)){
                                 System.out.println("[RULE] Cannot validate min:'x', variable must be a valid integer");
                             }else {
-                                if (provided.length() < Integer.parseInt(variable)) {
+                                if (provided.length() <= Integer.parseInt(variable)) {
                                     ruleErrors.put(rule + ":" + variable, "Validation failed for key " + key + " parameter should be at least " + variable + " characters long");
                                     outcome.set(false);
                                 }
                             }
                         }
                     }
-
 
                     //If the rule is max, validate as follows and set the error if false.
                     //Note: for rules with variables this is where we validate their values.
@@ -234,10 +247,18 @@ public abstract class Rule {
                             ArrayList<HashMap<String, String>> result = Database.query("SELECT * FROM [dbo].[" + table + "] WHERE " + column + "='" + provided + "'");
 
                             //if the result size is more than 0 then the value is taken, else its free!
-                            if (result.size() > 0) {
-                                ruleErrors.put(rule, "value is ready taken and is not unique");
-                                outcome.set(false);
+                            if(!not){
+                                if (result.size() > 0) {
+                                    ruleErrors.put(rule, "value is already taken and is not unique");
+                                    outcome.set(false);
+                                }
+                            }else{
+                                if (result.size() == 0) {
+                                    ruleErrors.put(rule, "value does not exist");
+                                    outcome.set(false);
+                                }
                             }
+
                         }
 
                     }
