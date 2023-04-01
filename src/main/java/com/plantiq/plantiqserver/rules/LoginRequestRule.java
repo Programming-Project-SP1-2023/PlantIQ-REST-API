@@ -3,6 +3,17 @@ package com.plantiq.plantiqserver.rules;
 import com.plantiq.plantiqserver.core.Rule;
 
 import java.util.ArrayList;
+//Class used to determine the Rules of a Session
+
+// -----------------------------------------------------------------------------------|
+//                                  LIST OF RULES                                     |
+// -----------------------------------------------------------------------------------|
+//                                                                                    |
+//  A)                                                       |
+//  B)                 |
+//  C)      |
+//                                                                                    |
+//------------------------------------------------------------------------------------|
 
 public class LoginRequestRule extends Rule {
 
