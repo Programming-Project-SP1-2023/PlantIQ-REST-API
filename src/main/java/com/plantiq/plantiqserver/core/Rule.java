@@ -156,7 +156,7 @@ public abstract class Rule {
                             if(!this.isInteger(variable)){
                                 System.out.println("[RULE] Cannot validate min:'x', variable must be a valid integer");
                             }else {
-                                if (provided.length() <= Integer.parseInt(variable)) {
+                                if (provided.length() < Integer.parseInt(variable)) {
                                     ruleErrors.put(rule + ":" + variable, "Validation failed for key " + key + " parameter should be at least " + variable + " characters long");
                                     outcome.set(false);
                                 }
