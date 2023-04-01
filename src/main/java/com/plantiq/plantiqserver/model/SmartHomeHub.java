@@ -48,7 +48,7 @@ public class SmartHomeHub extends Model {
     }
 
     public int getDataRegistred(){
-        return (int)this.data.get("date_registred");
+        return Integer.parseInt((String)this.data.get("date_registred"));
     }
 
     public String getName(){
