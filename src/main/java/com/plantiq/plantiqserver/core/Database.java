@@ -11,8 +11,9 @@ public class Database{
 
     public static ArrayList<HashMap<String, String>> query(String query){
 
-        ArrayList<HashMap<String,String>> data = new ArrayList<>();
+        String[] queryData = query.split(" ");
 
+        ArrayList<HashMap<String,String>> data = new ArrayList<>();
 
         Connection connection = null;
         ResultSet resultSet = null;
@@ -23,7 +24,16 @@ public class Database{
 
             Statement statement = connection.createStatement();
 
+
+            if(!queryData[0].equals("SELECT")){
+                statement.execute(query);
+                System.out.println("[DATABASE] Performed query "+query);
+                return data;
+            }
+
             resultSet = statement.executeQuery(query);
+
+
 
             while(resultSet.next()){
                 HashMap<String, String> row = new HashMap<>();
@@ -32,7 +42,7 @@ public class Database{
                     row.put(resultSet.getMetaData().getColumnName(i),resultSet.getString(i));
                     i++;
                 }
-                row.put("_table",resultSet.getMetaData().getTableName(1));
+                row.put("_table",queryData[3].substring(7,queryData[3].length()-1));
                 data.add(row);
             }
 
