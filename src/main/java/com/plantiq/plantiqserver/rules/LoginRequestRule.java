@@ -12,7 +12,7 @@ public class LoginRequestRule extends Rule {
         ArrayList<String> email = new ArrayList<>();
 
         email.add("required");
-        email.add("regex.email");
+        email.add("regex:email");
 
         ArrayList<String> password = new ArrayList<>();
 
