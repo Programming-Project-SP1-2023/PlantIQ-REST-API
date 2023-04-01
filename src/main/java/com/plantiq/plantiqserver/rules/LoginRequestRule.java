@@ -3,15 +3,19 @@ package com.plantiq.plantiqserver.rules;
 import com.plantiq.plantiqserver.core.Rule;
 
 import java.util.ArrayList;
-//Class used to determine the Rules of a Session
 
 // -----------------------------------------------------------------------------------|
 //                                  LIST OF RULES                                     |
 // -----------------------------------------------------------------------------------|
 //                                                                                    |
-//  A)                                                       |
-//  B)                 |
-//  C)      |
+//  Email:                                                                            |
+//  A) Required -> Validates the email input is present and not null.                 |
+//  B) regex.email -> Validates the input meets the criteria of an email address.     |
+//                                                                                    |
+//  Password:                                                                         |
+//  A) Required -> Validates the email input is present and not null.                 |
+//  B) min:8 -> Validates the password is at least 8 characters long.                 |
+//  C) max:25 -> Validates the password is no larger than 25 characters long.         |
 //                                                                                    |
 //------------------------------------------------------------------------------------|
 
