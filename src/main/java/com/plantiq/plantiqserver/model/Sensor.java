@@ -40,18 +40,15 @@ public class Sensor extends Model {
         return (String)this.data.get("id");
     }
 
-    //Get Smart Hub ID Method
-    public String getSmartHubId(){
-        return (String)this.data.get("smarthub_id");
+    public String getName(){
+        return (String)this.data.get("name");
     }
 
-    //Get User Method
-    public String getUser_id(){
-        return (String)this.data.get("user_id");
+    public String getLocation(){
+        return (String)this.data.get("location");
     }
 
-    //Get Sensor Type Method
-    public String getSensorType(){
-        return (String)this.data.get("sensor_type");
+    public String getRegistrationDate(){
+        return (String)this.data.get("registrationDate");
     }
 }
