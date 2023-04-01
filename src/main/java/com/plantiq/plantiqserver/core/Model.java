@@ -11,6 +11,34 @@ public class Model {
         this.data = data;
     }
 
+    //------------------ INSERT INTO METHOD -----------------
+
+    public static boolean insert(String table,HashMap<String,Object> data){
+    //Create our query string and initialize it to the starting value
+        StringBuilder query = new StringBuilder("INSERT INTO [dbo].["+table+"] (");
+
+        //For each loop to add all the column names of the table into the query, with the correct SQL syntax
+        data.forEach((key,value)->{
+            query.append(key+",");
+        });
+
+        //From the previous loop, a comma has been added to the last column.
+        //This needs to be removed for the query to run
+        query.deleteCharAt(query.length()-1);
+        query.append(") VALUES (");
+
+        //For each loop to add all the values of the table into the query, with the correct SQL syntax
+        data.forEach((key,value)->{
+            query.append("'"+value+"',");
+        });
+        query.deleteCharAt(query.length()-1);
+        query.append(");");
+
+        Database.query(query.toString());
+
+        return Database.getAndResetRowsAffected() != 0;
+    }
+
 
     //Our static CRUD methods map to the crud actions of
     //create, read, update and delete, these are all assigned
