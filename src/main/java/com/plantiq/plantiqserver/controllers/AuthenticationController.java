@@ -1,5 +1,6 @@
 package com.plantiq.plantiqserver.controllers;
 
+import com.plantiq.plantiqserver.model.Session;
 import com.plantiq.plantiqserver.model.User;
 import com.plantiq.plantiqserver.rules.LoginRequestRule;
 import com.plantiq.plantiqserver.rules.SessionValidateRequestRule;
@@ -66,6 +67,9 @@ public class AuthenticationController {
             response.put("errors",rule.getErrors());
             return response;
         }
+
+        Session session = (Session) rule.getCachedModel("session");
+        System.out.println(session.getToken());
 
         response.put("outcome", true);
 
