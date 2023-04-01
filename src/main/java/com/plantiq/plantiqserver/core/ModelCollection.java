@@ -15,12 +15,24 @@ public class ModelCollection<T> {
     private String query;
     private final Class<T> type;
 
+    private final ArrayList<HashMap<String,String>> data;
+
     public ModelCollection(Class<T> type){
         this.where=new HashMap<>();
         this.limit=-1;
         this.offset=-1;
         this.type = type;
+        this.data = null;
     }
+
+    public ModelCollection(Class<T> type, ArrayList<HashMap<String,String>> data){
+        this.where=new HashMap<>();
+        this.limit=-1;
+        this.offset=-1;
+        this.type = type;
+        this.data = data;
+    }
+
     public ModelCollection<T> where(String key,String value){
         this.where.put(key,value);
         return this;
@@ -85,17 +97,32 @@ public class ModelCollection<T> {
         HashMap<String,String> test = new HashMap<>();
         cArg[0] = test.getClass();
 
-        Database.query(this.query).forEach((n -> {
+        if(this.data != null){
 
-            try {
+            this.data.forEach((n)->{
+                try {
 
-           output.add(this.type.getDeclaredConstructor(cArg).newInstance(n));
+                    output.add(this.type.getDeclaredConstructor(cArg).newInstance(n));
 
-           }catch(InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-                e.printStackTrace();
-           }
+                }catch(InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
+            });
 
-        }));
+        }else{
+
+            Database.query(this.query).forEach((n -> {
+
+                try {
+
+                    output.add(this.type.getDeclaredConstructor(cArg).newInstance(n));
+
+                }catch(InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
+
+            }));
+        }
 
 
         return output;
