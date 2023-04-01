@@ -34,21 +34,21 @@ public class User extends Model {
         super(data);
     }
 
+    public String getId(){
+        return (String) this.data.get("id");
+    }
     //Get Name Method
-    @JsonProperty("name")
-    public String name(){
+    public String getName(){
         return (String)this.data.get("name");
     }
 
     //Get Email Method
-    @JsonProperty("email")
-    public String email(){
+    public String getEmail(){
         return (String)this.data.get("email");
     }
 
     //Get Password Method
-    @JsonProperty("password")
-    public String password(){
+    public String getPassword(){
         return (String)this.data.get("password");
     }
 
