@@ -112,6 +112,13 @@ public abstract class Rule {
                     rule = "max";
                 }
 
+                if(rule.equals("regex:")){
+                    rule = "regex";
+                }
+                if(rule.equals("unique:")){
+                    rule = "unique";
+                }
+
                 //Now we have performed all our pre-checks and split our data into variable
                 //and rule we can then switch between the rules and perform our checks.
                 switch (rule) {
@@ -163,12 +170,76 @@ public abstract class Rule {
                     }
 
                     //If the rule is regex, validate as follows and set the error if false.
-                    case "regex.email"->{
-                        Matcher matcher = emailPattern.matcher(provided);
-                        if(!matcher.matches()){
-                            ruleErrors.put(rule,"Validation failed for key " + key);
+
+                    //Note:
+
+                    //Currently we only have 1 regex validation type called email, more can be added
+                    //as needed by the project.
+                    case "regex"->{
+
+                        if(!variable.equals("email")){
+                            System.out.println("[RULE] Cannot validate 'regex:x', variable must be a valid regex pattern");
+                        }else{
+                            Matcher matcher = emailPattern.matcher(provided);
+                            if(!matcher.matches()){
+                                ruleErrors.put(rule,"Validation failed for key " + key);
+                                outcome.set(false);
+                            }
+                        }
+
+                    }
+
+                    //If the rule is integer, validate using our isInteger helper method.
+                    case "integer"->{
+
+                        if(!this.isInteger(provided)){
+                            ruleErrors.put(rule,"Invalid type provided, input must be a valid integer");
                             outcome.set(false);
                         }
+
+                    }
+
+                    //If the rule is a float, validate using our isFloat helper method.
+                    case "float"->{
+
+                        if(!this.isFloat(provided)){
+                            ruleErrors.put(rule,"Invalid type provided, input must be a valid float");
+                            outcome.set(false);
+                        }
+
+                    }
+                    //If the rule is unique, validate using our database to ensure the
+                    //value provided is unique.
+                    case "unique"->{
+
+                        //Check to see if we have a provided value, if not then don't proceed.
+                        if(provided.isEmpty()){
+                            ruleErrors.put(rule,"Validation must have a value that is not null");
+                            outcome.set(false);
+                        }{
+
+                            //declare our column and table name variables
+                            String column = "";
+                            String table = "";
+
+                            //check to ensure we have both provided and split them via the "."
+                            if(variable.contains(".")){
+                                String[] result = variable.split("\\.");
+
+                                column = result[1];
+                                table = result[0];
+                            }
+
+                            //query the database for the result
+                            ArrayList<HashMap<String, String>> result = Database.query("SELECT * FROM [dbo].[" + table + "] WHERE " + column + "='" + provided + "'");
+
+                            //if the result size is more than 0 then the value is taken, else its free!
+                            if (result.size() > 0) {
+                                ruleErrors.put(rule, "value is ready taken and is not unique");
+                                outcome.set(false);
+                            }
+                        }
+
                     }
                 }
 
@@ -218,4 +289,22 @@ public abstract class Rule {
         return outcome;
     }
 
+
+    //-----------------------------------------------------------------//
+    //                        is Float Method                          //
+    //-----------------------------------------------------------------//
+
+    //This method will validate our input to ensure it is a valid float
+    private boolean isFloat(String value){
+
+        boolean outcome = true;
+
+        try{
+            Float.parseFloat(value);
+        }catch (Exception e){
+            outcome = false;
+        }
+
+        return outcome;
+    }
 }
