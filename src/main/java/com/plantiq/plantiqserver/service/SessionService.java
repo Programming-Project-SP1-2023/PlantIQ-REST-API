@@ -12,8 +12,6 @@ public class SessionService {
     //SHA256 hash of the user_id and the current time.
     public static String create(String user_id){
 
-        String currentTime = (TimeService.now()).toString();
-
         String data = user_id+TimeService.now();
         String hash = hashUsingSHA1(data);
 
