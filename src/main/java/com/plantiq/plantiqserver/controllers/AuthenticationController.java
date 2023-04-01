@@ -2,6 +2,7 @@ package com.plantiq.plantiqserver.controllers;
 
 import com.plantiq.plantiqserver.model.User;
 import com.plantiq.plantiqserver.rules.LoginRequestRule;
+import com.plantiq.plantiqserver.rules.SessionValidateRequestRule;
 import com.plantiq.plantiqserver.service.SessionService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +28,7 @@ public class AuthenticationController {
         //Validate our request and return the errors if present.
         if(!rule.validate(request)){
             response.put("outcome",false);
-            response.put("error",rule.getErrors());
+            response.put("errors",rule.getErrors());
             return response;
         }
 
@@ -52,5 +53,23 @@ public class AuthenticationController {
 
 
         return null;
+    }
+
+    @PostMapping("/validate")
+    public HashMap<String, Object> validate(HttpServletRequest request){
+
+        HashMap<String,Object> response = new HashMap<>();
+        SessionValidateRequestRule rule = new SessionValidateRequestRule();
+
+        if(!rule.validate(request)){
+            response.put("outcome",false);
+            response.put("errors",rule.getErrors());
+            return response;
+        }
+
+        response.put("outcome", true);
+
+
+        return response;
     }
 }
