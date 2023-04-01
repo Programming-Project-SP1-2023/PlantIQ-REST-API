@@ -52,7 +52,7 @@ public class Model {
     public boolean update(HashMap<String,Object> data){
 
         //Create our query string and initialize it to the starting value
-        StringBuilder query = new StringBuilder("UPDATE "+this.data.get("_table")+" SET");
+        StringBuilder query = new StringBuilder("UPDATE [dbo].["+this.data.get("_table")+"] SET");
 
         data.forEach((key,value)->{
 
@@ -73,7 +73,14 @@ public class Model {
 
     public void delete(){
 
-        String query = "DELETE FROM "+this.data.get("_table")+" WHERE id='"+this.data.get("id")+"'";
+        String query = "DELETE FROM [dbo].["+this.data.get("_table")+"] WHERE id='"+this.data.get("id")+"'";
+
+        Database.query(query);
+    }
+
+    public void delete(String column){
+
+        String query = "DELETE FROM [dbo].["+this.data.get("_table")+"] WHERE "+column+"='"+this.data.get(column)+"'";
 
         Database.query(query);
     }
