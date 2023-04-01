@@ -41,7 +41,7 @@ public class AuthenticationController {
             response.put("session", SessionService.create(user.getId()));
         }else{
             response.put("outcome","false");
-            response.put("error","Login failed, please check your email and password");
+            response.put("errors","Login failed, please check your email and password");
         }
 
         return response;
