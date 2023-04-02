@@ -24,7 +24,7 @@ public class SessionValidateRequestRule extends Rule {
         token.add("required");
         token.add("min:40");
         token.add("max:40");
-        token.add("!unique:session.token");
+        token.add("!unique:Session.token");
 
         this.rules.put("token",token);
 
