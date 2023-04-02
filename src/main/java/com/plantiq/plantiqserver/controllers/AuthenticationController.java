@@ -3,13 +3,13 @@ package com.plantiq.plantiqserver.controllers;
 import com.plantiq.plantiqserver.model.Session;
 import com.plantiq.plantiqserver.model.User;
 import com.plantiq.plantiqserver.rules.LoginRequestRule;
+import com.plantiq.plantiqserver.rules.RegistrationRequestRule;
 import com.plantiq.plantiqserver.rules.SessionValidateRequestRule;
+import com.plantiq.plantiqserver.service.HashService;
 import com.plantiq.plantiqserver.service.SessionService;
 import com.plantiq.plantiqserver.service.TimeService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
@@ -49,16 +49,8 @@ public class AuthenticationController {
         return response;
     }
 
-    @PostMapping("/logout")
-    public HashMap<String, String> logout(){
-
-
-
-        return null;
-    }
-
-    @PostMapping("/validate")
-    public HashMap<String, Object> validate(HttpServletRequest request){
+    @DeleteMapping("/logout")
+    public HashMap<String, Object> logout(HttpServletRequest request){
 
         HashMap<String,Object> response = new HashMap<>();
         SessionValidateRequestRule rule = new SessionValidateRequestRule();
@@ -69,7 +61,26 @@ public class AuthenticationController {
             return response;
         }
 
-        Session session = Session.collection().where("token",request.getParameter("token")).loadFromCache().getFirst();
+        Session session = Session.collection().where("token",request.getParameter("token")).getFirst();
+        session.delete("token");
+
+        response.put("outcome",true);
+
+        return response;
+    }
+
+    @GetMapping("/validate/{token}")
+    public HashMap<String, Object> validate(@PathVariable("token")String token){
+
+        HashMap<String,Object> response = new HashMap<>();
+
+        Session session = Session.collection().where("token",token).getFirst();
+
+        if(session == null){
+            response.put("outcome",false);
+            response.put("errors","Invalid token provided!");
+            return response;
+        }
 
         if(session.getExpiry() < TimeService.now()){
             session.delete("token");
@@ -78,6 +89,38 @@ public class AuthenticationController {
             response.put("outcome", true);
         }
 
+        return response;
+    }
+
+    @PostMapping("/register")
+    public HashMap<String,Object> register(HttpServletRequest request){
+        HashMap<String,Object> response = new HashMap<>();
+        RegistrationRequestRule rule = new RegistrationRequestRule();
+
+        if(!rule.validate(request)){
+            response.put("outcome",false);
+            response.put("errors",rule.getErrors());
+            return response;
+        }
+
+
+        HashMap<String,Object> data = new HashMap<>();
+
+        data.put("id", HashService.generateSHA1(TimeService.now().toString()+request.getParameter("email")));
+        data.put("email",request.getParameter("email"));
+        data.put("firstname",request.getParameter("firstname"));
+        data.put("surname",request.getParameter("surname"));
+        data.put("password",request.getParameter("password"));
+        data.put("isAdministrator","0");
+        data.put("registrationDate",TimeService.now().toString());
+
+        if(User.insert("User",data)){
+            response.put("outcome", true);
+            response.put("message","User successfully registered");
+        }else{
+            response.put("outcome", false);
+            response.put("errors","Failed to register user, please contact support!");
+        }
 
         return response;
     }
