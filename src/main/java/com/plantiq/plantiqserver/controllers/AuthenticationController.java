@@ -5,6 +5,7 @@ import com.plantiq.plantiqserver.model.User;
 import com.plantiq.plantiqserver.rules.LoginRequestRule;
 import com.plantiq.plantiqserver.rules.SessionValidateRequestRule;
 import com.plantiq.plantiqserver.service.SessionService;
+import com.plantiq.plantiqserver.service.TimeService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,10 +69,14 @@ public class AuthenticationController {
             return response;
         }
 
-        Session session = (Session) rule.getCachedModel("session");
-        System.out.println(session.getToken());
+        Session session = Session.collection().where("token",request.getParameter("token")).loadFromCache().getFirst();
 
-        response.put("outcome", true);
+        if(session.getExpiry() < TimeService.now()){
+            session.delete("token");
+            response.put("outcome", false);
+        }else{
+            response.put("outcome", true);
+        }
 
 
         return response;
