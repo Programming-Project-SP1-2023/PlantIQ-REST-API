@@ -4,7 +4,6 @@ package com.plantiq.plantiqserver.core;
 
 //**** PACKAGE IMPORTS ****\\
 //Imports the required classes from other packages.
-import com.plantiq.plantiqserver.model.Session;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
@@ -32,8 +31,6 @@ public abstract class Rule {
     //Error hashmap, its values are set by the validation method
     //and returned via this.getErrors().
     protected HashMap<String, Object> errors = new HashMap<>();
-
-    protected HashMap<String, Object> cachedModels = new HashMap<>();
 
     //Regex email pattern, this regex pattern is used to validate
     //email addresses.
@@ -249,10 +246,6 @@ public abstract class Rule {
                             //query the database for the result
                             ArrayList<HashMap<String, String>> result = Database.query("SELECT * FROM [dbo].[" + table + "] WHERE " + column + "='" + provided + "'");
 
-                            if(result.size() > 0){
-                                this.cachedModels.put("session",new ModelCollection<Session>(Session.class,result).getFirst());
-                            }
-
                             //if the result size is more than 0 then the value is taken, else its free!
                             if(!not){
 
@@ -335,10 +328,5 @@ public abstract class Rule {
         }
 
         return outcome;
-    }
-
-    public Object getCachedModel(String key){
-
-        return this.cachedModels.getOrDefault(key, null);
     }
 }
