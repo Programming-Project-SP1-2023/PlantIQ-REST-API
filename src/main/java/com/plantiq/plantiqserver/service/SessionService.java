@@ -1,8 +1,6 @@
 package com.plantiq.plantiqserver.service;
 
 import com.plantiq.plantiqserver.model.Session;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +22,7 @@ public class SessionService {
 
         //Use the user_id and time to create the hash value.
         String data = user_id+TimeService.now();
-        String hash = hashUsingSHA1(data);
+        String hash = HashService.generateSHA1(data);
 
         //Create the new session object data map.
         HashMap<String,Object> sessionData = new HashMap<>();
@@ -46,22 +44,5 @@ public class SessionService {
         return hash;
     }
 
-
-    //This method is used to create an SHA-1 hash of the user_id+timestamp.
-    private static String hashUsingSHA1(String data) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-1");
-            byte[] hash = digest.digest(data.getBytes());
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : hash) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) hexString.append('0');
-                hexString.append(hex);
-            }
-            return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("SHA-1 algorithm not available", e);
-        }
-    }
 
 }
