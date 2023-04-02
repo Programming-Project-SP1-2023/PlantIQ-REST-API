@@ -246,7 +246,7 @@ public abstract class Rule {
                             //query the database for the result
                             ArrayList<HashMap<String, String>> result = Database.query("SELECT * FROM [dbo].[" + table + "] WHERE " + column + "='" + provided + "'");
 
-                            //if the result size is more than 0 then the value is taken, else its free!
+                            //if the result size is more than 0 then the value is taken, else it's free!
                             if(!not){
 
                                 if (result.size() > 0) {
