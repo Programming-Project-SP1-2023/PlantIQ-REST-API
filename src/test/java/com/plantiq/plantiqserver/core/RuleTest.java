@@ -26,13 +26,13 @@ class RuleTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		// set parameters
 		request.addParameter("firstname", "Brian");
-		request.addParameter("surname", "Cusack");
+		request.addParameter("surname", "");
 		request.addParameter("email", "");
 		request.addParameter("password", "Admin1234!");
 
 		RegistrationRequestRule rule = new RegistrationRequestRule();
 		rule.validate(request);
 		HashMap<String, Object> errors = rule.getErrors();
-		assert (errors.size() == 1);
+		assert (errors.size() == 2);
 	}
 }
