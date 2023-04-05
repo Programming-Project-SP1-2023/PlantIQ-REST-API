@@ -6,7 +6,7 @@ name: Build and deploy JAR app to Azure Web App - PlantIQServer
 on:
   push:
     branches:
-      - main
+      - feature_test
   workflow_dispatch:
 
 jobs:
