@@ -23,12 +23,24 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean install -DskipTests
+        
+      - name: Delete Old Artifacts
+        uses: actions/github-script@v6
+        id: artifact
+        with:
+          script: |
+            const res = await github.rest.actions.listArtifactsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            })
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: java-app
           path: '${{ github.workspace }}/target/*.jar'
+          
+     
 
   deploy:
     runs-on: windows-latest
