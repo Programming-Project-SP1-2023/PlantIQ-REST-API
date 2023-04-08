@@ -30,13 +30,19 @@ public class ModelCollection<T> {
     //Limit variables limits how many results will be returned.
     private int limit;
 
+    private HashMap<String,String> whereGreaterThan;
+    private HashMap<String,String> whereGreaterAndEqualThan;
+    private HashMap<String,String> whereLessThan;
+    private HashMap<String,String> whereLessAndEqualThan;
+    private HashMap<String,String> with;
+
     //Offset variable will offset the request by the number,
     //this is used for pagination.
     private int offset;
 
     //Where "key" = "value" will be used to refine our search
     //results
-    private final HashMap<String,String> where;
+    private  HashMap<String,String> where;
 
     //OrderBy will tell SQL how we want the results order by, it
     //will accept a column and an order key.
@@ -66,6 +72,15 @@ public class ModelCollection<T> {
         this.type = type;
     }
 
+
+    public ModelCollection<T> with(String query,String query2){
+        this.with.put(query,query2);
+        return this;
+    }
+
+
+
+
     //-----------------------------------------------------------------//
     //                         Where Method                            //
     //-----------------------------------------------------------------//
@@ -77,6 +92,32 @@ public class ModelCollection<T> {
         this.where.put(key,value);
         return this;
     }
+
+//-------------------------------------------------------------------------
+
+    public ModelCollection<T> whereGreaterThan(String key, String value){
+        this.whereGreaterThan.put(key, value);
+        return this;
+    }
+
+    public ModelCollection<T> whereGreaterAndEqualThan(String key, String value){
+        this.whereGreaterThan.put(key, value);
+        return this;
+    }
+    public ModelCollection<T> whereLessThan(String key, String value){
+        this.whereGreaterThan.put(key, value);
+        return this;
+    }
+
+    public ModelCollection<T> whereLessAndEqualThan(String key, String value){
+        this.whereGreaterThan.put(key, value);
+        return this;
+    }
+
+//    ----------------------------------------------------------------
+
+
+
 
     //-----------------------------------------------------------------//
     //                        OrderBy Method                           //
@@ -162,6 +203,61 @@ public class ModelCollection<T> {
 
         });
 
+//        -------------------------------------------------------------------
+
+        this.whereGreaterThan.forEach((key,value)->{
+            if(counter.get() == 0){
+                this.query += " WHERE "+key+" > '"+value+"'";
+            }else{
+                this.query += " AND "+key+" > '"+value+"'";
+            }
+            counter.getAndIncrement();
+        });
+
+        this.whereGreaterAndEqualThan.forEach((key,value)->{
+            if(counter.get() == 0){
+                this.query += " WHERE "+key+" >= '"+value+"'";
+            }else{
+                this.query += " AND "+key+" >= '"+value+"'";
+            }
+            counter.getAndIncrement();
+        });
+        this.whereLessThan.forEach((key,value)->{
+            if(counter.get() == 0){
+                this.query += " WHERE "+key+" < '"+value+"'";
+            }else{
+                this.query += " AND "+key+" < '"+value+"'";
+            }
+            counter.getAndIncrement();
+        });
+
+        this.whereLessAndEqualThan.forEach((key,value)->{
+            if(counter.get() == 0){
+                this.query += " WHERE "+key+" <= '"+value+"'";
+            }else{
+                this.query += " AND "+key+" <= '"+value+"'";
+            }
+            counter.getAndIncrement();
+        });
+
+
+
+
+
+
+        counter.set(0);
+        this.orderBy.forEach((key,value)->{
+            if(counter.getAndIncrement() == 0){
+                this.query += "ORDER BY "+key+" "+value+", ";
+            }else{
+               this.query+=key+" "+value+", ";
+            }
+
+        });
+        this.query=this.query.substring(0,this.query.length()-2);
+
+//        ---------------------------------------------------------------------
+
         //If we have a limit set add it!
         if (this.limit!=-1){
             this.query+=" LIMIT "+this.limit;
@@ -171,6 +267,7 @@ public class ModelCollection<T> {
         if (this.offset!=-1){
             this.query+=" OFFSET "+this.offset;
         }
+
 
 
         //Create our cArguments.
