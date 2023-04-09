@@ -4,14 +4,11 @@ import com.plantiq.plantiqserver.model.PasswordResetToken;
 import com.plantiq.plantiqserver.model.User;
 import com.plantiq.plantiqserver.rules.ConsumePasswordResetTokenRule;
 import com.plantiq.plantiqserver.rules.SessionValidateRequestRule;
-import com.plantiq.plantiqserver.service.EmailService2;
 import com.plantiq.plantiqserver.service.HashService;
 import com.plantiq.plantiqserver.service.TimeService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
