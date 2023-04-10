@@ -4,6 +4,24 @@ import com.plantiq.plantiqserver.core.Rule;
 
 import java.util.ArrayList;
 
+// -----------------------------------------------------------------------------------|
+//                                  LIST OF RULES                                     |
+// -----------------------------------------------------------------------------------|
+//                                                                                    |
+//  Token:                                                                            |
+//  A) Required -> Validates the email input is present and not null.                 |
+//  B) min:40/max:40 -> Validates the password exactly 40 characters long             |
+//  B) !unique:PasswordResetToken.token -> Validates that the token is not uniques,   |
+//                                  meaning that it matches a token in the database   |
+//                                                                                    |
+//  Password:                                                                         |
+//  A) Required -> Validates the email input is present and not null.                 |
+//  B) min:8 -> Validates the password is at least 8 characters long.                 |
+//  C) max:50 -> Validates the password is no larger than 50 characters long.         |
+//                                                                                    |
+//------------------------------------------------------------------------------------|
+
+
 public class ConsumePasswordResetTokenRule extends Rule {
 
     public void setup(){
