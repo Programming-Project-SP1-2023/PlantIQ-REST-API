@@ -46,8 +46,9 @@ public class ModelCollection<T> {
     //results
     private HashMap<String,String> whereLessAndEqualThan;
 
-
-    private HashMap<String,String> with;
+    //This hashmap is used to collect the table name and the
+    // two attributes that must match in order to perform a right join
+    private HashMap<String,HashMap<String,String>> rightJoin;
 
     //Offset variable will offset the request by the number,
     //this is used for pagination.
@@ -78,6 +79,7 @@ public class ModelCollection<T> {
     //model child type. Lastly the constructor will set our starting values
     //and perform and initialization.
     public ModelCollection(Class<T> type){
+        this.rightJoin = new HashMap<>();
         this.where=new HashMap<>();
         this.whereGreaterThan=new HashMap<>();
         this.whereGreaterAndEqualThan=new HashMap<>();
@@ -89,9 +91,19 @@ public class ModelCollection<T> {
         this.type = type;
     }
 
+    //-----------------------------------------------------------------//
+    //                      Right Join Method                          //
+    //-----------------------------------------------------------------//
 
-    public ModelCollection<T> with(String query,String query2){
-        this.with.put(query,query2);
+    //This method is used to perform a right join between two tables
+    //Its accepts the table name it will joining as a String, and each table name
+    //will have a hashmap containing the two attributes that must match to
+    //perform the right join.
+    // The final picture will see injected in query 'RIGHT JOIN tablename ON key = value'
+    public ModelCollection<T> rightJoin(String table,String key,String value){
+        HashMap<String,String> on =new HashMap<>();
+        on.put(key, value);
+        this.rightJoin.put(table,on);
         return this;
     }
 
@@ -222,9 +234,20 @@ public class ModelCollection<T> {
 
         //Declare the first part of our query.
         this.query = "SELECT * FROM [dbo].["+table+"]";
+
+        //Looping through the right join, inserting each junction with tables.
+        //The output will be 'RIGHT JOIN tablename ON attribute = attribute'
+        this.rightJoin.forEach((nextTable,on)->{
+            this.query += " RIGHT JOIN "+nextTable+" ON ";
+            //The hashmap on will contain only one key and one value
+            on.forEach((key,value)->{
+                this.query += key + " = " + value;
+            });
+        });
+
+
         //Create an atomic integer to act as a counter for us
         AtomicInteger counter = new AtomicInteger(0);
-
         //For each of the where criteria present add them to
         //the query.
         this.where.forEach((key,value)->{
