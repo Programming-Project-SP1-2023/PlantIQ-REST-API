@@ -7,6 +7,7 @@ package com.plantiq.plantiqserver.core;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 //-----------------------------------------------------------------//
@@ -60,7 +61,7 @@ public class ModelCollection<T> {
 
     //OrderBy will tell SQL how we want the results order by, it
     //will accept a column and an order key.
-    private HashMap<String,Sort> orderBy;
+    private LinkedHashMap<String,Sort> orderBy;
 
     //Query, this is our final string query that has been
     //build by this object.
@@ -85,7 +86,7 @@ public class ModelCollection<T> {
         this.whereGreaterAndEqualThan=new HashMap<>();
         this.whereLessThan=new HashMap<>();
         this.whereLessAndEqualThan=new HashMap<>();
-        this.orderBy = new HashMap<>();
+        this.orderBy = new LinkedHashMap<>();
         this.limit=-1;
         this.offset=-1;
         this.type = type;
@@ -308,22 +309,21 @@ public class ModelCollection<T> {
         //Counter is set to 0 in order to insert multiple columns
         //for the sorting. Each time a column is inserted,
         //it will be followed by the sort type (ASC or Desc)
-        //counter.set(0);
-        //this.orderBy.forEach((key,value)->{
-        //    if(counter.getAndIncrement() == 0){
-         //       this.query += "ORDER BY "+key+" "+value+", ";
-         //   }else{
-         //      this.query+=key+" "+value+", ";
-         //   }
+//        counter.set(0);
+//        this.orderBy.forEach((key,value)->{
+//            if(counter.getAndIncrement() == 0){
+//                this.query += "ORDER BY "+key+" "+value+", ";
+//            }else{
+//               this.query+=key+" "+value+", ";
+//            }
+//
+//        });
+//        //Since the code to concatenate multiple attributes,
+//        //it add ', ' at the end of each sorting type. Once
+//        // all the attributes have been added, these last two
+//        // characters will need to be deleted
+//        this.query=this.query.substring(0,this.query.length()-2);
 
-       // });
-        //Since the code to concatenate multiple attributes,
-        //it add ', ' at the end of each sorting type. Once
-        // all the attributes have been added, these last two
-        // characters will need to be deleted
-        //this.query=this.query.substring(0,this.query.length()-2);
-
-//        ---------------------------------------------------------------------
 
         //If we have a limit set add it!
         if (this.limit!=-1){
