@@ -4,6 +4,34 @@ import com.plantiq.plantiqserver.core.Rule;
 
 import java.util.ArrayList;
 
+// -----------------------------------------------------------------------------------|
+//                                  LIST OF RULES                                     |
+// -----------------------------------------------------------------------------------|
+//                                                                                    |
+//  Email:                                                                            |
+//  A) Required -> Validates the email input is present and not null.                 |
+//  B) regex.email -> Validates the input meets the criteria of an email address.     |
+//  C) unique:User.email -> Validates that no other account is registered             |
+//                          with this email                                           |
+//                                                                                    |
+//  Firstname:                                                                        |
+//  A) Required -> Validates the firstname input is present and not null.             |
+//  B) min:3 -> Validates the password is at least 3 characters long.                 |
+//  C) max:25 -> Validates the password is no larger than 25 characters long.         |
+//                                                                                    |
+//  Surname                                                                           |
+//  A) Required -> Validates the surname input is present and not null.               |
+//  B) min:2 -> Validates the password is at least 2 characters long.                 |
+//  C) max:25 -> Validates the password is no larger than 25 characters long.         |
+//                                                                                    |
+//  Password:                                                                         |
+//  A) Required -> Validates the email input is present and not null.                 |
+//  B) min:8 -> Validates the password is at least 8 characters long.                 |
+//  C) max:50 -> Validates the password is no larger than 50 characters long.         |
+//                                                                                    |
+//------------------------------------------------------------------------------------|
+
+
 public class RegistrationRequestRule extends Rule {
     @Override
     protected void setup() {

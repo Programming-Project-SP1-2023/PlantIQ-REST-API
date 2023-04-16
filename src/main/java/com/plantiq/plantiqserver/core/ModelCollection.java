@@ -30,13 +30,33 @@ public class ModelCollection<T> {
     //Limit variables limits how many results will be returned.
     private int limit;
 
+    //Where "key" > "value" will be used to refine our search
+    //results
+    private HashMap<String,String> whereGreaterThan;
+
+    //Where "key" >= "value" will be used to refine our search
+    //results
+    private HashMap<String,String> whereGreaterAndEqualThan;
+
+    //Where "key" < "value" will be used to refine our search
+    //results
+    private HashMap<String,String> whereLessThan;
+
+    //Where "key" <= "value" will be used to refine our search
+    //results
+    private HashMap<String,String> whereLessAndEqualThan;
+
+    //This hashmap is used to collect the table name and the
+    // two attributes that must match in order to perform a right join
+    private HashMap<String,HashMap<String,String>> rightJoin;
+
     //Offset variable will offset the request by the number,
     //this is used for pagination.
     private int offset;
 
     //Where "key" = "value" will be used to refine our search
     //results
-    private final HashMap<String,String> where;
+    private  HashMap<String,String> where;
 
     //OrderBy will tell SQL how we want the results order by, it
     //will accept a column and an order key.
@@ -59,12 +79,36 @@ public class ModelCollection<T> {
     //model child type. Lastly the constructor will set our starting values
     //and perform and initialization.
     public ModelCollection(Class<T> type){
+        this.rightJoin = new HashMap<>();
         this.where=new HashMap<>();
+        this.whereGreaterThan=new HashMap<>();
+        this.whereGreaterAndEqualThan=new HashMap<>();
+        this.whereLessThan=new HashMap<>();
+        this.whereLessAndEqualThan=new HashMap<>();
         this.orderBy = new HashMap<>();
         this.limit=-1;
         this.offset=-1;
         this.type = type;
     }
+
+    //-----------------------------------------------------------------//
+    //                      Right Join Method                          //
+    //-----------------------------------------------------------------//
+
+    //This method is used to perform a right join between two tables
+    //Its accepts the table name it will joining as a String, and each table name
+    //will have a hashmap containing the two attributes that must match to
+    //perform the right join.
+    // The final picture will see injected in query 'RIGHT JOIN tablename ON key = value'
+    public ModelCollection<T> rightJoin(String table,String key,String value){
+        HashMap<String,String> on =new HashMap<>();
+        on.put(key, value);
+        this.rightJoin.put(table,on);
+        return this;
+    }
+
+
+
 
     //-----------------------------------------------------------------//
     //                         Where Method                            //
@@ -75,6 +119,50 @@ public class ModelCollection<T> {
     //in our sql query.
     public ModelCollection<T> where(String key,String value){
         this.where.put(key,value);
+        return this;
+    }
+
+    //-----------------------------------------------------------------//
+    //                   WhereGreaterThan Method                       //
+    //-----------------------------------------------------------------//
+
+    //This method accepts a key and a value and will add them to the whereGreaterThan
+    // which will than translate into the sql expression "WHERE KEY>VALUE"
+    public ModelCollection<T> whereGreaterThan(String key, String value){
+        this.whereGreaterThan.put(key, value);
+        return this;
+    }
+
+    //-----------------------------------------------------------------//
+    //               WhereGreaterAndEqualThan Method                   //
+    //-----------------------------------------------------------------//
+
+    //This method accepts a key and a value and will add them to the whereGreaterAndEqualThan
+    // which will than translate into the sql expression "WHERE KEY>=VALUE"
+    public ModelCollection<T> whereGreaterAndEqualThan(String key, String value){
+        this.whereGreaterThan.put(key, value);
+        return this;
+    }
+
+    //-----------------------------------------------------------------//
+    //                     WhereLessThan Method                        //
+    //-----------------------------------------------------------------//
+
+    //This method accepts a key and a value and will add them to the whereLessThan
+    // which will than translate into the sql expression "WHERE KEY<VALUE"
+    public ModelCollection<T> whereLessThan(String key, String value){
+        this.whereGreaterThan.put(key, value);
+        return this;
+    }
+
+    //-----------------------------------------------------------------//
+    //                 WhereLessAndEqualThan Method                    //
+    //-----------------------------------------------------------------//
+
+    //This method accepts a key and a value and will add them to the WhereLessAndEqualThan
+    // which will than translate into the sql expression "WHERE KEY<=VALUE"
+    public ModelCollection<T> whereLessAndEqualThan(String key, String value){
+        this.whereGreaterThan.put(key, value);
         return this;
     }
 
@@ -147,9 +235,19 @@ public class ModelCollection<T> {
         //Declare the first part of our query.
         this.query = "SELECT * FROM [dbo].["+table+"]";
 
+        //Looping through the right join, inserting each junction with tables.
+        //The output will be 'RIGHT JOIN tablename ON attribute = attribute'
+        this.rightJoin.forEach((nextTable,on)->{
+            this.query += " RIGHT JOIN "+nextTable+" ON ";
+            //The hashmap on will contain only one key and one value
+            on.forEach((key,value)->{
+                this.query += key + " = " + value;
+            });
+        });
+
+
         //Create an atomic integer to act as a counter for us
         AtomicInteger counter = new AtomicInteger(0);
-
         //For each of the where criteria present add them to
         //the query.
         this.where.forEach((key,value)->{
@@ -162,6 +260,75 @@ public class ModelCollection<T> {
 
         });
 
+        //If there was a where condition previously, instead of
+        // re-inserting the key word WHERE, the key word AND
+        // will be added to the query, followed by the key>value
+        this.whereGreaterThan.forEach((key,value)->{
+            if(counter.get() == 0){
+                this.query += " WHERE "+key+" > '"+value+"'";
+            }else{
+                this.query += " AND "+key+" > '"+value+"'";
+            }
+            counter.getAndIncrement();
+        });
+        //If there was a where condition previously, instead of
+        // re-inserting the key word WHERE, the key word AND
+        // will be added to the query, followed by the key>=value
+        this.whereGreaterAndEqualThan.forEach((key,value)->{
+            if(counter.get() == 0){
+                this.query += " WHERE "+key+" >= '"+value+"'";
+            }else{
+                this.query += " AND "+key+" >= '"+value+"'";
+            }
+            counter.getAndIncrement();
+        });
+        //If there was a where condition previously, instead of
+        // re-inserting the key word WHERE, the key word AND
+        // will be added to the query, followed by the key<value
+        this.whereLessThan.forEach((key,value)->{
+            if(counter.get() == 0){
+                this.query += " WHERE "+key+" < '"+value+"'";
+            }else{
+                this.query += " AND "+key+" < '"+value+"'";
+            }
+            counter.getAndIncrement();
+        });
+        //If there was a where condition previously, instead of
+        // re-inserting the key word WHERE, the key word AND
+        // will be added to the query, followed by the key<=value
+        this.whereLessAndEqualThan.forEach((key,value)->{
+            if(counter.get() == 0){
+                this.query += " WHERE "+key+" <= '"+value+"'";
+            }else{
+                this.query += " AND "+key+" <= '"+value+"'";
+            }
+            counter.getAndIncrement();
+        });
+
+
+
+
+
+        //Counter is set to 0 in order to insert multiple columns
+        //for the sorting. Each time a column is inserted,
+        //it will be followed by the sort type (ASC or Desc)
+        counter.set(0);
+        this.orderBy.forEach((key,value)->{
+            if(counter.getAndIncrement() == 0){
+                this.query += "ORDER BY "+key+" "+value+", ";
+            }else{
+               this.query+=key+" "+value+", ";
+            }
+
+        });
+        //Since the code to concatenate multiple attributes,
+        //it add ', ' at the end of each sorting type. Once
+        // all the attributes have been added, these last two
+        // characters will need to be deleted
+        this.query=this.query.substring(0,this.query.length()-2);
+
+//        ---------------------------------------------------------------------
+
         //If we have a limit set add it!
         if (this.limit!=-1){
             this.query+=" LIMIT "+this.limit;
@@ -171,6 +338,7 @@ public class ModelCollection<T> {
         if (this.offset!=-1){
             this.query+=" OFFSET "+this.offset;
         }
+
 
 
         //Create our cArguments.
