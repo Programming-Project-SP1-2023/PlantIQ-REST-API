@@ -305,27 +305,23 @@ public class ModelCollection<T> {
             counter.getAndIncrement();
         });
 
-
-
-
-
         //Counter is set to 0 in order to insert multiple columns
         //for the sorting. Each time a column is inserted,
         //it will be followed by the sort type (ASC or Desc)
-        counter.set(0);
-        this.orderBy.forEach((key,value)->{
-            if(counter.getAndIncrement() == 0){
-                this.query += "ORDER BY "+key+" "+value+", ";
-            }else{
-               this.query+=key+" "+value+", ";
-            }
+        //counter.set(0);
+        //this.orderBy.forEach((key,value)->{
+        //    if(counter.getAndIncrement() == 0){
+         //       this.query += "ORDER BY "+key+" "+value+", ";
+         //   }else{
+         //      this.query+=key+" "+value+", ";
+         //   }
 
-        });
+       // });
         //Since the code to concatenate multiple attributes,
         //it add ', ' at the end of each sorting type. Once
         // all the attributes have been added, these last two
         // characters will need to be deleted
-        this.query=this.query.substring(0,this.query.length()-2);
+        //this.query=this.query.substring(0,this.query.length()-2);
 
 //        ---------------------------------------------------------------------
 
