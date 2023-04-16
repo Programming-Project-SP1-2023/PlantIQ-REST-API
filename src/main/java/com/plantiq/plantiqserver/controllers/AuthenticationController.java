@@ -9,6 +9,8 @@ import com.plantiq.plantiqserver.service.HashService;
 import com.plantiq.plantiqserver.service.SessionService;
 import com.plantiq.plantiqserver.service.TimeService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -18,7 +20,7 @@ import java.util.HashMap;
 @RequestMapping("/auth")
 public class AuthenticationController {
 	@PostMapping("/login")
-	public HashMap<String, Object> login(HttpServletRequest request) {
+	public ResponseEntity<HashMap<String, Object>> login(HttpServletRequest request) {
 
 		//Create our response object, this is returned as JSON.
 		HashMap<String, Object> response = new HashMap<>();
@@ -29,36 +31,35 @@ public class AuthenticationController {
 
 		//Validate our request and return the errors if present.
 		if (!rule.validate(request)) {
-			response.put("outcome", false);
-			response.put("errors", rule.getErrors());
-			return response;
+			return rule.abort();
 		}
 
 		//Else if we reach this stage of the code then proceed to
 		//lookup the user from the database.
 		User user = User.collection().where("email", request.getParameter("email")).where("password", request.getParameter("password")).getFirst();
+		int status;
 
 		if (user != null) {
 			response.put("outcome", "true");
 			response.put("session", SessionService.create(user.getId()));
+			status = 200;
 		} else {
 			response.put("outcome", "false");
 			response.put("errors", "Login failed, please check your email and password");
+			status = 401;
 		}
 
-		return response;
+		return new ResponseEntity<>(response, HttpStatusCode.valueOf(status));
 	}
 
 	@DeleteMapping("/logout")
-	public HashMap<String, Object> logout(HttpServletRequest request) {
+	public ResponseEntity<HashMap<String, Object>> logout(HttpServletRequest request) {
 
 		HashMap<String, Object> response = new HashMap<>();
 		SessionValidateRequestRule rule = new SessionValidateRequestRule();
 
 		if (!rule.validate(request)) {
-			response.put("outcome", false);
-			response.put("errors", rule.getErrors());
-			return response;
+			return rule.abort();
 		}
 
 		Session session = Session.collection().where("token", request.getParameter("token")).getFirst();
@@ -66,11 +67,11 @@ public class AuthenticationController {
 
 		response.put("outcome", true);
 
-		return response;
+		return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
 	}
 
 	@GetMapping("/validate/{token}")
-	public HashMap<String, Object> validate(@PathVariable("token") String token) {
+	public ResponseEntity<HashMap<String, Object>> validate(@PathVariable("token") String token) {
 
 		HashMap<String, Object> response = new HashMap<>();
 
@@ -79,28 +80,29 @@ public class AuthenticationController {
 		if (session == null) {
 			response.put("outcome", false);
 			response.put("errors", "Invalid token provided!");
-			return response;
+			return new ResponseEntity<>(response, HttpStatusCode.valueOf(401));
 		}
+		int outcome;
 
 		if (session.getExpiry() < TimeService.now()) {
 			session.delete("token");
 			response.put("outcome", false);
+			outcome = 401;
 		} else {
 			response.put("outcome", true);
+			outcome = 200;
 		}
 
-		return response;
+		return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
 	}
 
 	@PostMapping("/register")
-	public HashMap<String, Object> register(HttpServletRequest request) {
+	public  ResponseEntity<HashMap<String, Object>> register(HttpServletRequest request) {
 		HashMap<String, Object> response = new HashMap<>();
 		RegistrationRequestRule rule = new RegistrationRequestRule();
 
 		if (!rule.validate(request)) {
-			response.put("outcome", false);
-			response.put("errors", rule.getErrors());
-			return response;
+			return rule.abort();
 		}
 
 		HashMap<String, Object> data = new HashMap<>();
@@ -113,14 +115,18 @@ public class AuthenticationController {
 		data.put("isAdministrator", "0");
 		data.put("registrationDate", TimeService.now().toString());
 
+		int outcome;
+
 		if (User.insert("User", data)) {
 			response.put("outcome", true);
 			response.put("message", "User successfully registered");
+			outcome = 200;
 		} else {
 			response.put("outcome", false);
 			response.put("errors", "Failed to register user, please contact support!");
+			outcome = 500;
 		}
 
-		return response;
+		return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
 	}
 }
