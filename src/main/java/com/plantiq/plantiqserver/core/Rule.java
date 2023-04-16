@@ -5,6 +5,8 @@ package com.plantiq.plantiqserver.core;
 //**** PACKAGE IMPORTS ****\\
 //Imports the required classes from other packages.
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -328,5 +330,22 @@ public abstract class Rule {
         }
 
         return outcome;
+    }
+
+    //-----------------------------------------------------------------//
+    //                          abort method                           //
+    //-----------------------------------------------------------------//
+
+    //This method will build the aborted response object and return it
+    //to the caller. All aborted rule objects use the 400 status code
+    //to indicate this was as bad request as all the required request
+    //data was not present.
+    public ResponseEntity<HashMap<String, Object>> abort(){
+        HashMap<String, Object> response = new HashMap<>();
+
+        response.put("outcome", false);
+        response.put("errors",this.errors);
+
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(400));
     }
 }
