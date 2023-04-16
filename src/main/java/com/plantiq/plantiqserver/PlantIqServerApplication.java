@@ -8,6 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class PlantIqServerApplication {
 
+	public static final String passwordPepper = "Steak&Chips!";
+
 	public static void main(String[] args) {
 
 		SpringApplication.run(PlantIqServerApplication.class, args);
