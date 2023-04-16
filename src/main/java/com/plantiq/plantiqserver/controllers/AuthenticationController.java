@@ -1,5 +1,6 @@
 package com.plantiq.plantiqserver.controllers;
 
+import com.plantiq.plantiqserver.PlantIqServerApplication;
 import com.plantiq.plantiqserver.model.Session;
 import com.plantiq.plantiqserver.model.User;
 import com.plantiq.plantiqserver.rules.LoginRequestRule;
@@ -36,7 +37,7 @@ public class AuthenticationController {
 
 		//Else if we reach this stage of the code then proceed to
 		//lookup the user from the database.
-		User user = User.collection().where("email", request.getParameter("email")).where("password", request.getParameter("password")).getFirst();
+		User user = User.collection().where("email", request.getParameter("email")).where("password", HashService.generateSHA1(PlantIqServerApplication.passwordPepper+request.getParameter("password"))).getFirst();
 		int status;
 
 		if (user != null) {
@@ -111,7 +112,7 @@ public class AuthenticationController {
 		data.put("email", request.getParameter("email"));
 		data.put("firstname", request.getParameter("firstname"));
 		data.put("surname", request.getParameter("surname"));
-		data.put("password", request.getParameter("password"));
+		data.put("password", HashService.generateSHA1(PlantIqServerApplication.passwordPepper+request.getParameter("password")));
 		data.put("isAdministrator", "0");
 		data.put("registrationDate", TimeService.now().toString());
 
