@@ -37,7 +37,7 @@ public class ModelCollection<T> {
 
     //Where "key" >= "value" will be used to refine our search
     //results
-    private HashMap<String,String> whereGreaterAndEqualThan;
+    private HashMap<String,String> whereGreaterOrEqualThan;
 
     //Where "key" < "value" will be used to refine our search
     //results
@@ -45,7 +45,7 @@ public class ModelCollection<T> {
 
     //Where "key" <= "value" will be used to refine our search
     //results
-    private HashMap<String,String> whereLessAndEqualThan;
+    private HashMap<String,String> whereLessOrEqualThan;
 
     //This hashmap is used to collect the table name and the
     // two attributes that must match in order to perform a right join
@@ -83,9 +83,9 @@ public class ModelCollection<T> {
         this.rightJoin = new HashMap<>();
         this.where=new HashMap<>();
         this.whereGreaterThan=new HashMap<>();
-        this.whereGreaterAndEqualThan=new HashMap<>();
+        this.whereGreaterOrEqualThan=new HashMap<>();
         this.whereLessThan=new HashMap<>();
-        this.whereLessAndEqualThan=new HashMap<>();
+        this.whereLessOrEqualThan=new HashMap<>();
         this.orderBy = new LinkedHashMap<>();
         this.limit=-1;
         this.offset=-1;
@@ -135,13 +135,13 @@ public class ModelCollection<T> {
     }
 
     //-----------------------------------------------------------------//
-    //               WhereGreaterAndEqualThan Method                   //
+    //               WhereGreaterOrEqualThan Method                   //
     //-----------------------------------------------------------------//
 
     //This method accepts a key and a value and will add them to the whereGreaterAndEqualThan
     // which will than translate into the sql expression "WHERE KEY>=VALUE"
-    public ModelCollection<T> whereGreaterAndEqualThan(String key, String value){
-        this.whereGreaterThan.put(key, value);
+    public ModelCollection<T> whereGreaterOrEqualThan(String key, String value){
+        this.whereGreaterOrEqualThan.put(key, value);
         return this;
     }
 
@@ -152,7 +152,7 @@ public class ModelCollection<T> {
     //This method accepts a key and a value and will add them to the whereLessThan
     // which will than translate into the sql expression "WHERE KEY<VALUE"
     public ModelCollection<T> whereLessThan(String key, String value){
-        this.whereGreaterThan.put(key, value);
+        this.whereLessThan.put(key, value);
         return this;
     }
 
@@ -163,7 +163,7 @@ public class ModelCollection<T> {
     //This method accepts a key and a value and will add them to the WhereLessAndEqualThan
     // which will than translate into the sql expression "WHERE KEY<=VALUE"
     public ModelCollection<T> whereLessAndEqualThan(String key, String value){
-        this.whereGreaterThan.put(key, value);
+        this.whereLessOrEqualThan.put(key, value);
         return this;
     }
 
@@ -266,20 +266,20 @@ public class ModelCollection<T> {
         // will be added to the query, followed by the key>value
         this.whereGreaterThan.forEach((key,value)->{
             if(counter.get() == 0){
-                this.query += " WHERE "+key+" > '"+value+"'";
+                this.query += " WHERE "+key+" > "+value;
             }else{
-                this.query += " AND "+key+" > '"+value+"'";
+                this.query += " AND "+key+" > "+value;
             }
             counter.getAndIncrement();
         });
         //If there was a where condition previously, instead of
         // re-inserting the key word WHERE, the key word AND
         // will be added to the query, followed by the key>=value
-        this.whereGreaterAndEqualThan.forEach((key,value)->{
+        this.whereGreaterOrEqualThan.forEach((key,value)->{
             if(counter.get() == 0){
-                this.query += " WHERE "+key+" >= '"+value+"'";
+                this.query += " WHERE "+key+" >= "+value;
             }else{
-                this.query += " AND "+key+" >= '"+value+"'";
+                this.query += " AND "+key+" >= "+value;
             }
             counter.getAndIncrement();
         });
@@ -288,20 +288,20 @@ public class ModelCollection<T> {
         // will be added to the query, followed by the key<value
         this.whereLessThan.forEach((key,value)->{
             if(counter.get() == 0){
-                this.query += " WHERE "+key+" < '"+value+"'";
+                this.query += " WHERE "+key+" < "+value;
             }else{
-                this.query += " AND "+key+" < '"+value+"'";
+                this.query += " AND "+key+" < "+value;
             }
             counter.getAndIncrement();
         });
         //If there was a where condition previously, instead of
         // re-inserting the key word WHERE, the key word AND
         // will be added to the query, followed by the key<=value
-        this.whereLessAndEqualThan.forEach((key,value)->{
+        this.whereLessOrEqualThan.forEach((key,value)->{
             if(counter.get() == 0){
-                this.query += " WHERE "+key+" <= '"+value+"'";
+                this.query += " WHERE "+key+" <= "+value;
             }else{
-                this.query += " AND "+key+" <= '"+value+"'";
+                this.query += " AND "+key+" <= "+value;
             }
             counter.getAndIncrement();
         });
@@ -312,7 +312,7 @@ public class ModelCollection<T> {
 //        counter.set(0);
 //        this.orderBy.forEach((key,value)->{
 //            if(counter.getAndIncrement() == 0){
-//                this.query += "ORDER BY "+key+" "+value+", ";
+//                this.query += " ORDER BY "+key+" "+value+", ";
 //            }else{
 //               this.query+=key+" "+value+", ";
 //            }
