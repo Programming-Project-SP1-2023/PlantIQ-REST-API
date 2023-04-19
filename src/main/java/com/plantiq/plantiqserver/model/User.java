@@ -1,5 +1,6 @@
 package com.plantiq.plantiqserver.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.plantiq.plantiqserver.core.Model;
 import com.plantiq.plantiqserver.core.ModelCollection;
 
@@ -47,10 +48,12 @@ public class User extends Model {
     }
 
     //Get Password Method
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public String getPassword(){
         return (String)this.data.get("password");
     }
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public boolean isAdministrator(){
         return Boolean.getBoolean((String) this.data.get("isAdministrator"));
     }
