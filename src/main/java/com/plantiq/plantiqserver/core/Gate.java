@@ -20,6 +20,9 @@ import java.util.HashMap;
 
 public class Gate {
 
+
+    private static User current;
+
     //-----------------------------------------------------------------//
     //                        Authorized Method                        //
     //-----------------------------------------------------------------//
@@ -40,7 +43,9 @@ public class Gate {
         //Check the session is valid and not expired.
         if(session != null && session.getExpiry() > TimeService.now()){
             outcome = true;
+            Gate.current = User.collection().where("id",session.getUserId()).getFirst();
         }
+
 
         //finally return our outcome.
         return outcome;
@@ -69,6 +74,7 @@ public class Gate {
 
         //if valid load the user from the database.
         User user = User.collection().where("id",session.getUserId()).getFirst();
+        Gate.current = user;
 
         //lastly we return the administrator status
         return user.isAdministrator();
@@ -88,6 +94,10 @@ public class Gate {
         response.put("error","You are not authorized to access the requested resource");
 
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(401));
+    }
+
+    public static User getCurrentUser(){
+        return Gate.current;
     }
 
 }
