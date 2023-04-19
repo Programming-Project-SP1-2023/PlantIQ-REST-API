@@ -3,7 +3,7 @@
 <h3 align="center">
   <b>Documentation:</b><br><br>
   <a href="https://github.com/Programming-Project-SP1-2023/Backend-REST-API/blob/main/docs/Rules.md">Rules</a> |
-  <a href="#">Model Collection</a>
+  <a href="https://github.com/Programming-Project-SP1-2023/Backend-REST-API/blob/main/docs/ModelCollection.md">Model Collection</a>
 </h3>
 
 ## Overview
