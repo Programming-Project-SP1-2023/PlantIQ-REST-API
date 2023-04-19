@@ -1,11 +1,18 @@
 package com.plantiq.plantiqserver.controllers;
 
 import com.plantiq.plantiqserver.core.Gate;
+import com.plantiq.plantiqserver.model.AwaitingRegistration;
+import com.plantiq.plantiqserver.model.SmartHomeHub;
+import com.plantiq.plantiqserver.model.User;
+import com.plantiq.plantiqserver.rules.RegisterSmartHubRequestRule;
+import com.plantiq.plantiqserver.service.HashService;
+import com.plantiq.plantiqserver.service.TimeService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @RestController
@@ -18,10 +25,26 @@ public class SmartHubController {
 
         HashMap<String, Object> response = new HashMap<>();
 
-        if(!Gate.authorized(request)){
-            return Gate.abortUnauthorized();
+        //Validate our id length is with in expected standards
+        if(id.length() < 17 && id.length() > 12){
+            response.put("error","Smart home hub identifier did not meet expected standard");
+            response.put("outcome",false);
+            return new ResponseEntity<>(response, HttpStatusCode.valueOf(400));
         }
 
+        //Get the smart home hub model object for this id.
+        SmartHomeHub smartHomeHub = SmartHomeHub.collection().where("id",id).getFirst();
+
+        //Check the ID is valid and if not set it to await registration.
+        if(smartHomeHub == null && AwaitingRegistration.collection().where("id",id).getFirst() == null){
+            HashMap<String,Object> data = new HashMap<>();
+            data.put("id",id);
+            data.put("date", TimeService.nowPlusDays(7));
+            AwaitingRegistration.insert("AwaitingRegistration",data);
+        }
+
+        //Placeholder!
+        response.put("error","Endpoint awaiting further setup");
 
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
     }
@@ -62,10 +85,62 @@ public class SmartHubController {
             return Gate.abortUnauthorized();
         }
 
+        ArrayList<SmartHomeHub> hubs = SmartHomeHub.collection().where("user_id",Gate.getCurrentUser().getId()).get();
+
+        if(hubs.size() == 0){
+            response.put("message","No hubs currently registered with user");
+        }else{
+            response.put("list",hubs);
+        }
+
         response.put("outcome",true);
+
 
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
     }
+
+    @PostMapping("/register")
+    public ResponseEntity<HashMap<String, Object>> register(HttpServletRequest request){
+
+        HashMap<String, Object> response = new HashMap<>();
+
+        if(!Gate.authorized(request)){
+            return Gate.abortUnauthorized();
+        }
+
+        RegisterSmartHubRequestRule rule = new RegisterSmartHubRequestRule();
+
+        if(!rule.validate(request)){
+            return rule.abort();
+        }
+
+        HashMap<String,Object> data = new HashMap<>();
+
+        data.put("id",request.getParameter("id"));
+        data.put("deviceSpecificPassword", HashService.generateSHA1(request.getParameter("id")+TimeService.now()));
+        data.put("name",request.getParameter("name"));
+        data.put("user_id",Gate.getCurrentUser().getId());
+        data.put("lastPosted",TimeService.now());
+        data.put("postFrequency","");
+
+        AwaitingRegistration smartHubAwaitingRegistration = AwaitingRegistration.collection().where("id",request.getParameter("id")).getFirst();
+        smartHubAwaitingRegistration.delete("id");
+
+        int outcome;
+
+        if (SmartHomeHub.insert("SmartHomeHub",data)) {
+            response.put("outcome", true);
+            response.put("message", "Smart Hub registered to account");
+            outcome = 200;
+        } else {
+            response.put("outcome", false);
+            response.put("errors", "Failed to register smart hub, please contact support!");
+            outcome = 500;
+        }
+
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
+    }
+
 
 
 }
