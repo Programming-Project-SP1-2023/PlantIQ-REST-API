@@ -1,5 +1,6 @@
 package com.plantiq.plantiqserver.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.plantiq.plantiqserver.core.Model;
 import com.plantiq.plantiqserver.core.ModelCollection;
 
@@ -43,16 +44,21 @@ public class SmartHomeHub extends Model {
         return (String)this.data.get("id");
     }
 
-    public String getUserId(){
-       return (String)this.data.get("user_id");
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public String getDeviceSpecificPassword(){
+       return (String)this.data.get("deviceSpecificPassword");
     }
 
-    public int getDataRegistred(){
-        return Integer.parseInt((String)this.data.get("date_registred"));
+    public int getLastPosted(){
+        return Integer.parseInt((String)this.data.get("lastPosted"));
     }
 
     public String getName(){
         return (String)this.data.get("name");
+    }
+
+    public int getPostFrequency(){
+        return Integer.parseInt((String)this.data.get("postFrequency"));
     }
 
 }
