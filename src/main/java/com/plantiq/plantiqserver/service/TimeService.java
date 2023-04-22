@@ -10,6 +10,11 @@ public class TimeService {
         return TimeService.now() + offset*(24*3600);
     }
 
+    public static Long nowMinusDays(int offset){
+
+        return TimeService.now() - offset*(24*3600);
+    }
+
     //This method returns the current timestamp.
     public static Long now(){
         return System.currentTimeMillis() / 1000L;
