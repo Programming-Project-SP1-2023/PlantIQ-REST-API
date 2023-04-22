@@ -38,8 +38,13 @@ public class User extends Model {
         return (String) this.data.get("id");
     }
     //Get Name Method
-    public String getName(){
-        return (String)this.data.get("name");
+    public String getFirstname(){
+        return (String)this.data.get("firstname");
+    }
+
+    //Get first name method
+    public String getSurname(){
+        return (String)this.data.get("surname");
     }
 
     //Get Email Method
