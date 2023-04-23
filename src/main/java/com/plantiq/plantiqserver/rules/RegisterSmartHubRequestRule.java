@@ -13,7 +13,7 @@ public class RegisterSmartHubRequestRule extends Rule {
 
         id.add("required");
         id.add("min:12");
-        id.add("max:17");
+        id.add("max:50");
         id.add("!unique:AwaitingRegistration.id");
 
         this.rules.put("id",id);
