@@ -61,4 +61,8 @@ public class SmartHomeHub extends Model {
         return Integer.parseInt((String)this.data.get("postFrequency"));
     }
 
+    public boolean getVirtual(){
+        return this.data.get("virtual").equals("true");
+    }
+
 }
