@@ -187,6 +187,12 @@ public class SmartHubController {
         data.put("lastPosted",TimeService.now());
         data.put("postFrequency","");
 
+        if(request.getParameterMap().containsKey("virtual")){
+            data.put("virtual",request.getParameter("virtual"));
+        }else{
+            data.put("virtual",false);
+        }
+
         //Get the current object from the awaiting registration table
         AwaitingRegistration smartHubAwaitingRegistration = AwaitingRegistration.collection().where("id",request.getParameter("id")).getFirst();
 
