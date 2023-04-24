@@ -263,7 +263,7 @@ public class SmartHubController {
 
             if(request.getParameterMap().containsKey("postFrequency")){
 
-                data.put("postFrequency",request.getParameter("postFrequency"));
+                data.put("postFrequency",Integer.parseInt(request.getParameter("postFrequency")));
             }
 
             if(smartHomeHub.update(data)){
