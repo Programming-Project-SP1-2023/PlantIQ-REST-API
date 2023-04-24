@@ -159,6 +159,7 @@ public class SmartHubController {
         ModelCollection results = SmartHomeHub.collection();
 
 
+
         String virtualParam = request.getParameter("virtual");
         if (virtualParam == "true") {
             results.where("virtual","true");
