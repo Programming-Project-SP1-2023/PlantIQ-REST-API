@@ -5,6 +5,7 @@ import com.plantiq.plantiqserver.model.Session;
 import com.plantiq.plantiqserver.model.User;
 import com.plantiq.plantiqserver.rules.ConsumePasswordResetTokenRule;
 import com.plantiq.plantiqserver.rules.SessionValidateRequestRule;
+import com.plantiq.plantiqserver.service.EmailService;
 import com.plantiq.plantiqserver.service.HashService;
 import com.plantiq.plantiqserver.service.TimeService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -70,6 +71,7 @@ public class UserController {
             if(PasswordResetToken.insert("passwordResetToken",token)){
                 response.put("outcome",true);
                 response.put("message","If an email address exists for that account you will receive an email shortly.");
+                EmailService.sendRecoveryEmail(request.getParameter("email"),HashService.generateSHA1(data));
             }else{
                 response.put("outcome",false);
                 response.put("message","Failed to perform action, please contact support.");
@@ -79,7 +81,7 @@ public class UserController {
 
         }
 
-        @PatchMapping("/reset")
+        @PatchMapping("/reset/{token}")
         public HashMap<String,Object> consumePasswordResetToken(HttpServletRequest request){
             HashMap<String,Object> response = new HashMap<>();
 
