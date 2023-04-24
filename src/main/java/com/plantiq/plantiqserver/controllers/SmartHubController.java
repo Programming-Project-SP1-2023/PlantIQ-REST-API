@@ -240,6 +240,46 @@ public class SmartHubController {
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<HashMap<String,Object>> updateHub(@PathVariable("id") String id, HttpServletRequest request){
+        HashMap<String, Object> response = new HashMap<>();
+
+        if(!Gate.authorized(request)){
+            return Gate.abortUnauthorized();
+        }
+
+        SmartHomeHub smartHomeHub = SmartHomeHub.collection().where("id",id).getFirst();
+
+        int outcome;
+        if(smartHomeHub == null){
+            response.put("outcome",false);
+            outcome = 404;
+        }else{
+            HashMap<String,Object> data = new HashMap<>();
+
+            if(request.getParameterMap().containsKey("name")){
+                data.put("name",request.getParameter("name"));
+            }
+
+            if(request.getParameterMap().containsKey("postFrequency")){
+
+                data.put("postFrequency",request.getParameter("postFrequency"));
+            }
+
+            if(smartHomeHub.update(data)){
+                outcome = 200;
+                response.put("outcome",true);
+                response.put("message","Successfully updated!");
+            }else{
+                outcome = 500;
+                response.put("outcome",false);
+                response.put("message","Update error, please contact support");
+            }
+        }
+
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
+    }
+
 
 
 }
