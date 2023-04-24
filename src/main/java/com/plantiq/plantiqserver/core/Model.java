@@ -1,6 +1,7 @@
 package com.plantiq.plantiqserver.core;
 
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class Model {
@@ -54,18 +55,26 @@ public class Model {
         //Create our query string and initialize it to the starting value
         StringBuilder query = new StringBuilder("UPDATE [dbo].["+this.data.get("_table")+"] SET");
 
+        AtomicBoolean validUpdate = new AtomicBoolean(false);
+
         data.forEach((key,value)->{
 
             //Check if the data in our data hashmap matches a key present
             //in this object, if so then append the key value to the query.
             if(this.data.containsKey(key)){
                 query.append(" "+key+"='"+value+"'");
+                validUpdate.set(true);
             }
 
         });
 
-        //Next append our where query to update this record only
-        query.append(" WHERE id="+this.data.get("id"));
+        if(validUpdate.get()){
+            //Next append our where query to update this record only
+            query.append(" WHERE id='").append(this.data.get("id")).append("'");
+
+            Database.query(query.toString());
+        }
+
 
         //Finally return our result as a boolean
         return Database.getAndResetRowsAffected() != 0;
