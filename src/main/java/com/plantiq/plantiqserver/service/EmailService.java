@@ -2,7 +2,9 @@ package com.plantiq.plantiqserver.service;
 
 import java.io.*;
 import java.security.GeneralSecurityException;
+import java.util.Date;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -31,27 +33,24 @@ public class EmailService {
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String USER = "me";
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
+    private static final String FROM ="iqplant0@gmail.com";
 
     private static Credential getCredentials(final HttpTransport httpTransport) throws IOException, GeneralSecurityException {
-
-
-        // Load client secrets
-        InputStream in = PlantIqServerApplication.class.getResourceAsStream("/credentials.json");
+        InputStream in = PlantIqServerApplication.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
 
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
-        // Build flow and trigger user authorization request
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 httpTransport, JSON_FACTORY, clientSecrets, GmailScopes.all())
                 .setDataStoreFactory(new FileDataStoreFactory(new java.io.File("tokens")))
                 .setAccessType("offline")
+                .setApprovalPrompt("force")
                 .build();
         Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
-
+        credential.setExpirationTimeMilliseconds(System.currentTimeMillis() + 31536000000L);
         return credential;
     }
-
-    public static void sendRecoveryEmail(String to) {
+    public static void sendRecoveryEmail(String to,String token) {
         try {
             HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
             Credential credential = getCredentials(httpTransport);
@@ -61,7 +60,7 @@ public class EmailService {
                     .build();
 
             MimeMessage message = new MimeMessage(Session.getDefaultInstance(new Properties()));
-            message.setFrom(new InternetAddress("iqplant0@gmail.com"));
+            message.setFrom(new InternetAddress(FROM));
             message.addRecipient(javax.mail.Message.RecipientType.TO, new InternetAddress(to));
             message.setSubject("Reset Password");
             message.setText("Forgot your password? You can reset it at the following link");
