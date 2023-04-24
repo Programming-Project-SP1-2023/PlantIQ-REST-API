@@ -62,7 +62,8 @@ public class Model {
             //Check if the data in our data hashmap matches a key present
             //in this object, if so then append the key value to the query.
             if(this.data.containsKey(key)){
-                query.append(" "+key+"='"+value+"'");
+
+                query.append(" "+key+"='"+value+"',");
                 validUpdate.set(true);
             }
 
@@ -70,11 +71,11 @@ public class Model {
 
         if(validUpdate.get()){
             //Next append our where query to update this record only
+            query.deleteCharAt(query.length()-1);
             query.append(" WHERE id='").append(this.data.get("id")).append("'");
 
             Database.query(query.toString());
         }
-
 
         //Finally return our result as a boolean
         return Database.getAndResetRowsAffected() != 0;
