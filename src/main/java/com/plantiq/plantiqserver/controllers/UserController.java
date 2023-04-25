@@ -1,5 +1,6 @@
 package com.plantiq.plantiqserver.controllers;
 
+import com.plantiq.plantiqserver.core.Gate;
 import com.plantiq.plantiqserver.model.PasswordResetToken;
 import com.plantiq.plantiqserver.model.Session;
 import com.plantiq.plantiqserver.model.User;
@@ -21,25 +22,18 @@ import java.util.List;
 public class UserController {
 
 
-        @GetMapping("/session/{token}")
-        public ResponseEntity<HashMap<String, Object>> getUserBySession(@PathVariable("token") String token){
+        @GetMapping("/info")
+        public ResponseEntity<HashMap<String, Object>> getUserBySession(HttpServletRequest request){
             HashMap<String,Object> response = new HashMap<>();
 
-            Session session = Session.collection().where("token",token).getFirst();
-
-            int outcome;
-
-            if(session != null && session.getExpiry() > TimeService.now()){
-                response.put("outcome",true);
-                response.put("data",User.collection().where("id",session.getUserId()).getFirst());
-                outcome =  200;
-            }else{
-                response.put("outcome",false);
-                response.put("message","Session token is invalid or expired");
-                outcome = 401;
+            if(!Gate.authorized(request)){
+                return Gate.abortUnauthorized();
             }
 
-            return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
+            response.put("outcome",true);
+            response.put("data",User.collection().where("id",Gate.getCurrentUser().getId()).getFirst());
+
+            return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
         }
 
         @GetMapping("/all")
