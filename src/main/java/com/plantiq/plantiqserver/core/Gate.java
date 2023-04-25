@@ -38,7 +38,7 @@ public class Gate {
         String token = request.getHeader("Authorization").substring(7);
 
         //attempt to load our session object from the database.
-        Session session = Session.collection().where("token",token).getFirst();
+        Session session = Session.collection().where("token",token).orderBy("token").getFirst();
 
         //Check the session is valid and not expired.
         if(session != null && session.getExpiry() > TimeService.now()){
@@ -65,7 +65,7 @@ public class Gate {
         String token = request.getHeader("Authorization").substring(7);
 
         //attempt to load our session object from the database
-        Session session = Session.collection().where("token",token).getFirst();
+        Session session = Session.collection().where("token",token).orderBy("token").getFirst();
 
         //check to see if the session is valid and not expired.
         if(session == null || session.getExpiry() > TimeService.now()){
