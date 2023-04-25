@@ -20,7 +20,7 @@ public class Database{
 
         try{
 
-            connection = DriverManager.getConnection("jdbc:sqlserver://db-plantiq.database.windows.net:1433;database=plantiq-backend;user=spring@db-plantiq;password={PASSWORD};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30");
+            connection = null;
 
             Statement statement = connection.createStatement();
 
@@ -42,7 +42,11 @@ public class Database{
                     row.put(resultSet.getMetaData().getColumnName(i),resultSet.getString(i));
                     i++;
                 }
-                row.put("_table",queryData[3].substring(7,queryData[3].length()-1));
+                if(queryData[1].equals("TOP")){
+                    row.put("_table",queryData[5].substring(7,queryData[5].length()-1));
+                }else{
+                    row.put("_table",queryData[3].substring(7,queryData[3].length()-1));
+                }
                 data.add(row);
             }
 
