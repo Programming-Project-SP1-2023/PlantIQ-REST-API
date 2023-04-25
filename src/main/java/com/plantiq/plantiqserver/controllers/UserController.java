@@ -18,18 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @RestController
-@CrossOrigin(
-        origins = {
-                "http://localhost:8080",
-                "https://plantiq.azurewebsites.net"
-        },
-        methods = {
-                RequestMethod.OPTIONS,
-                RequestMethod.GET,
-                RequestMethod.PUT,
-                RequestMethod.DELETE,
-                RequestMethod.POST
-        })
+@CrossOrigin(origins = "https://plantiq.azurewebsites.net", maxAge = 3600)
 @RequestMapping("/user")
 public class UserController {
 
