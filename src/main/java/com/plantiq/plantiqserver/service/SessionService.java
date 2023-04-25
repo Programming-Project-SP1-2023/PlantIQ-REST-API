@@ -15,7 +15,7 @@ public class SessionService {
         //ensure that we do not end up with any duplicated sessions we will
         //get an arraylist of them and delete all entries, this should be 1
         //only.
-        ArrayList<Session> sessions = Session.collection().where("user_id",user_id).get();
+        ArrayList<Session> sessions = Session.collection().where("user_id",user_id).orderBy("token").get();
 
         //Delete all sessions for this user.
         sessions.forEach((n)-> n.delete("token"));
