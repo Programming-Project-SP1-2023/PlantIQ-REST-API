@@ -20,7 +20,7 @@ import java.util.HashMap;
 @CrossOrigin(
 		origins = {
 				"http://localhost:8080",
-				"https://plantiq.azurewebsites.net/"
+				"https://plantiq.azurewebsites.net"
 		},
 		methods = {
 				RequestMethod.OPTIONS,
