@@ -75,7 +75,7 @@ public class AuthenticationController {
 
 		HashMap<String, Object> response = new HashMap<>();
 
-		Session session = Session.collection().where("token", token).getFirst();
+		Session session = Session.collection().where("token", token).orderBy("token").getFirst();
 
 		if (session == null) {
 			response.put("outcome", false);
