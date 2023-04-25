@@ -61,7 +61,7 @@ public class ModelCollection<T> {
 
     //OrderBy will tell SQL how we want the results order by, it
     //will accept a column and an order key.
-    private LinkedHashMap<String,Sort> orderBy;
+    private String orderBy;
 
     //Query, this is our final string query that has been
     //build by this object.
@@ -86,9 +86,9 @@ public class ModelCollection<T> {
         this.whereGreaterOrEqualThan=new HashMap<>();
         this.whereLessThan=new HashMap<>();
         this.whereLessOrEqualThan=new HashMap<>();
-        this.orderBy = new LinkedHashMap<>();
-        this.limit=-1;
-        this.offset=-1;
+        this.orderBy = "id";
+        this.limit=100;
+        this.offset=0;
         this.type = type;
     }
 
@@ -173,8 +173,8 @@ public class ModelCollection<T> {
 
     //Our OrderBy method will accept a column and a sort type, this will
     //then be used to order the results.
-    public ModelCollection<T>  orderBy(String column,Sort sort){
-        this.orderBy.put(column,sort);
+    public ModelCollection<T>  orderBy(String column){
+        this.orderBy = column;
         return this;
     }
 
@@ -234,12 +234,8 @@ public class ModelCollection<T> {
         String table = this.type.getSimpleName();
 
 
-        //If we have a limit set add it!
-        if (this.limit != -1){
-            this.query = "SELECT TOP "+this.limit+" * FROM [dbo].["+table+"]";
-        }else{
-            this.query = "SELECT * FROM [dbo].["+table+"]";
-        }
+        this.query = "SELECT * FROM [dbo].["+table+"]";
+
 
         //Declare the first part of our query.
 
@@ -313,29 +309,7 @@ public class ModelCollection<T> {
             counter.getAndIncrement();
         });
 
-        //Counter is set to 0 in order to insert multiple columns
-        //for the sorting. Each time a column is inserted,
-        //it will be followed by the sort type (ASC or Desc)
-//        counter.set(0);
-//        this.orderBy.forEach((key,value)->{
-//            if(counter.getAndIncrement() == 0){
-//                this.query += " ORDER BY "+key+" "+value+", ";
-//            }else{
-//               this.query+=key+" "+value+", ";
-//            }
-//
-//        });
-//        //Since the code to concatenate multiple attributes,
-//        //it add ', ' at the end of each sorting type. Once
-//        // all the attributes have been added, these last two
-//        // characters will need to be deleted
-//        this.query=this.query.substring(0,this.query.length()-2);
-
-
-        //If we have an offset set add it!
-        if (this.offset!=-1){
-            this.query+=" OFFSET "+this.offset;
-        }
+        this.query += " ORDER BY "+this.orderBy+" OFFSET "+this.offset+" ROWS FETCH NEXT "+this.limit+" ROWS ONLY";
 
 
         //Create our cArguments.
