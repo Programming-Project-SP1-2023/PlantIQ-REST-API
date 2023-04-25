@@ -155,7 +155,7 @@ public abstract class Rule {
                             System.out.println("[RULE] Cannot validate 'min:x', variable cannot be null");
                         }else{
 
-                            if(!this.isInteger(variable)){
+                            if(!Rule.isInteger(variable)){
                                 System.out.println("[RULE] Cannot validate min:'x', variable must be a valid integer");
                             }else {
                                 if (provided.length() < Integer.parseInt(variable)) {
@@ -173,7 +173,7 @@ public abstract class Rule {
                             System.out.println("[RULE] Cannot validate 'max:x', variable cannot be null");
                         }else{
 
-                            if(!this.isInteger(variable)){
+                            if(!Rule.isInteger(variable)){
                                 System.out.println("[RULE] Cannot validate max:'x', variable must be a valid integer");
                             }else {
                                 if (provided.length() > Integer.parseInt(variable)) {
@@ -207,7 +207,7 @@ public abstract class Rule {
                     //If the rule is integer, validate using our isInteger helper method.
                     case "integer"->{
 
-                        if(!this.isInteger(provided)){
+                        if(!Rule.isInteger(provided)){
                             ruleErrors.put(rule,"Invalid type provided, input must be a valid integer");
                             outcome.set(false);
                         }
@@ -217,7 +217,7 @@ public abstract class Rule {
                     //If the rule is a float, validate using our isFloat helper method.
                     case "float"->{
 
-                        if(!this.isFloat(provided)){
+                        if(!Rule.isFloat(provided)){
                             ruleErrors.put(rule,"Invalid type provided, input must be a valid float");
                             outcome.set(false);
                         }
@@ -300,7 +300,7 @@ public abstract class Rule {
     //This private helper method will accept a string value and attempt
     //to convert it to an integer, if this fails it will return false,
     //if this succeeds it will return true!
-    private boolean isInteger(String value){
+    public static boolean isInteger(String value){
 
         boolean outcome = true;
 
@@ -319,7 +319,7 @@ public abstract class Rule {
     //-----------------------------------------------------------------//
 
     //This method will validate our input to ensure it is a valid float
-    private boolean isFloat(String value){
+    public static boolean isFloat(String value){
 
         boolean outcome = true;
 
