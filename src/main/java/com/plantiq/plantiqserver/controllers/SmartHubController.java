@@ -1,6 +1,7 @@
 package com.plantiq.plantiqserver.controllers;
 
 import com.plantiq.plantiqserver.core.Gate;
+import com.plantiq.plantiqserver.core.ModelCollection;
 import com.plantiq.plantiqserver.model.AwaitingRegistration;
 import com.plantiq.plantiqserver.model.PlantData;
 import com.plantiq.plantiqserver.model.SmartHomeHub;
@@ -150,9 +151,31 @@ public class SmartHubController {
         //Add a valid response outcome
         response.put("outcome",true);
 
+        ModelCollection results = SmartHomeHub.collection();
+
+
+
+        String virtualParam = request.getParameter("virtual");
+        if (virtualParam == "true") {
+            results.where("virtual","true");
+        }else if (virtualParam == "false"){
+            results.where("virtual","false");
+        }
+        String offsetParam = request.getParameter("offset");
+        if (offsetParam != null) {
+            results.offset(Integer.parseInt(offsetParam));
+        }
+        String limitParam = request.getParameter("limit");
+        if (limitParam != null) {
+            results.limit(Integer.parseInt(limitParam));
+        }
+
+        response.put("list", results.get());
+
         //Lastly return the response.
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
     }
+
 
     @PostMapping("/register")
     public ResponseEntity<HashMap<String, Object>> register(HttpServletRequest request){
