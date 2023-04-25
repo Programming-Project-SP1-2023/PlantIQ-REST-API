@@ -233,8 +233,15 @@ public class ModelCollection<T> {
         //Get our target table from the current type name
         String table = this.type.getSimpleName();
 
+
+        //If we have a limit set add it!
+        if (this.limit != -1){
+            this.query = "SELECT TOP "+this.limit+" * FROM [dbo].["+table+"]";
+        }else{
+            this.query = "SELECT * FROM [dbo].["+table+"]";
+        }
+
         //Declare the first part of our query.
-        this.query = "SELECT * FROM [dbo].["+table+"]";
 
         //Looping through the right join, inserting each junction with tables.
         //The output will be 'RIGHT JOIN tablename ON attribute = attribute'
@@ -325,16 +332,10 @@ public class ModelCollection<T> {
 //        this.query=this.query.substring(0,this.query.length()-2);
 
 
-        //If we have a limit set add it!
-        if (this.limit!=-1){
-            this.query+=" LIMIT "+this.limit;
-        }
-
         //If we have an offset set add it!
         if (this.offset!=-1){
             this.query+=" OFFSET "+this.offset;
         }
-
 
 
         //Create our cArguments.
