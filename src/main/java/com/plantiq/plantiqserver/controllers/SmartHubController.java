@@ -27,7 +27,7 @@ public class SmartHubController {
         HashMap<String, Object> response = new HashMap<>();
 
         //Validate our id length is with in expected standards
-        if(id.length() < 17 && id.length() > 12){
+        if(id.length() == 12){
             response.put("error","Smart home hub identifier did not meet expected standard");
             response.put("outcome",false);
             return new ResponseEntity<>(response, HttpStatusCode.valueOf(400));
@@ -108,11 +108,6 @@ public class SmartHubController {
 
         HashMap<String, Object> response = new HashMap<>();
 
-        //Authenticate the user with the gate service
-        if(!Gate.authorized(request)){
-            return Gate.abortUnauthorized();
-        }
-
         //Get the current hub requested
         SmartHomeHub hub = SmartHomeHub.collection().where("id",id).where("user_id",Gate.getCurrentUser().getId()).getFirst();
 
@@ -185,7 +180,7 @@ public class SmartHubController {
         data.put("name",request.getParameter("name"));
         data.put("user_id",Gate.getCurrentUser().getId());
         data.put("lastPosted",TimeService.now());
-        data.put("postFrequency","");
+        data.put("postFrequency","3600");
 
         if(request.getParameterMap().containsKey("virtual")){
             data.put("virtual",request.getParameter("virtual"));
@@ -280,6 +275,25 @@ public class SmartHubController {
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
     }
 
+    //TODO ADD CODE
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HashMap<String,Object>> updateHub(@PathVariable("id") String id) {
+        HashMap<String, Object> response = new HashMap<>();
+
+        SmartHomeHub smartHomeHub = SmartHomeHub.collection().where("id",id).getFirst();
+
+        int outcome;
+        if(smartHomeHub == null){
+            outcome = 404;
+            response.put("outcome",false);
+            response.put("error","Smart Home Hub not found, please contact support");
+        }else{
+            outcome = 200;
+            response.put("outcome",true);
 
 
+        }
+
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
+    }
 }
