@@ -13,12 +13,10 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Time;
 import java.util.HashMap;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "https://plantiq.azurewebsites.net", maxAge = 3600)
 @RequestMapping("/user")
 public class UserController {
 

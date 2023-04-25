@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 
 @RestController
-@CrossOrigin(origins = "https://plantiq.azurewebsites.net", maxAge = 3600)
-
 @RequestMapping("/auth")
 public class AuthenticationController {
 	@PostMapping("/login")
