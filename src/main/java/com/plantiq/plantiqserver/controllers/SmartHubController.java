@@ -2,11 +2,13 @@ package com.plantiq.plantiqserver.controllers;
 
 import com.plantiq.plantiqserver.core.Gate;
 import com.plantiq.plantiqserver.core.ModelCollection;
+import com.plantiq.plantiqserver.core.Rule;
 import com.plantiq.plantiqserver.model.AwaitingRegistration;
 import com.plantiq.plantiqserver.model.PlantData;
 import com.plantiq.plantiqserver.model.SmartHomeHub;
 import com.plantiq.plantiqserver.rules.RegisterSmartHubRequestRule;
 import com.plantiq.plantiqserver.rules.SmartHubPostDataRule;
+import com.plantiq.plantiqserver.rules.UpdateSmartHubRequestRule;
 import com.plantiq.plantiqserver.service.HashService;
 import com.plantiq.plantiqserver.service.TimeService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -137,39 +139,39 @@ public class SmartHubController {
             return Gate.abortUnauthorized();
         }
 
-        //Get the list of hubs for this current user from the database
-        ArrayList<SmartHomeHub> hubs = SmartHomeHub.collection().where("user_id",Gate.getCurrentUser().getId()).get();
-
-        //Check if the user has any hubs by the size and either add them or a message.
-        if(hubs.size() == 0){
-            response.put("message","No hubs currently registered with user");
-        }else{
-            response.put("list",hubs);
-        }
-
         //Add a valid response outcome
         response.put("outcome",true);
 
-        ModelCollection results = SmartHomeHub.collection();
+        ModelCollection<SmartHomeHub> hubs = SmartHomeHub.collection().where("user_id",Gate.getCurrentUser().getId());
 
 
-
-        String virtualParam = request.getParameter("virtual");
-        if (virtualParam == "true") {
-            results.where("virtual","true");
-        }else if (virtualParam == "false"){
-            results.where("virtual","false");
-        }
-        String offsetParam = request.getParameter("offset");
-        if (offsetParam != null) {
-            results.offset(Integer.parseInt(offsetParam));
-        }
-        String limitParam = request.getParameter("limit");
-        if (limitParam != null) {
-            results.limit(Integer.parseInt(limitParam));
+        if(request.getParameterMap().containsKey("virtual")){
+            hubs.where("virtual",request.getParameter("virtual"));
         }
 
-        response.put("list", results.get());
+        if(request.getParameterMap().containsKey("offset")){
+            if(Rule.isInteger(request.getParameter("offset"))){
+                hubs.offset(Integer.parseInt(request.getParameter("offset")));
+            }
+        }
+
+
+        if(request.getParameterMap().containsKey("limit")){
+            if(Rule.isInteger(request.getParameter("limit"))){
+                hubs.limit(Integer.parseInt(request.getParameter("limit")));
+            }
+        }
+
+
+        ArrayList<SmartHomeHub> output = hubs.get();
+
+
+        //Check if the user has any hubs by the size and either add them or a message.
+        if(output.size() == 0){
+            response.put("message","No hubs currently registered with user");
+        }else{
+            response.put("list",output);
+        }
 
         //Lastly return the response.
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
@@ -274,13 +276,10 @@ public class SmartHubController {
         }else{
             HashMap<String,Object> data = new HashMap<>();
 
-            if(request.getParameterMap().containsKey("name")){
-                data.put("name",request.getParameter("name"));
-            }
+            UpdateSmartHubRequestRule rule = new UpdateSmartHubRequestRule();
 
-            if(request.getParameterMap().containsKey("postFrequency")){
-
-                data.put("postFrequency",Integer.parseInt(request.getParameter("postFrequency")));
+            if(!rule.validate(request)){
+                return rule.abort();
             }
 
             if(smartHomeHub.update(data)){
