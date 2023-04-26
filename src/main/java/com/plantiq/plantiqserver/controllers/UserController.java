@@ -1,5 +1,6 @@
 package com.plantiq.plantiqserver.controllers;
 
+import com.plantiq.plantiqserver.PlantIqServerApplication;
 import com.plantiq.plantiqserver.core.Gate;
 import com.plantiq.plantiqserver.model.PasswordResetToken;
 import com.plantiq.plantiqserver.model.User;
@@ -56,7 +57,7 @@ public class UserController {
             data.put("email",request.getParameter("email"));
             data.put("firstname",request.getParameter("firstname"));
             data.put("surname",request.getParameter("surname"));
-            data.put("password",request.getParameter("password"));
+            data.put("password",HashService.generateSHA1(PlantIqServerApplication.passwordPepper+request.getParameter("password")));
 
             user.update(data);
 
