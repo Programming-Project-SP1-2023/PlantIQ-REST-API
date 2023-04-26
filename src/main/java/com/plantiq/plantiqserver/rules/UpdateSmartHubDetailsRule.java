@@ -4,7 +4,7 @@ import com.plantiq.plantiqserver.core.Rule;
 
 import java.util.ArrayList;
 
-public class UpdateSmartHubRequestRule extends Rule {
+public class UpdateSmartHubDetailsRule extends Rule {
     @Override
     protected void setup() {
 
