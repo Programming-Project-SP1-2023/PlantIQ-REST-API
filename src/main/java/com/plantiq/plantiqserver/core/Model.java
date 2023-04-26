@@ -95,4 +95,8 @@ public class Model {
         Database.query(query);
     }
 
+    public Object getValue(String column){
+        return this.data.get(column);
+    }
+
 }
