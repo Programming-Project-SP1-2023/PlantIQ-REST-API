@@ -2,10 +2,10 @@ package com.plantiq.plantiqserver.controllers;
 
 import com.plantiq.plantiqserver.core.Gate;
 import com.plantiq.plantiqserver.model.PasswordResetToken;
-import com.plantiq.plantiqserver.model.Session;
 import com.plantiq.plantiqserver.model.User;
 import com.plantiq.plantiqserver.rules.ConsumePasswordResetTokenRule;
-import com.plantiq.plantiqserver.rules.SessionValidateRequestRule;
+import com.plantiq.plantiqserver.rules.UpdateUserDetailsRule;
+import com.plantiq.plantiqserver.rules.ValidateSessionRule;
 import com.plantiq.plantiqserver.service.EmailService;
 import com.plantiq.plantiqserver.service.HashService;
 import com.plantiq.plantiqserver.service.TimeService;
@@ -36,6 +36,36 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
         }
 
+        @PatchMapping("/info")
+        public ResponseEntity<HashMap<String, Object>> updateUserBySession(HttpServletRequest request){
+            HashMap<String,Object> response = new HashMap<>();
+
+            if(!Gate.authorized(request)){
+                return Gate.abortUnauthorized();
+            }
+
+            UpdateUserDetailsRule rule = new UpdateUserDetailsRule();
+
+            if(!rule.validate(request)){
+                return rule.abort();
+            }
+
+            User user = User.collection().where("id",Gate.getCurrentUser().getId()).getFirst();
+
+            HashMap<String,Object> data = new HashMap<>();
+            data.put("email",request.getParameter("email"));
+            data.put("firstname",request.getParameter("firstname"));
+            data.put("surname",request.getParameter("surname"));
+            data.put("password",request.getParameter("password"));
+
+            user.update(data);
+
+            response.put("outcome",true);
+            response.put("message","User details updated");
+
+            return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
+        }
+
         @GetMapping("/all")
         public List<User> all(){
             return User.collection().get();
@@ -44,7 +74,7 @@ public class UserController {
         @PostMapping("/reset")
         public HashMap<String, Object> generateResetToken(HttpServletRequest request){
             HashMap<String,Object> response = new HashMap<>();
-            SessionValidateRequestRule rule = new SessionValidateRequestRule();
+            ValidateSessionRule rule = new ValidateSessionRule();
 
             if(!rule.validate(request)){
                 response.put("outcome", false);
