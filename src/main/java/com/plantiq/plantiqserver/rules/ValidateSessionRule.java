@@ -15,7 +15,7 @@ import java.util.ArrayList;
 //                                                                                    |
 //------------------------------------------------------------------------------------|
 
-public class SessionValidateRequestRule extends Rule {
+public class ValidateSessionRule extends Rule {
     @Override
     protected void setup() {
 
