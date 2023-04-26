@@ -3,9 +3,9 @@ package com.plantiq.plantiqserver.controllers;
 import com.plantiq.plantiqserver.PlantIqServerApplication;
 import com.plantiq.plantiqserver.model.Session;
 import com.plantiq.plantiqserver.model.User;
-import com.plantiq.plantiqserver.rules.LoginRequestRule;
-import com.plantiq.plantiqserver.rules.RegistrationRequestRule;
-import com.plantiq.plantiqserver.rules.SessionValidateRequestRule;
+import com.plantiq.plantiqserver.rules.LoginUserRule;
+import com.plantiq.plantiqserver.rules.RegisterUserRule;
+import com.plantiq.plantiqserver.rules.ValidateSessionRule;
 import com.plantiq.plantiqserver.service.HashService;
 import com.plantiq.plantiqserver.service.SessionService;
 import com.plantiq.plantiqserver.service.TimeService;
@@ -27,7 +27,7 @@ public class AuthenticationController {
 
 		//Create our login request rule, we will validate our request
 		//using this rule.
-		LoginRequestRule rule = new LoginRequestRule();
+		LoginUserRule rule = new LoginUserRule();
 
 		//Validate our request and return the errors if present.
 		if (!rule.validate(request)) {
@@ -56,7 +56,7 @@ public class AuthenticationController {
 	public ResponseEntity<HashMap<String, Object>> logout(HttpServletRequest request) {
 
 		HashMap<String, Object> response = new HashMap<>();
-		SessionValidateRequestRule rule = new SessionValidateRequestRule();
+		ValidateSessionRule rule = new ValidateSessionRule();
 
 		if (!rule.validate(request)) {
 			return rule.abort();
@@ -98,8 +98,9 @@ public class AuthenticationController {
 
 	@PostMapping("/register")
 	public  ResponseEntity<HashMap<String, Object>> register(HttpServletRequest request) {
+
 		HashMap<String, Object> response = new HashMap<>();
-		RegistrationRequestRule rule = new RegistrationRequestRule();
+		RegisterUserRule rule = new RegisterUserRule();
 
 		if (!rule.validate(request)) {
 			return rule.abort();

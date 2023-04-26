@@ -19,7 +19,7 @@ import java.util.ArrayList;
 //                                                                                    |
 //------------------------------------------------------------------------------------|
 
-public class LoginRequestRule extends Rule {
+public class LoginUserRule extends Rule {
 
     @Override
     protected void setup() {

@@ -32,7 +32,7 @@ import java.util.ArrayList;
 //------------------------------------------------------------------------------------|
 
 
-public class RegistrationRequestRule extends Rule {
+public class RegisterUserRule extends Rule {
     @Override
     protected void setup() {
         ArrayList<String> email = new ArrayList<>();
