@@ -6,9 +6,9 @@ import com.plantiq.plantiqserver.core.Rule;
 import com.plantiq.plantiqserver.model.AwaitingRegistration;
 import com.plantiq.plantiqserver.model.PlantData;
 import com.plantiq.plantiqserver.model.SmartHomeHub;
-import com.plantiq.plantiqserver.rules.RegisterSmartHubRequestRule;
-import com.plantiq.plantiqserver.rules.SmartHubPostDataRule;
-import com.plantiq.plantiqserver.rules.UpdateSmartHubRequestRule;
+import com.plantiq.plantiqserver.rules.RegisterSmartHubRule;
+import com.plantiq.plantiqserver.rules.PostSensorDataRule;
+import com.plantiq.plantiqserver.rules.UpdateSmartHubDetailsRule;
 import com.plantiq.plantiqserver.service.HashService;
 import com.plantiq.plantiqserver.service.TimeService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,15 +53,15 @@ public class SmartHubController {
             data.put("date", TimeService.nowPlusDays(7));
             AwaitingRegistration.insert("AwaitingRegistration",data);
 
-            response.put("outcome",true);
-            response.put("message","Awaiting registration");
+            response.put("outcome",false);
+            response.put("message","Smart Home Hub Awaiting Registration");
 
             //At this stage we simply want to return.
-            return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
+            return new ResponseEntity<>(response, HttpStatusCode.valueOf(425));
         }
 
         //If we get to this stage we know the hub is valid and registered, and we then process our data validation.
-        SmartHubPostDataRule rule = new SmartHubPostDataRule();
+        PostSensorDataRule rule = new PostSensorDataRule();
 
         if(!rule.validate(request)){
             return rule.abort();
@@ -106,18 +106,30 @@ public class SmartHubController {
     }
 
     @GetMapping("/{id}/rate")
-    public ResponseEntity<HashMap<String, Object>> getPlantDataUploadRate(@PathVariable("id") String id, HttpServletRequest request){
+    public ResponseEntity<HashMap<String, Object>> getPlantDataUploadRate(@PathVariable("id") String id){
 
         HashMap<String, Object> response = new HashMap<>();
 
         //Get the current hub requested
-        SmartHomeHub hub = SmartHomeHub.collection().where("id",id).where("user_id",Gate.getCurrentUser().getId()).getFirst();
+        SmartHomeHub hub = SmartHomeHub.collection().where("id",id).getFirst();
 
         int outcome;
         if(hub == null){
-            outcome = 404;
+
+            AwaitingRegistration awaitingRegistration = AwaitingRegistration.collection().where("id",id).getFirst();
+
+            if(awaitingRegistration == null){
+
+                HashMap<String,Object> data = new HashMap<>();
+                data.put("id",id);
+                data.put("date", TimeService.nowPlusDays(7));
+                AwaitingRegistration.insert("AwaitingRegistration",data);
+            }
+
+            outcome = 425;
             response.put("outcome",false);
-            response.put("error","Smart Home Hub not found, please contact support");
+            response.put("message","Smart Home Hub Awaiting Registration");
+
         }else{
             outcome = 200;
             response.put("outcome",true);
@@ -189,7 +201,7 @@ public class SmartHubController {
         }
 
         //Create our request rule
-        RegisterSmartHubRequestRule rule = new RegisterSmartHubRequestRule();
+        RegisterSmartHubRule rule = new RegisterSmartHubRule();
 
         //Validate our request rule
         if(!rule.validate(request)){
@@ -276,7 +288,7 @@ public class SmartHubController {
         }else{
             HashMap<String,Object> data = new HashMap<>();
 
-            UpdateSmartHubRequestRule rule = new UpdateSmartHubRequestRule();
+            UpdateSmartHubDetailsRule rule = new UpdateSmartHubDetailsRule();
 
             if(!rule.validate(request)){
                 return rule.abort();
