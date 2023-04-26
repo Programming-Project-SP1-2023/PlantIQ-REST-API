@@ -97,9 +97,11 @@ public abstract class Rule {
                 //not mode.
                 boolean not = first == '!';
 
+                boolean others = first =='@';
+
                 //if not is active then we trim the "!" from the start of
                 //the rule.
-                if(not){
+                if(not || others){
                     rule = rule.substring(1);
                 }
 
@@ -252,8 +254,19 @@ public abstract class Rule {
                             if(!not){
 
                                 if (result.size() > 0) {
-                                    ruleErrors.put(rule, "value is already taken and is not unique");
-                                    outcome.set(false);
+
+                                    if(others){
+
+                                        if(!result.get(0).get(column).equals(Gate.getCurrentUser().getValue(column))){
+                                            ruleErrors.put(rule, "value is already taken and is not unique");
+                                            outcome.set(false);
+                                        }
+
+                                    }else{
+                                        ruleErrors.put(rule, "value is already taken and is not unique");
+                                        outcome.set(false);
+                                    }
+
                                 }
                             }else{
                                 if (result.size() == 0) {
