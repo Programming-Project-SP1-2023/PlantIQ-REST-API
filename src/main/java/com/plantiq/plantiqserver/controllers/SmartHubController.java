@@ -1,6 +1,7 @@
 package com.plantiq.plantiqserver.controllers;
 
 import com.plantiq.plantiqserver.core.Gate;
+import com.plantiq.plantiqserver.core.Model;
 import com.plantiq.plantiqserver.core.ModelCollection;
 import com.plantiq.plantiqserver.core.Rule;
 import com.plantiq.plantiqserver.model.AwaitingRegistration;
@@ -308,23 +309,35 @@ public class SmartHubController {
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
     }
 
-    //TODO ADD CODE
     @DeleteMapping("/{id}")
-    public ResponseEntity<HashMap<String,Object>> updateHub(@PathVariable("id") String id) {
+    public ResponseEntity<HashMap<String,Object>> deleteHub(@PathVariable("id") String id, HttpServletRequest request) {
         HashMap<String, Object> response = new HashMap<>();
 
-        SmartHomeHub smartHomeHub = SmartHomeHub.collection().where("id",id).getFirst();
+        if(!Gate.authorized(request)){
+            return Gate.abortUnauthorized();
+        }
+
+        SmartHomeHub smartHomeHub = SmartHomeHub.collection().where("id",id).where("user_id",Gate.getCurrentUser().getId()).getFirst();
 
         int outcome;
         if(smartHomeHub == null){
+
             outcome = 404;
             response.put("outcome",false);
             response.put("error","Smart Home Hub not found, please contact support");
         }else{
+
+            //Get all the plant data for the current smart home hub.
+            ArrayList<PlantData> data = PlantData.collection().where("smarthomehub_id",id).get();
+
+            //Delete all the data
+            data.forEach(Model::delete);
+
+            //Delete the smart hub
+            smartHomeHub.delete();
+
             outcome = 200;
             response.put("outcome",true);
-
-
         }
 
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
