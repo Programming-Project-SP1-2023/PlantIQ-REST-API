@@ -4,7 +4,7 @@ import com.plantiq.plantiqserver.core.Rule;
 
 import java.util.ArrayList;
 
-public class SmartHubPostDataRule extends Rule {
+public class PostSensorDataRule extends Rule {
 
     @Override
     protected void setup() {
@@ -12,8 +12,8 @@ public class SmartHubPostDataRule extends Rule {
         //Sensor ID
         ArrayList<String> sensorId = new ArrayList<>();
         sensorId.add("required");
-        sensorId.add("min:10");
-        sensorId.add("max:50");
+        sensorId.add("min:16");
+        sensorId.add("max:16");
         this.rules.put("sensor_id",sensorId);
 
         //Temperature
