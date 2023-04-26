@@ -10,7 +10,7 @@ class RuleTest {
 //		request.addParameter("email", "bcusack78@gmail.com");
 //		request.addParameter("password", "Admin1234!");
 //
-//		RegistrationRequestRule rule = new RegistrationRequestRule();
+//		RegisterUserRule rule = new RegisterUserRule();
 //		rule.validate(request);
 //		assert (rule.getErrors().size() == 0);
 //	}
@@ -24,7 +24,7 @@ class RuleTest {
 //		request.addParameter("email", "");
 //		request.addParameter("password", "Admin1234!");
 //
-//		RegistrationRequestRule rule = new RegistrationRequestRule();
+//		RegisterUserRule rule = new RegisterUserRule();
 //		rule.validate(request);
 //		HashMap<String, Object> errors = rule.getErrors();
 //		assert (errors.size() == 1);
