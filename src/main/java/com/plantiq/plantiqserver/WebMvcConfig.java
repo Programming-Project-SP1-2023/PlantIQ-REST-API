@@ -12,7 +12,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         System.out.println("[WebMvcConfig] Configured CORS");
         registry.addMapping("/**")
                 .allowedMethods("*")
-                .allowedOrigins("plantiq.azurewebsites.net")
+                .allowedOrigins("*")
                 .allowedHeaders("*")
                 .allowCredentials(false)
                 .maxAge(-1);
