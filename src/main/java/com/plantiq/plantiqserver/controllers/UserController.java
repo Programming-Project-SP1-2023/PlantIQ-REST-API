@@ -5,8 +5,8 @@ import com.plantiq.plantiqserver.core.Gate;
 import com.plantiq.plantiqserver.model.PasswordResetToken;
 import com.plantiq.plantiqserver.model.User;
 import com.plantiq.plantiqserver.rules.ConsumePasswordResetTokenRule;
+import com.plantiq.plantiqserver.rules.PasswordResetRule;
 import com.plantiq.plantiqserver.rules.UpdateUserDetailsRule;
-import com.plantiq.plantiqserver.rules.ValidateSessionRule;
 import com.plantiq.plantiqserver.service.EmailService;
 import com.plantiq.plantiqserver.service.HashService;
 import com.plantiq.plantiqserver.service.TimeService;
@@ -73,15 +73,15 @@ public class UserController {
         }
 
         @PostMapping("/reset")
-        public HashMap<String, Object> generateResetToken(HttpServletRequest request){
+        public ResponseEntity<HashMap<String, Object>> generateResetToken(HttpServletRequest request){
             HashMap<String,Object> response = new HashMap<>();
-            ValidateSessionRule rule = new ValidateSessionRule();
+
+            PasswordResetRule rule = new PasswordResetRule();
 
             if(!rule.validate(request)){
-                response.put("outcome", false);
-                response.put("errors", rule.getErrors());
-                return response;
+                return rule.abort();
             }
+
             String data=request.getParameter("email")+TimeService.now();
 
             HashMap<String, Object> token= new HashMap<>();
@@ -91,17 +91,19 @@ public class UserController {
             token.put("expirationDate",TimeService.nowPlusDays(1).toString());
             token.put("createdDate",TimeService.now().toString());
 
+            int outcome;
             if(PasswordResetToken.insert("passwordResetToken",token)){
                 response.put("outcome",true);
+                outcome = 200;
                 response.put("message","If an email address exists for that account you will receive an email shortly.");
                 EmailService.sendRecoveryEmail(request.getParameter("email"),HashService.generateSHA1(data));
             }else{
                 response.put("outcome",false);
+                outcome = 500;
                 response.put("message","Failed to perform action, please contact support.");
             }
 
-            return response;
-
+            return new ResponseEntity<>(response,HttpStatusCode.valueOf(outcome));
         }
 
         @PatchMapping("/reset/{token}")
@@ -134,5 +136,10 @@ public class UserController {
 
 
             return response;
+        }
+
+        @GetMapping("/reset/{token}")
+        public void validateToken(){
+
         }
 }
