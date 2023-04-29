@@ -62,7 +62,7 @@ public class AuthenticationController {
 			return rule.abort();
 		}
 
-		Session session = Session.collection().where("token", request.getParameter("token")).getFirst();
+		Session session = Session.collection().where("token", request.getParameter("token")).orderBy("token").getFirst();
 		session.delete("token");
 
 		response.put("outcome", true);
