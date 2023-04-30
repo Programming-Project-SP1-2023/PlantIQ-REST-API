@@ -71,6 +71,11 @@ public class ModelCollection<T> {
     //the model collection will need to return.
     private final Class<T> type;
 
+    //Sort type
+    private Sort sortType;
+
+    private ArrayList<String> columns;
+
     //-----------------------------------------------------------------//
     //                          Constructor                            //
     //-----------------------------------------------------------------//
@@ -90,6 +95,22 @@ public class ModelCollection<T> {
         this.limit=100;
         this.offset=0;
         this.type = type;
+        this.sortType = Sort.ASC;
+    }
+
+    public ModelCollection(Class<T> type, ArrayList<String> columns){
+        this.rightJoin = new HashMap<>();
+        this.where=new HashMap<>();
+        this.whereGreaterThan=new HashMap<>();
+        this.whereGreaterOrEqualThan=new HashMap<>();
+        this.whereLessThan=new HashMap<>();
+        this.whereLessOrEqualThan=new HashMap<>();
+        this.orderBy = "id";
+        this.limit=100;
+        this.offset=0;
+        this.type = type;
+        this.sortType = Sort.ASC;
+        this.columns = columns;
     }
 
     //-----------------------------------------------------------------//
@@ -178,6 +199,11 @@ public class ModelCollection<T> {
         return this;
     }
 
+    public ModelCollection<T>  orderType(Sort sort){
+        this.sortType = sort;
+        return this;
+    }
+
     //-----------------------------------------------------------------//
     //                         Limit Method                            //
     //-----------------------------------------------------------------//
@@ -199,6 +225,10 @@ public class ModelCollection<T> {
     public ModelCollection<T>  offset(int value){
         this.offset=value;
         return this;
+    }
+
+    public boolean containsColumn(String key){
+        return this.columns.contains(key);
     }
 
     //-----------------------------------------------------------------//
@@ -309,7 +339,7 @@ public class ModelCollection<T> {
             counter.getAndIncrement();
         });
 
-        this.query += " ORDER BY "+this.orderBy+" OFFSET "+this.offset+" ROWS FETCH NEXT "+this.limit+" ROWS ONLY";
+        this.query += " ORDER BY "+this.orderBy+" "+this.sortType+" OFFSET "+this.offset+" ROWS FETCH NEXT "+this.limit+" ROWS ONLY";
 
 
         //Create our cArguments.
