@@ -346,6 +346,23 @@ public abstract class Rule {
     }
 
     //-----------------------------------------------------------------//
+    //                      is Sort Type Method                        //
+    //-----------------------------------------------------------------//
+
+    public static boolean isSortType(String value){
+
+        boolean outcome = true;
+
+        try{
+            Sort.valueOf(value);
+        }catch (Exception e){
+            outcome = false;
+        }
+
+        return outcome;
+    }
+
+    //-----------------------------------------------------------------//
     //                          abort method                           //
     //-----------------------------------------------------------------//
 
