@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.plantiq.plantiqserver.core.Model;
 import com.plantiq.plantiqserver.core.ModelCollection;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SmartHomeHub extends Model {
@@ -22,7 +23,14 @@ public class SmartHomeHub extends Model {
     //allows us to build our SQL query and return our values.
 
     public static ModelCollection<SmartHomeHub> collection(){
-        return new ModelCollection<>(SmartHomeHub.class);
+
+        ArrayList<String> columns = new ArrayList<>();
+
+        columns.add("name");
+        columns.add("lastPosted");
+        columns.add("postFrequency");
+
+        return new ModelCollection<>(SmartHomeHub.class,columns);
     }
 
 
