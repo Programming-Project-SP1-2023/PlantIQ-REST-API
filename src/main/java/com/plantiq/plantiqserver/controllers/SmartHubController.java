@@ -1,9 +1,6 @@
 package com.plantiq.plantiqserver.controllers;
 
-import com.plantiq.plantiqserver.core.Gate;
-import com.plantiq.plantiqserver.core.Model;
-import com.plantiq.plantiqserver.core.ModelCollection;
-import com.plantiq.plantiqserver.core.Rule;
+import com.plantiq.plantiqserver.core.*;
 import com.plantiq.plantiqserver.model.AwaitingRegistration;
 import com.plantiq.plantiqserver.model.PlantData;
 import com.plantiq.plantiqserver.model.SmartHomeHub;
@@ -168,16 +165,31 @@ public class SmartHubController {
             }
         }
 
-
         if(request.getParameterMap().containsKey("limit")){
             if(Rule.isInteger(request.getParameter("limit"))){
                 hubs.limit(Integer.parseInt(request.getParameter("limit")));
             }
         }
 
+        //Validate order type & add
+        if(request.getParameterMap().containsKey("orderType")){
+            if(Rule.isSortType(request.getParameter("orderType"))){
+                hubs.orderType(Sort.valueOf(request.getParameter("orderType")));
+            }else{
+                //add error
+            }
+        }
+
+        //validate order by column
+        if(request.getParameterMap().containsKey("orderBy")){
+            if(hubs.containsColumn(request.getParameter("orderBy"))){
+                hubs.orderBy(request.getParameter("orderBy"));
+            }else{
+                //add error
+            }
+        }
 
         ArrayList<SmartHomeHub> output = hubs.get();
-
 
         //Check if the user has any hubs by the size and either add them or a message.
         if(output.size() == 0){
@@ -294,6 +306,8 @@ public class SmartHubController {
             if(!rule.validate(request)){
                 return rule.abort();
             }
+
+            System.out.println(smartHomeHub.getId());
 
             if(smartHomeHub.update(data)){
                 outcome = 200;
