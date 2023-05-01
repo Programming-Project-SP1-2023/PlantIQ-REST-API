@@ -50,7 +50,7 @@ public class EmailService {
         credential.setExpirationTimeMilliseconds(System.currentTimeMillis() + 31536000000L);
         return credential;
     }
-    public static void sendRecoveryEmail(String to,String token) {
+    public static void sendRecoveryEmail(String to,String token,String username) {
         try {
             HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
             Credential credential = getCredentials(httpTransport);
@@ -63,7 +63,7 @@ public class EmailService {
             message.setFrom(new InternetAddress(FROM));
             message.addRecipient(javax.mail.Message.RecipientType.TO, new InternetAddress(to));
             message.setSubject("Reset Password");
-            message.setText("Forgot your password? You can reset it at the following link");
+            message.setText("Hello "+username+"\n\nDid you forget your password? You can reset it at the following link:\nhttps://plantiq.azurewebsites.net/reset/"+token+"\n\nRegards,\nPlantIQ.");
 
             // Convert MimeMessage to Gmail message
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -81,4 +81,34 @@ public class EmailService {
         }
     }
 
+    public static void sendAlert(String to,String username,String field, String value,String plant){
+        try {
+            HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+            Credential credential = getCredentials(httpTransport);
+
+            Gmail service = new Gmail.Builder(httpTransport, JSON_FACTORY, credential)
+                    .setApplicationName(APPLICATION_NAME)
+                    .build();
+
+            MimeMessage message = new MimeMessage(Session.getDefaultInstance(new Properties()));
+            message.setFrom(new InternetAddress(FROM));
+            message.addRecipient(javax.mail.Message.RecipientType.TO, new InternetAddress(to));
+            message.setSubject("Plant Alert");
+            message.setText("Hello "+username+",\n\nwe are reaching to you because the plant '"+plant+"' might need some attention. The current value of its "+field+" is "+value+", which is out of range.\n\nRegards,\nPlantIQ.");
+
+            // Convert MimeMessage to Gmail message
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            message.writeTo(buffer);
+            byte[] bytes = buffer.toByteArray();
+            String encodedEmail = Base64.encodeBase64URLSafeString(bytes);
+            Message gmailMessage = new Message();
+            gmailMessage.setRaw(encodedEmail);
+
+            // Send message
+            service.users().messages().send(USER, gmailMessage).execute();
+            System.out.println("Sent message successfully....");
+        } catch (IOException | MessagingException | GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+    }
 }
