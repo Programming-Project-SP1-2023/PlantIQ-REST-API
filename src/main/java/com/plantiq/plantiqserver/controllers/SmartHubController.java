@@ -1,12 +1,11 @@
 package com.plantiq.plantiqserver.controllers;
 
 import com.plantiq.plantiqserver.core.*;
-import com.plantiq.plantiqserver.model.AwaitingRegistration;
-import com.plantiq.plantiqserver.model.PlantData;
-import com.plantiq.plantiqserver.model.SmartHomeHub;
+import com.plantiq.plantiqserver.model.*;
 import com.plantiq.plantiqserver.rules.RegisterSmartHubRule;
 import com.plantiq.plantiqserver.rules.PostSensorDataRule;
 import com.plantiq.plantiqserver.rules.UpdateSmartHubDetailsRule;
+import com.plantiq.plantiqserver.service.EmailService;
 import com.plantiq.plantiqserver.service.HashService;
 import com.plantiq.plantiqserver.service.TimeService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -74,6 +73,10 @@ public class SmartHubController {
         data.put("light",request.getParameter("light"));
         data.put("moisture",request.getParameter("moisture"));
         data.put("timestamp",TimeService.now().toString());
+        data.put("range_temperature", Range.DEFAULT_TEMPERATURE_RANGE);
+        data.put("range_humidity", Range.DEFAULT_HUMIDITY_RANGE);
+        data.put("range_light", Range.DEFAULT_LIGHT_RANGE);
+        data.put("range_moisture", Range.DEFAULT_MOISTURE_RANGE);
 
         int outcome;
         if(PlantData.insert("PlantData",data)){
@@ -83,6 +86,34 @@ public class SmartHubController {
             response.put("error", "Failed to save plant data, please contact support!");
             response.put("outcome",false);
             outcome = 500;
+        }
+
+        Range range = Range.collection().where("smarthub_id", id).getFirst();
+        String[] rangeTemperature = range.getRangeTemperature().split("-");
+        String[] rangeMoisture = range.getRangeMoisture().split("-");
+        String[] rangeLight = range.getRangeLight().split("-");
+        String[] rangeHumidity = range.getRangeHumidity().split("-");
+
+        String userID = SmartHomeHub.collection().where("id", id).getFirst().getUser_id();
+        String firstname = User.collection().where("id",userID).getFirst().getFirstname();
+        String email = User.collection().where("id",userID).getFirst().getEmail();
+//        -----------------------------------------------------------------------------------------PLANT NAME
+        //Checks to ensure value is in range
+        //      IF TEMPERATURE<MIN_TEMPERATURE && TEMPERATURE>MAX_TEMPERATURE
+        if(Float.parseFloat(request.getParameter("temperature"))<Integer.parseInt(rangeTemperature[0]) && Float.parseFloat(request.getParameter("temperature"))>Integer.parseInt(rangeTemperature[1])){
+            EmailService.sendAlert(email,firstname,"temperature",request.getParameter("temperature"),"namexample");
+        }
+        //      IF MOISTURE<MIN_MOISTURE && MOISTURE>MAX_MOISTURE
+        if(Float.parseFloat(request.getParameter("moisture"))<Integer.parseInt(rangeMoisture[0]) && Float.parseFloat(request.getParameter("moisture"))>Integer.parseInt(rangeMoisture[1])){
+            EmailService.sendAlert(email,firstname,"moisture",request.getParameter("moisture"),"namexample");
+        }
+        //      IF LIGHT<MIN_LIGHT && LIGHT>MAX_LIGHT
+        if(Float.parseFloat(request.getParameter("light"))<Integer.parseInt(rangeLight[0]) && Float.parseFloat(request.getParameter("light"))>Integer.parseInt(rangeLight[1])){
+            EmailService.sendAlert(email,firstname,"light",request.getParameter("light"),"namexample");
+        }
+        //      IF HUMIDITY<MIN_HUMIDITY && HUMIDITY>MAX_HUMIDITY
+        if(Float.parseFloat(request.getParameter("humidity"))<Integer.parseInt(rangeHumidity[0]) && Float.parseFloat(request.getParameter("humidity"))>Integer.parseInt(rangeHumidity[1])){
+            EmailService.sendAlert(email,firstname,"light",request.getParameter("light"),"namexample");
         }
 
 
