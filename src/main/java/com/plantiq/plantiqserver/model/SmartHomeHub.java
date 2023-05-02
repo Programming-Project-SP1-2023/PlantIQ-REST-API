@@ -73,4 +73,8 @@ public class SmartHomeHub extends Model {
         return this.data.get("virtual").equals("true");
     }
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public String getUser_id(){ return (String)this.data.get("user_id");}
+
+
 }
