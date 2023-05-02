@@ -90,13 +90,14 @@ public class UserController {
             token.put("email",request.getParameter("email"));
             token.put("expirationDate",TimeService.nowPlusDays(1).toString());
             token.put("createdDate",TimeService.now().toString());
-
+            String name = User.collection().where("email",request.getParameter("email")).getFirst().getFirstname();
             int outcome;
             if(PasswordResetToken.insert("passwordResetToken",token)){
                 response.put("outcome",true);
                 outcome = 200;
                 response.put("message","If an email address exists for that account you will receive an email shortly.");
-                EmailService.sendRecoveryEmail(request.getParameter("email"),HashService.generateSHA1(data));
+                EmailService.sendRecoveryEmail(request.getParameter("email"),HashService.generateSHA1(data),name);
+
             }else{
                 response.put("outcome",false);
                 outcome = 500;
