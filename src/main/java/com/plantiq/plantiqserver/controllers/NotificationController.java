@@ -1,7 +1,7 @@
 package com.plantiq.plantiqserver.controllers;
 
 import com.plantiq.plantiqserver.core.Gate;
-import com.plantiq.plantiqserver.model.Notifications;
+import com.plantiq.plantiqserver.model.Notification;
 
 import com.plantiq.plantiqserver.model.Range;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 
 
 @RestController
@@ -23,9 +22,9 @@ public class NotificationController {
         if(!Gate.authorized(request)){
             return Gate.abortUnauthorized();
         }
-//        return Notifications.collection().where("user_id",Gate.getCurrentUser().getId()).get();
+//        return Notification.collection().where("user_id",Gate.getCurrentUser().getId()).get();
         response.put("outcome",true);
-        response.put("message",Notifications.collection().where("user_id",Gate.getCurrentUser().getId()).get() );
+        response.put("message", Notification.collection().where("user_id",Gate.getCurrentUser().getId()).get() );
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
     }
 

@@ -4,7 +4,7 @@ import com.plantiq.plantiqserver.core.Model;
 import com.plantiq.plantiqserver.core.ModelCollection;
 
 import java.util.HashMap;
-public class Notifications extends Model{
+public class Notification extends Model{
 
     //|================================================|
     //|              STATIC CRUD METHODS               |
@@ -19,8 +19,8 @@ public class Notifications extends Model{
     //directly into the constructor, this collection object
     //allows us to build our SQL query and return our values.
 
-    public static ModelCollection<Notifications> collection(){
-        return new ModelCollection<>(Notifications.class);
+    public static ModelCollection<Notification> collection(){
+        return new ModelCollection<>(Notification.class);
     }
 
 
@@ -29,7 +29,7 @@ public class Notifications extends Model{
     //|================================================|
 
     //Constructor
-    public Notifications(HashMap<String, Object> data){
+    public Notification(HashMap<String, Object> data){
         super(data);
     }
 
