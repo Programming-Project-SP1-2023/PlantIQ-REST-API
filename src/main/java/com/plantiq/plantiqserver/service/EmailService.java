@@ -93,8 +93,14 @@ public class EmailService {
             MimeMessage message = new MimeMessage(Session.getDefaultInstance(new Properties()));
             message.setFrom(new InternetAddress(FROM));
             message.addRecipient(javax.mail.Message.RecipientType.TO, new InternetAddress(to));
+            String [] unit= {"%, °C"};
+            int i;
+            if(field=="temperature")
+                i=1;
+            else
+                i=0;
             message.setSubject("Plant Alert");
-            message.setText("Hello "+username+",\n\nwe are reaching to you because the plant '"+plant+"' might need some attention. The current value of its "+field+" is "+value+", which is out of range.\n\nRegards,\nPlantIQ.");
+            message.setText("Hello "+username+",\n\nwe are reaching to you because the plant '"+plant+"' might need some attention. The current value "+field+" is "+value+unit[i]+", which is out of range.\n\nRegards,\nPlantIQ.");
 
             // Convert MimeMessage to Gmail message
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
