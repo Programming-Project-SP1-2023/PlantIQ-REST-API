@@ -44,6 +44,8 @@ public class Range extends Model {
         return (String)this.data.get("id");
     }
 
+    public String getSmartHubId() { return (String)this.data.get("smarthub_id");}
+
     public String getRangeHumidity(){
         return (String)this.data.get("range_humidity");
     }
