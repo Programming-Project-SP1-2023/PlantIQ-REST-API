@@ -25,27 +25,62 @@ public class NotificationController {
             return Gate.abortUnauthorized();
         }
         response.put("outcome",true);
-        response.put("message", Notification.collection().where("user_id",Gate.getCurrentUser().getId()).get());
+        response.put("notifications", Notification.collection().where("user_id",Gate.getCurrentUser().getId()).get());
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
     }
     @DeleteMapping("/clear")
     public ResponseEntity<HashMap<String,Object>>  clear(HttpServletRequest request){
         HashMap<String, Object> response = new HashMap<>();
+        //Authenticate the user with the gate service
         if(!Gate.authorized(request)){
             return Gate.abortUnauthorized();
         }
         ArrayList<Notification> notifications =Notification.collection().where("user_id",Gate.getCurrentUser().getId()).get();
+        int outcome=200;
         //For loop that goes through all notifications and deletes them all
         for ( Notification notification : notifications){
             if(notification.delete()){
                 response.put("outcome",true);
                 response.put("message","Notification deleted");
+            } else{
+                response.put("outcome",false);
+                response.put("error","Could not delete notification");
+                outcome=500;
+                return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
             }
         }
 
-        response.put("message", Notification.collection().where("user_id",Gate.getCurrentUser().getId()).get());
-        return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
+        response.put("notifications", Notification.collection().where("user_id",Gate.getCurrentUser().getId()).get());
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
     }
+
+    @DeleteMapping("/dismiss")
+    public ResponseEntity<HashMap<String,Object>>  dismiss(HttpServletRequest request){
+        HashMap<String, Object> response = new HashMap<>();
+        //Authenticate the user with the gate service
+        if(!Gate.authorized(request)){
+            return Gate.abortUnauthorized();
+        }
+
+
+
+        int outcome=200;
+        //Search for the notification that needs to be dismissed
+        Notification notification =Notification.collection().where("user_id",Gate.getCurrentUser().getId()).where("id",request.getParameter("id")).getFirst();
+        if(notification.delete()){
+                response.put("outcome",true);
+                response.put("message","Notification deleted");
+        }else{
+            response.put("outcome",false);
+            response.put("error","Could not delete notification");
+            outcome=500;
+            return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
+        }
+
+        response.put("notifications", Notification.collection().where("user_id",Gate.getCurrentUser().getId()).get());
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
+    }
+
 
 
     @GetMapping("/limits")
