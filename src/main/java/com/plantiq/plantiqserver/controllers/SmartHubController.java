@@ -73,50 +73,64 @@ public class SmartHubController {
         data.put("light",request.getParameter("light"));
         data.put("moisture",request.getParameter("moisture"));
         data.put("timestamp",TimeService.now().toString());
-        data.put("range_temperature", Range.DEFAULT_TEMPERATURE_RANGE);
-        data.put("range_humidity", Range.DEFAULT_HUMIDITY_RANGE);
-        data.put("range_light", Range.DEFAULT_LIGHT_RANGE);
-        data.put("range_moisture", Range.DEFAULT_MOISTURE_RANGE);
+
 
         int outcome;
         if(PlantData.insert("PlantData",data)){
             response.put("outcome",true);
             outcome = 200;
+
         }else{
             response.put("error", "Failed to save plant data, please contact support!");
             response.put("outcome",false);
             outcome = 500;
         }
+        HashMap<String,Object> notificationData = new HashMap<>();
+        String userID = SmartHomeHub.collection().where("id", id).getFirst().getUser_id();
+        notificationData.put("user_id",userID);
+        notificationData.put("timestamp",TimeService.now());
+//        String plantname=********************FINISH AND REPLACE BELOW
 
         Range range = Range.collection().where("smarthub_id", id).getFirst();
-        String[] rangeTemperature = range.getRangeTemperature().split("-");
-        String[] rangeMoisture = range.getRangeMoisture().split("-");
-        String[] rangeLight = range.getRangeLight().split("-");
-        String[] rangeHumidity = range.getRangeHumidity().split("-");
+        String[] ranges = {range.getRangeTemperature(),range.getRangeMoisture(),range.getRangeLight(),range.getRangeHumidity()};
 
-        String userID = SmartHomeHub.collection().where("id", id).getFirst().getUser_id();
+
         String firstname = User.collection().where("id",userID).getFirst().getFirstname();
         String email = User.collection().where("id",userID).getFirst().getEmail();
-//        -----------------------------------------------------------------------------------------PLANT NAME
-        //Checks to ensure value is in range
-        //      IF TEMPERATURE<MIN_TEMPERATURE && TEMPERATURE>MAX_TEMPERATURE
-        if(Float.parseFloat(request.getParameter("temperature"))<Integer.parseInt(rangeTemperature[0]) && Float.parseFloat(request.getParameter("temperature"))>Integer.parseInt(rangeTemperature[1])){
-            EmailService.sendAlert(email,firstname,"temperature",request.getParameter("temperature"),"namexample");
-        }
-        //      IF MOISTURE<MIN_MOISTURE && MOISTURE>MAX_MOISTURE
-        if(Float.parseFloat(request.getParameter("moisture"))<Integer.parseInt(rangeMoisture[0]) && Float.parseFloat(request.getParameter("moisture"))>Integer.parseInt(rangeMoisture[1])){
-            EmailService.sendAlert(email,firstname,"moisture",request.getParameter("moisture"),"namexample");
-        }
-        //      IF LIGHT<MIN_LIGHT && LIGHT>MAX_LIGHT
-        if(Float.parseFloat(request.getParameter("light"))<Integer.parseInt(rangeLight[0]) && Float.parseFloat(request.getParameter("light"))>Integer.parseInt(rangeLight[1])){
-            EmailService.sendAlert(email,firstname,"light",request.getParameter("light"),"namexample");
-        }
-        //      IF HUMIDITY<MIN_HUMIDITY && HUMIDITY>MAX_HUMIDITY
-        if(Float.parseFloat(request.getParameter("humidity"))<Integer.parseInt(rangeHumidity[0]) && Float.parseFloat(request.getParameter("humidity"))>Integer.parseInt(rangeHumidity[1])){
-            EmailService.sendAlert(email,firstname,"light",request.getParameter("light"),"namexample");
-        }
+////        -----------------------------------------------------------------------------------------CHANGE PLANT NAME
+        //For Loop to ensure value is in range for each field
+        String[] fields = {"temperature", "moisture", "light", "humidity"};
+        for(int i=0;i<4;i++){
+            String field=fields[i];
+            String min="";
+            String max="";
+            try {
+                min = ranges[i].split("-")[0];
+                max = ranges[i].split("-")[1];
+            }catch(NullPointerException e){
+                response.put("error", "Ranges are not in the right format");
+                response.put("outcome",false);
+                outcome = 500;
+                return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
+            }
+            if(Float.parseFloat(request.getParameter(field))<Float.parseFloat(min) && Float.parseFloat(request.getParameter(field))>Float.parseFloat(max)){
+                String value=request.getParameter(field);
+                notificationData.put("field",field);
+                notificationData.put("value",value);
+                EmailService.sendAlert(email,firstname,field,value,"namexample");
 
+                if(Notification.insert("Notification",notificationData)){
+                    response.put("outcome",true);
+                    outcome = 200;
 
+                }else{
+                    response.put("error", "Failed to save notification data, please contact support!");
+                    response.put("outcome",false);
+                    outcome = 500;
+                }
+
+            }
+        }
 
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
     }
@@ -274,21 +288,32 @@ public class SmartHubController {
         //Delete the object from the table by its id.
         smartHubAwaitingRegistration.delete("id");
 
-        //Declare our status outcome
-        int outcome;
+        //Organising the data prior insertion into the Range table
+        HashMap<String,Object> ranges = new HashMap<>();
+        ranges.put("smarthub_id",request.getParameter("id"));
+        ranges.put("range_temperature", Range.DEFAULT_TEMPERATURE_RANGE);
+        ranges.put("range_humidity", Range.DEFAULT_HUMIDITY_RANGE);
+        ranges.put("range_light", Range.DEFAULT_LIGHT_RANGE);
+        ranges.put("range_moisture", Range.DEFAULT_MOISTURE_RANGE);
+
 
         //Attempt to insert the data, if true return so, else return false.
-        if (SmartHomeHub.insert("SmartHomeHub",data)) {
-            response.put("outcome", true);
-            response.put("message", "Smart Hub registered to account");
-            outcome = 200;
-        } else {
+        if (!SmartHomeHub.insert("SmartHomeHub",data)) {
             response.put("outcome", false);
             response.put("errors", "Failed to register smart hub, please contact support!");
-            outcome = 500;
+            return new ResponseEntity<>(response, HttpStatusCode.valueOf(500));
         }
+        if(!Range.insert("Range",ranges)){
+            response.put("outcome", false);
+            response.put("errors", "Failed to insert default ranges");
 
-        return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
+            return new ResponseEntity<>(response, HttpStatusCode.valueOf(500));
+        }
+        //If the code reached this line, the two previous error check did not generate any errors
+        response.put("outcome", true);
+        response.put("message", "Smart Hub registered to account and default Ranges setted");
+
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
     }
 
     @GetMapping("/{id}/data")
