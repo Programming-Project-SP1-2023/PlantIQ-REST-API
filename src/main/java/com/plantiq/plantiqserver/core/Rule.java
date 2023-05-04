@@ -160,7 +160,7 @@ public abstract class Rule {
                             if(!Rule.isInteger(variable)){
                                 System.out.println("[RULE] Cannot validate min:'x', variable must be a valid integer");
                             }else {
-                                if (provided.length() < Integer.parseInt(variable)) {
+                                if (provided.length() <= Integer.parseInt(variable)) {
                                     ruleErrors.put(rule + ":" + variable, "Validation failed for key " + key + " parameter should be at least " + variable + " characters long");
                                     outcome.set(false);
                                 }
@@ -178,7 +178,7 @@ public abstract class Rule {
                             if(!Rule.isInteger(variable)){
                                 System.out.println("[RULE] Cannot validate max:'x', variable must be a valid integer");
                             }else {
-                                if (provided.length() > Integer.parseInt(variable)) {
+                                if (provided.length() >= Integer.parseInt(variable)) {
                                     ruleErrors.put(rule + ":" + variable, "Validation failed for key " + key + " parameter should be no more than " + variable + " characters long");
                                     outcome.set(false);
                                 }
@@ -202,6 +202,42 @@ public abstract class Rule {
                                 ruleErrors.put(rule,"Validation failed for key " + key);
                                 outcome.set(false);
                             }
+                        }
+
+                    }
+
+                    case "range"-> {
+
+                        String var = variable.replace('[', 'S');
+                        String[] type = var.split("S");
+
+                        if(!provided.contains(",")){
+                            ruleErrors.put(rule, "Invalid "+type[0]+" range provided, values must be provided as [x,y]");
+                            outcome.set(false);
+
+                        }else if(provided.split(",").length != 2){
+                            ruleErrors.put(rule, "Invalid "+type[0]+" range provided, values must be provided as [x,y]");
+                            outcome.set(false);
+
+                        }else{
+
+                            switch (type[0]) {
+                                case "float" -> {
+                                    boolean result = Rule.validateRange(provided, "float");
+                                    if (!result) {
+                                        ruleErrors.put(rule, "Invalid "+type[0]+" range provided, values must be of correct type '"+provided+"'");
+                                        outcome.set(false);
+                                    }
+                                }
+                                case "integer" -> {
+                                    boolean result = Rule.validateRange(provided, "integer");
+                                    if (!result) {
+                                        ruleErrors.put(rule, "Invalid "+type[0]+" range provided, values must be of correct type '"+provided+"'");
+                                        outcome.set(false);
+                                    }
+                                }
+                            }
+
                         }
 
                     }
@@ -359,6 +395,36 @@ public abstract class Rule {
             outcome = false;
         }
 
+        return outcome;
+    }
+
+    public static boolean validateRange(String value,String type){
+        System.out.println(value);
+
+        if(!value.contains(",")){
+            return false;
+        }
+        String[] split = value.split(",");
+        boolean outcome = true;
+
+        switch(type){
+            case "integer" ->{
+                if(!Rule.isInteger(split[0])){
+                    outcome = false;
+                }
+                if(!Rule.isInteger(split[1])){
+                    outcome = false;
+                }
+            }
+            case "float" ->{
+                if(!Rule.isFloat(split[0])){
+                    outcome = false;
+                }
+                if(!Rule.isInteger(split[1])){
+                    outcome = false;
+                }
+            }
+        }
         return outcome;
     }
 
