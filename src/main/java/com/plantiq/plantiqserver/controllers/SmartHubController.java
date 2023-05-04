@@ -2,7 +2,7 @@ package com.plantiq.plantiqserver.controllers;
 
 import com.plantiq.plantiqserver.core.*;
 import com.plantiq.plantiqserver.model.*;
-import com.plantiq.plantiqserver.rules.GetAllModelsRule;
+import com.plantiq.plantiqserver.rules.GetAllRule;
 import com.plantiq.plantiqserver.rules.RegisterSmartHubRule;
 import com.plantiq.plantiqserver.rules.PostSensorDataRule;
 import com.plantiq.plantiqserver.rules.UpdateSmartHubDetailsRule;
@@ -203,7 +203,7 @@ public class SmartHubController {
         }
 
         //Validate our request
-        GetAllModelsRule rule = new GetAllModelsRule();
+        GetAllRule rule = new GetAllRule();
         if(!rule.validate(request)){
             return rule.abort();
         }
