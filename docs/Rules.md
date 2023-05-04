@@ -229,9 +229,18 @@ parameter.add("intger");
 ````
 
 ### 7) float
-Lastly our float rule will validate that the data provided is that of or is compatible with the float data type.
+Our float rule will validate that the data provided is that of or is compatible with the float data type.
 
 Example:
 ````java
 parameter.add("float");
+````
+
+### 8) range
+The range rule allows you to specify a value that is between a range on one line, whilst you can achieve the same effect with min:x, max:x this rules streamlines the process.
+Range supports both integer and float types.
+
+Example:
+````java
+parameter.add("range:integer[3.1,20.95]");
 ````
