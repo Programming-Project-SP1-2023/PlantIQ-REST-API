@@ -24,15 +24,8 @@ public class SmartHomeHub extends Model {
 
     public static ModelCollection<SmartHomeHub> collection(){
 
-        ArrayList<String> columns = new ArrayList<>();
-
-        columns.add("name");
-        columns.add("lastPosted");
-        columns.add("postFrequency");
-
-        return new ModelCollection<>(SmartHomeHub.class,columns);
+        return new ModelCollection<>(SmartHomeHub.class);
     }
-
 
     //|================================================|
     //|                  CLASS METHODS                 |
