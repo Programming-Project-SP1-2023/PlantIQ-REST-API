@@ -34,6 +34,11 @@ public class Gate {
         //declare out outcome
         boolean outcome = false;
 
+        //validate the header was provided
+        if(request.getHeader("Authorization") == null){
+            return false;
+        }
+
         //get our token from the header, if not present this will be null
         String token = request.getHeader("Authorization").substring(7);
 
@@ -59,7 +64,12 @@ public class Gate {
     //if present this will validate the authorization of the user to ensure
     //this is a valid session and that the user is a valid admin.
 
-    public static boolean authorized(HttpServletRequest request, boolean isAdmin){
+    public static boolean authorizedAsAdmin(HttpServletRequest request){
+
+        //validate the header was provided
+        if(request.getHeader("Authorization") == null){
+            return false;
+        }
 
         //get our token from the header, if not present this will be null
         String token = request.getHeader("Authorization").substring(7);
@@ -67,17 +77,14 @@ public class Gate {
         //attempt to load our session object from the database
         Session session = Session.collection().where("token",token).orderBy("token").getFirst();
 
-        //check to see if the session is valid and not expired.
-        if(session == null || session.getExpiry() > TimeService.now()){
-            return false;
+        //Check the session is valid and not expired.
+        if(session != null && session.getExpiry() > TimeService.now()){
+            Gate.current = User.collection().where("id",session.getUserId()).getFirst();
+            return Gate.current.isAdministrator();
         }
 
-        //if valid load the user from the database.
-        User user = User.collection().where("id",session.getUserId()).getFirst();
-        Gate.current = user;
 
-        //lastly we return the administrator status
-        return user.isAdministrator();
+        return false;
     }
 
 
