@@ -4,11 +4,13 @@ import com.plantiq.plantiqserver.core.Gate;
 import com.plantiq.plantiqserver.model.Notification;
 
 import com.plantiq.plantiqserver.model.Range;
+import com.plantiq.plantiqserver.rules.NotificationRule;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -22,22 +24,82 @@ public class NotificationController {
         if(!Gate.authorized(request)){
             return Gate.abortUnauthorized();
         }
-//        return Notification.collection().where("user_id",Gate.getCurrentUser().getId()).get();
         response.put("outcome",true);
-        response.put("message", Notification.collection().where("user_id",Gate.getCurrentUser().getId()).get() );
+        response.put("notifications", Notification.collection().where("user_id",Gate.getCurrentUser().getId()).get());
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
     }
+    @DeleteMapping("/clear")
+    public ResponseEntity<HashMap<String,Object>>  clear(HttpServletRequest request){
+        HashMap<String, Object> response = new HashMap<>();
+        //Authenticate the user with the gate service
+        if(!Gate.authorized(request)){
+            return Gate.abortUnauthorized();
+        }
+        ArrayList<Notification> notifications =Notification.collection().where("user_id",Gate.getCurrentUser().getId()).get();
+        int outcome=200;
+        //For loop that goes through all notifications and deletes them all
+        for ( Notification notification : notifications){
+            if(notification.delete()){
+                response.put("outcome",true);
+                response.put("message","Notification deleted");
+            } else{
+                response.put("outcome",false);
+                response.put("error","Could not delete notification");
+                outcome=500;
+                return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
+            }
+        }
+
+        response.put("notifications", Notification.collection().where("user_id",Gate.getCurrentUser().getId()).get());
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
+    }
+
+    @DeleteMapping("/dismiss")
+    public ResponseEntity<HashMap<String,Object>>  dismiss(HttpServletRequest request){
+        HashMap<String, Object> response = new HashMap<>();
+        //Authenticate the user with the gate service
+        if(!Gate.authorized(request)){
+            return Gate.abortUnauthorized();
+        }
+
+
+
+        int outcome=200;
+        //Search for the notification that needs to be dismissed
+        Notification notification =Notification.collection().where("user_id",Gate.getCurrentUser().getId()).where("id",request.getParameter("id")).getFirst();
+        if(notification.delete()){
+                response.put("outcome",true);
+                response.put("message","Notification deleted");
+        }else{
+            response.put("outcome",false);
+            response.put("error","Could not delete notification");
+            outcome=500;
+            return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
+        }
+
+        response.put("notifications", Notification.collection().where("user_id",Gate.getCurrentUser().getId()).get());
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
+    }
+
+
 
     @GetMapping("/limits")
     public ResponseEntity<HashMap<String,Object>> getLimits(HttpServletRequest request){
         HashMap<String, Object> response = new HashMap<>();
 
+        ///Authenticate the user with the gate service
         if(!Gate.authorized(request)){
             return Gate.abortUnauthorized();
         }
-//        ---------------------------------------------------------CHECK PARAMETERS-------------------------------------
 
-        Range range = Range.collection().where("smarthub_id",request.getParameter("smarthub")).getFirst();
+        NotificationRule rule = new NotificationRule();
+        //Validate our request rule
+        if(!rule.validate(request)){
+            return rule.abort();
+        }
+
+//        ---------------------------------------------------------CHECK PARAMETERS-------------------------------------
+        Range range = Range.collection().where("smarthub_id",request.getParameter("smarthub_id")).getFirst();
         int outcome;
         if(range==null) {
             response.put("outcome",false);
@@ -59,20 +121,27 @@ public class NotificationController {
     @PatchMapping("/limits")
     public ResponseEntity<HashMap<String,Object>> updateLimits(HttpServletRequest request){
 
+        //Authenticate the user with the gate service
         if(!Gate.authorized(request)){
             return Gate.abortUnauthorized();
         }
 
+        NotificationRule rule = new NotificationRule();
+        //Validate our request rule
+        if(!rule.validate(request)){
+            return rule.abort();
+        }
+
         HashMap<String, Object> response = new HashMap<>();
         HashMap<String, Object> data = new HashMap<>();
-        String smarthubID = request.getParameter("smarthub");
+        String smarthubID = request.getParameter("smarthub_id");
         Range range = Range.collection().where("smarthub_id",smarthubID).getFirst();
         //        ---------------------------------------------------------CHECK PARAMETERS-------------------------------------
         data.put("temperature", request.getParameter("temperature"));
         data.put("humidity", request.getParameter("humidity"));
         data.put("light", request.getParameter("light"));
         data.put("moisture", request.getParameter("moisture"));
-        data.put("id",smarthubID);
+        data.put("smarthub_id",smarthubID);
         int outcome;
         if(range.update(data)){
             response.put("outcome",true);
@@ -87,10 +156,32 @@ public class NotificationController {
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
     }
     @PostMapping("/limits")
-    public void insertLimits(HttpServletRequest request){
-
+    public ResponseEntity<HashMap<String,Object>> insertLimits(HttpServletRequest request){
+        if(!Gate.authorized(request)){
+            return Gate.abortUnauthorized();
+        }
+        HashMap<String, Object> response = new HashMap<>();
+        HashMap<String, Object> data = new HashMap<>();
+        String smarthubID = request.getParameter("smarthub_id");
+        //        ---------------------------------------------------------CHECK PARAMETERS-------------------------------------
+        data.put("temperature", request.getParameter("temperature"));
+        data.put("humidity", request.getParameter("humidity"));
+        data.put("light", request.getParameter("light"));
+        data.put("moisture", request.getParameter("moisture"));
+        data.put("smarthub_id",smarthubID);
+        int outcome;
+        if(Range.insert("Range",data)){
+            response.put("outcome",true);
+            response.put("ranges",data);
+            outcome=200;
+        }else{
+            response.put("outcome",false);
+            response.put("error","No records were effected by change");
+//            ----------------------------------------------------------------Check status code
+            outcome=400;
+        }
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
     }
-
     @DeleteMapping("/limits")
     public ResponseEntity<HashMap<String,Object>> deleteLimits(HttpServletRequest request){
         if(!Gate.authorized(request)){
@@ -99,12 +190,12 @@ public class NotificationController {
 
         HashMap<String, Object> response = new HashMap<>();
         HashMap<String, Object> data = new HashMap<>();
-        String smarthubID = request.getParameter("smarthub");
+        String smarthubID = request.getParameter("smarthub_id");
         data.put("temperature", Range.DEFAULT_TEMPERATURE_RANGE);
         data.put("humidity", Range.DEFAULT_HUMIDITY_RANGE);
         data.put("light", Range.DEFAULT_LIGHT_RANGE);
         data.put("moisture", Range.DEFAULT_MOISTURE_RANGE);
-        data.put("id",request.getParameter(smarthubID));
+        data.put("smarthub_id",request.getParameter(smarthubID));
         int outcome;
         if(Range.collection().where("smarthub_id",smarthubID).getFirst().update(data)){
             response.put("outcome",true);

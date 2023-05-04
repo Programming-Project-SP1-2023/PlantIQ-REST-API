@@ -81,11 +81,12 @@ public class Model {
         return Database.getAndResetRowsAffected() != 0;
     }
 
-    public void delete(){
+    public boolean delete(){
 
         String query = "DELETE FROM [dbo].["+this.data.get("_table")+"] WHERE id='"+this.data.get("id")+"'";
 
         Database.query(query);
+        return Database.getAndResetRowsAffected() != 0;
     }
 
     public void delete(String column){

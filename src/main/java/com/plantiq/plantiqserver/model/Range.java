@@ -7,10 +7,10 @@ import java.util.HashMap;
 
 public class Range extends Model {
 
-    public final static String DEFAULT_TEMPERATURE_RANGE = "40-60";
+    public final static String DEFAULT_TEMPERATURE_RANGE = "4-29";
     public final static String DEFAULT_HUMIDITY_RANGE ="40-60";
-    public final static String DEFAULT_LIGHT_RANGE ="40-60";
-    public final static String DEFAULT_MOISTURE_RANGE ="40-60";
+    public final static String DEFAULT_LIGHT_RANGE ="8-16";
+    public final static String DEFAULT_MOISTURE_RANGE ="21-80";
 
     //|================================================|
     //|              STATIC CRUD METHODS               |
@@ -43,6 +43,8 @@ public class Range extends Model {
     public String getId(){
         return (String)this.data.get("id");
     }
+
+    public String getSmartHubId() { return (String)this.data.get("smarthub_id");}
 
     public String getRangeHumidity(){
         return (String)this.data.get("range_humidity");
