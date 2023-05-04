@@ -2,9 +2,12 @@ package com.plantiq.plantiqserver.controllers;
 
 import com.plantiq.plantiqserver.PlantIqServerApplication;
 import com.plantiq.plantiqserver.core.Gate;
+import com.plantiq.plantiqserver.core.ModelCollection;
+import com.plantiq.plantiqserver.core.Sort;
 import com.plantiq.plantiqserver.model.PasswordResetToken;
 import com.plantiq.plantiqserver.model.User;
 import com.plantiq.plantiqserver.rules.ConsumePasswordResetTokenRule;
+import com.plantiq.plantiqserver.rules.GetAllRule;
 import com.plantiq.plantiqserver.rules.PasswordResetRule;
 import com.plantiq.plantiqserver.rules.UpdateUserDetailsRule;
 import com.plantiq.plantiqserver.service.EmailService;
@@ -16,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -68,8 +70,31 @@ public class UserController {
         }
 
         @GetMapping("/all")
-        public List<User> all(){
-            return User.collection().get();
+        public ResponseEntity<HashMap<String, Object>> all(HttpServletRequest request){
+            HashMap<String,Object> response = new HashMap<>();
+
+            if(!Gate.authorized(request)){
+                return Gate.abortUnauthorized();
+            }
+
+            GetAllRule rule = new GetAllRule();
+            if(!rule.validate(request)){
+                return rule.abort();
+            }
+
+            ModelCollection<User> users = User.collection();
+
+            //Add all the required parameters.
+            users.limit(Integer.parseInt(request.getParameter("limit")));
+            users.offset(Integer.parseInt(request.getParameter("offset")));
+            users.orderBy(request.getParameter("sortBy"));
+            users.orderType(Sort.valueOf(request.getParameter("sort")));
+
+            response.put("list",users.get());
+            response.put("outcome",true);
+            response.put("message","successfully processed request");
+
+            return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
         }
 
         @PostMapping("/reset")
