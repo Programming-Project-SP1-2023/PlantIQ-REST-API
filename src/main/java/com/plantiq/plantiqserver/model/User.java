@@ -60,7 +60,7 @@ public class User extends Model {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public boolean isAdministrator(){
-        return Boolean.getBoolean((String) this.data.get("isAdministrator"));
+        return this.data.get("isAdministrator").equals("1");
     }
 
 
