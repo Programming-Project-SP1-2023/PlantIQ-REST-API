@@ -14,7 +14,7 @@ import java.util.ArrayList;
 //                                                                                    |
 //------------------------------------------------------------------------------------|
 
-public class updateLimitRule extends Rule {
+public class UpdateLimitRule extends Rule {
 
     @Override
     protected void setup() {
