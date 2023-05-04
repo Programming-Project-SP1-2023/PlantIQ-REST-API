@@ -34,11 +34,11 @@ public class GetAllRule extends Rule {
 
         this.rules.put("sortBy",sortBy);
 
-        ArrayList<String> order = new ArrayList<>();
+        ArrayList<String> sort = new ArrayList<>();
 
-        order.add("required");
-        order.add("enum:Sort");
+        sort.add("required");
+        sort.add("enum:Sort");
 
-        this.rules.put("order",order);
+        this.rules.put("sort",sort);
     }
 }

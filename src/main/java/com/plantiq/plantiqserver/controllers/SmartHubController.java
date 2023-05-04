@@ -223,7 +223,7 @@ public class SmartHubController {
         hubs.limit(Integer.parseInt(request.getParameter("limit")));
         hubs.offset(Integer.parseInt(request.getParameter("offset")));
         hubs.orderBy(request.getParameter("sortBy"));
-        hubs.orderType(Sort.valueOf(request.getParameter("order")));
+        hubs.orderType(Sort.valueOf(request.getParameter("sort")));
 
         ArrayList<SmartHomeHub> output = hubs.get();
 
