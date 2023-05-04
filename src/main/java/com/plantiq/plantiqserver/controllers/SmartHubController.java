@@ -2,6 +2,7 @@ package com.plantiq.plantiqserver.controllers;
 
 import com.plantiq.plantiqserver.core.*;
 import com.plantiq.plantiqserver.model.*;
+import com.plantiq.plantiqserver.rules.GetAllModelsRule;
 import com.plantiq.plantiqserver.rules.RegisterSmartHubRule;
 import com.plantiq.plantiqserver.rules.PostSensorDataRule;
 import com.plantiq.plantiqserver.rules.UpdateSmartHubDetailsRule;
@@ -201,51 +202,34 @@ public class SmartHubController {
             return Gate.abortUnauthorized();
         }
 
+        //Validate our request
+        GetAllModelsRule rule = new GetAllModelsRule();
+        if(!rule.validate(request)){
+            return rule.abort();
+        }
+
         //Add a valid response outcome
         response.put("outcome",true);
 
+        //Create our hubs object.
         ModelCollection<SmartHomeHub> hubs = SmartHomeHub.collection().where("user_id",Gate.getCurrentUser().getId());
 
-
+        //If virtual is passed then add it.
         if(request.getParameterMap().containsKey("virtual")){
             hubs.where("virtual",request.getParameter("virtual"));
         }
 
-        if(request.getParameterMap().containsKey("offset")){
-            if(Rule.isInteger(request.getParameter("offset"))){
-                hubs.offset(Integer.parseInt(request.getParameter("offset")));
-            }
-        }
-
-        if(request.getParameterMap().containsKey("limit")){
-            if(Rule.isInteger(request.getParameter("limit"))){
-                hubs.limit(Integer.parseInt(request.getParameter("limit")));
-            }
-        }
-
-        //Validate order type & add
-        if(request.getParameterMap().containsKey("orderType")){
-            if(Rule.isSortType(request.getParameter("orderType"))){
-                hubs.orderType(Sort.valueOf(request.getParameter("orderType")));
-            }else{
-                //add error
-            }
-        }
-
-        //validate order by column
-        if(request.getParameterMap().containsKey("orderBy")){
-            if(hubs.containsColumn(request.getParameter("orderBy"))){
-                hubs.orderBy(request.getParameter("orderBy"));
-            }else{
-                //add error
-            }
-        }
+        //Add all the required parameters.
+        hubs.limit(Integer.parseInt(request.getParameter("limit")));
+        hubs.offset(Integer.parseInt(request.getParameter("offset")));
+        hubs.orderBy(request.getParameter("sortBy"));
+        hubs.orderType(Sort.valueOf(request.getParameter("order")));
 
         ArrayList<SmartHomeHub> output = hubs.get();
 
         //Check if the user has any hubs by the size and either add them or a message.
         if(output.size() == 0){
-            response.put("message","No hubs currently registered with user");
+            response.put("message","No hubs found matching criteria currently registered with user");
         }else{
             response.put("list",output);
         }
