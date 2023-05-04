@@ -136,6 +136,9 @@ public abstract class Rule {
                 if(rule.equals("unique:")){
                     rule = "unique";
                 }
+                if(rule.equals("enum:")){
+                    rule = "enum";
+                }
 
                 //Now we have performed all our pre-checks and split our data into variable
                 //and rule we can then switch between the rules and perform our checks.
@@ -153,36 +156,42 @@ public abstract class Rule {
                     //Note: for rules with variables this is where we validate their values.
                     case "min"-> {
 
-                        if(variable.isBlank()){
-                            System.out.println("[RULE] Cannot validate 'min:x', variable cannot be null");
-                        }else{
+                            if(!Rule.isInteger(provided)){
 
-                            if(!Rule.isInteger(variable)){
-                                System.out.println("[RULE] Cannot validate min:'x', variable must be a valid integer");
-                            }else {
-                                if (provided.length() <= Integer.parseInt(variable)) {
-                                    ruleErrors.put(rule + ":" + variable, "Validation failed for key " + key + " parameter should be at least " + variable + " characters long");
+                                //if the provided value is not an integer run the min length
+                                if (Integer.parseInt(variable) > provided.length()) {
+                                    ruleErrors.put(rule,"Provided value should be at least "+variable+" characters long");
                                     outcome.set(false);
                                 }
+                            }else {
+
+                                //Else if the provide value is an integer the actual size
+                              if(Integer.parseInt(variable) > Integer.parseInt(provided)){
+                                  ruleErrors.put(rule,"Provided value should be at least "+variable);
+                                  outcome.set(false);
+                              }
+
                             }
-                        }
                     }
 
                     //If the rule is max, validate as follows and set the error if false.
                     //Note: for rules with variables this is where we validate their values.
                     case "max"->{
-                        if(variable.isBlank()){
-                            System.out.println("[RULE] Cannot validate 'max:x', variable cannot be null");
-                        }else{
+                        if(!Rule.isInteger(provided)){
 
-                            if(!Rule.isInteger(variable)){
-                                System.out.println("[RULE] Cannot validate max:'x', variable must be a valid integer");
-                            }else {
-                                if (provided.length() >= Integer.parseInt(variable)) {
-                                    ruleErrors.put(rule + ":" + variable, "Validation failed for key " + key + " parameter should be no more than " + variable + " characters long");
-                                    outcome.set(false);
-                                }
+                            //if the provided value is not an integer run the min length
+                            if (Integer.parseInt(variable) < provided.length()) {
+                                ruleErrors.put(rule,"Provided value should be no more than "+variable+" characters long");
+                                outcome.set(false);
                             }
+                        }else {
+
+                            //Else if the provide value is an integer the actual size
+                            if(Integer.parseInt(variable) < Integer.parseInt(provided)){
+                                ruleErrors.put(rule,"Provided value should not exceed "+variable);
+                                outcome.set(false);
+                            }
+
                         }
                     }
 
@@ -238,6 +247,15 @@ public abstract class Rule {
                                 }
                             }
 
+                        }
+
+                    }
+
+                    case "enum"->{
+
+                        if(!Rule.isSortType(provided)){
+                            ruleErrors.put(rule,"Invalid sort type provided, sort must match ASC, DESC");
+                            outcome.set(false);
                         }
 
                     }
@@ -386,6 +404,8 @@ public abstract class Rule {
     //-----------------------------------------------------------------//
 
     public static boolean isSortType(String value){
+
+        System.out.println("Checking Sort Value = "+value);
 
         boolean outcome = true;
 
