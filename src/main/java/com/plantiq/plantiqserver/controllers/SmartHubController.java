@@ -153,6 +153,13 @@ public class SmartHubController {
 
         HashMap<String, Object> response = new HashMap<>();
 
+        //Validate our id length is with in expected standards
+        if(id.length() != 12){
+            response.put("error","Smart home hub identifier did not meet expected standard");
+            response.put("outcome",false);
+            return new ResponseEntity<>(response, HttpStatusCode.valueOf(400));
+        }
+
         //Get the current hub requested
         SmartHomeHub hub = SmartHomeHub.collection().where("id",id).getFirst();
 
