@@ -1,6 +1,8 @@
 package com.plantiq.plantiqserver.core;
 
 
+import com.plantiq.plantiqserver.PlantIqServerApplication;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,8 +22,7 @@ public class Database{
 
         try{
 
-            connection = null;
-
+            connection = DriverManager.getConnection(PlantIqServerApplication.databasePassword);
             Statement statement = connection.createStatement();
 
 
@@ -32,7 +33,6 @@ public class Database{
             }
 
             resultSet = statement.executeQuery(query);
-
 
 
             while(resultSet.next()){
