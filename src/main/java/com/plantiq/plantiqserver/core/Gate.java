@@ -51,6 +51,9 @@ public class Gate {
             Gate.current = User.collection().where("id",session.getUserId()).getFirst();
         }
 
+        if(!Gate.current.isActivated()){
+            outcome = false;
+        }
 
         //finally return our outcome.
         return outcome;
@@ -80,7 +83,7 @@ public class Gate {
         //Check the session is valid and not expired.
         if(session != null && session.getExpiry() > TimeService.now()){
             Gate.current = User.collection().where("id",session.getUserId()).getFirst();
-            return Gate.current.isAdministrator();
+            return Gate.current.isAdministrator() && Gate.current.isActivated();
         }
 
 
