@@ -279,13 +279,6 @@ public class SmartHubController {
         //Delete the object from the table by its id.
         smartHubAwaitingRegistration.delete("id");
 
-        //Organising the data prior insertion into the Range table
-        HashMap<String,Object> ranges = new HashMap<>();
-        ranges.put("smarthub_id",request.getParameter("id"));
-        ranges.put("range_temperature", Range.DEFAULT_TEMPERATURE_RANGE);
-        ranges.put("range_humidity", Range.DEFAULT_HUMIDITY_RANGE);
-        ranges.put("range_light", Range.DEFAULT_LIGHT_RANGE);
-        ranges.put("range_moisture", Range.DEFAULT_MOISTURE_RANGE);
 
 
         //Attempt to insert the data, if true return so, else return false.
@@ -294,15 +287,17 @@ public class SmartHubController {
             response.put("errors", "Failed to register smart hub, please contact support!");
             return new ResponseEntity<>(response, HttpStatusCode.valueOf(500));
         }
-        if(!Range.insert("Range",ranges)){
-            response.put("outcome", false);
-            response.put("errors", "Failed to insert default ranges");
 
-            return new ResponseEntity<>(response, HttpStatusCode.valueOf(500));
-        }
         //If the code reached this line, the two previous error check did not generate any errors
         response.put("outcome", true);
-        response.put("message", "Smart Hub registered to account and default Ranges setted");
+        response.put("message", "Smart Hub registered to account");
+
+        Email email = new Email();
+        email.setUser(Gate.getCurrentUser())
+                .setHtmlTemplate("/emails/smartHubRegistrationConfirmation.html")
+                .setSubject("New Smart Hub Registered")
+                .setVariables(data)
+                .send();
 
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
     }
