@@ -73,7 +73,7 @@ public class UserController {
         public ResponseEntity<HashMap<String, Object>> all(HttpServletRequest request){
             HashMap<String,Object> response = new HashMap<>();
 
-            if(!Gate.authorized(request)){
+            if(!Gate.authorizedAsAdmin(request)){
                 return Gate.abortUnauthorized();
             }
 
