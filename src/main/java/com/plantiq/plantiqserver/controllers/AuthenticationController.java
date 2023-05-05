@@ -1,6 +1,7 @@
 package com.plantiq.plantiqserver.controllers;
 
 import com.plantiq.plantiqserver.PlantIqServerApplication;
+import com.plantiq.plantiqserver.core.Email;
 import com.plantiq.plantiqserver.model.Session;
 import com.plantiq.plantiqserver.model.User;
 import com.plantiq.plantiqserver.rules.LoginUserRule;
@@ -39,7 +40,7 @@ public class AuthenticationController {
 		User user = User.collection().where("email", request.getParameter("email")).where("password", HashService.generateSHA1(PlantIqServerApplication.passwordPepper+request.getParameter("password"))).getFirst();
 		int status;
 
-		if (user != null) {
+		if (user != null && user.isActivated()) {
 			response.put("outcome", "true");
 			response.put("session", SessionService.create(user.getId()));
 			status = 200;
@@ -115,13 +116,23 @@ public class AuthenticationController {
 		data.put("password", HashService.generateSHA1(PlantIqServerApplication.passwordPepper+request.getParameter("password")));
 		data.put("isAdministrator", "0");
 		data.put("registrationDate", TimeService.now().toString());
+		data.put("isActivated","0");
 
 		int outcome;
 
 		if (User.insert("User", data)) {
 			response.put("outcome", true);
-			response.put("message", "User successfully registered");
+			response.put("message", "User successfully registered and awaiting activation");
 			outcome = 200;
+
+			Email email = new Email();
+
+			email.setUser(new User(data))
+					.setHtmlTemplate("/emails/userRegistrationConfirmation.html")
+					.setSubject("Activate Account")
+					.setVariables(data)
+					.send();
+
 		} else {
 			response.put("outcome", false);
 			response.put("errors", "Failed to register user, please contact support!");
@@ -129,5 +140,36 @@ public class AuthenticationController {
 		}
 
 		return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
+	}
+
+	@GetMapping("/activate/{token}")
+	public ResponseEntity<HashMap<String, Object>> activateAccount(@PathVariable("token") String token){
+		HashMap<String, Object> response = new HashMap<>();
+
+		User user = User.collection().where("id",token).where("isActivated","0").getFirst();
+
+		if(user == null){
+
+			response.put("outcome",false);
+			response.put("message","Account not found or already activated");
+
+			return new ResponseEntity<>(response,HttpStatusCode.valueOf(404));
+		}
+
+		HashMap<String,Object> data = new HashMap<>();
+		data.put("isActivated","1");
+
+		int outcome;
+		if(user.update(data)){
+			response.put("message","Account successfully activated, please login");
+			response.put("outcome",true);
+			outcome = 200;
+		}else{
+			response.put("message","Failed to activate account, please contact support");
+			response.put("outcome",true);
+			outcome = 500;
+		}
+
+		return new ResponseEntity<>(response,HttpStatusCode.valueOf(outcome));
 	}
 }
