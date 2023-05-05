@@ -63,6 +63,11 @@ public class User extends Model {
         return this.data.get("isAdministrator").equals("1");
     }
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public boolean isActivated(){
+        return this.data.get("isActivated").equals("1");
+    }
+
 
 
 }
