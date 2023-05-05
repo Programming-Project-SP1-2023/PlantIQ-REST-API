@@ -9,6 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class PlantIqServerApplication {
 
 	public static final String passwordPepper = "Steak&Chips!";
+	public static final String emailPassword = "";
+	public static final String databasePassword = "";
 
 	public static void main(String[] args) {
 
