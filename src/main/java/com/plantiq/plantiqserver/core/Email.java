@@ -74,12 +74,15 @@ public class Email {
 
         Thread t1 = new Thread(() -> {
             this.message.setHtmlBody(this.message.getHtmlBody().replace("{{user.fullname}}",this.user.getFirstname()+" "+this.user.getSurname()));
+            this.message.setHtmlBody(this.message.getHtmlBody().replace("{{user.email}}",this.user.getEmail()));
 
-            this.variables.forEach((key,value)->{
-                if(this.message.getHtmlBody().contains("{{"+key+"}}")){
-                    this.message.setHtmlBody(this.message.getHtmlBody().replace("{{"+key+"}}", value.toString()));
-                }
-            });
+            if(this.variables != null) {
+                this.variables.forEach((key, value) -> {
+                    if (this.message.getHtmlBody().contains("{{" + key + "}}")) {
+                        this.message.setHtmlBody(this.message.getHtmlBody().replace("{{" + key + "}}", value.toString()));
+                    }
+                });
+            }
 
             // Create an instance of SmtpClient Class
             SmtpClient client = new SmtpClient();
@@ -87,7 +90,7 @@ public class Email {
             // Specify your mailing host server, Username, Password, Port
             client.setHost("smtp-mail.outlook.com");
             client.setUsername("help-plantiq@outlook.com");
-            client.setPassword("");
+            client.setPassword(PlantIqServerApplication.emailPassword);
             client.setPort(587);
             client.setSecurityOptions(SecurityOptions.Auto);
 
