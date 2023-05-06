@@ -24,6 +24,7 @@ public class SmartHubController {
     @PostMapping("/{id}/data")
     public ResponseEntity<HashMap<String, Object>> savePlantData(@PathVariable("id") String id, HttpServletRequest request){
 
+
         HashMap<String, Object> response = new HashMap<>();
 
         //Validate our id length is with in expected standards
@@ -66,7 +67,6 @@ public class SmartHubController {
         }
 
         HashMap<String,Object> data = new HashMap<>();
-
         data.put("smarthomehub_Id",smartHomeHub.getId());
         data.put("sensor_Id",request.getParameter("sensor_id"));
         data.put("temperature",request.getParameter("temperature"));
@@ -85,6 +85,7 @@ public class SmartHubController {
             response.put("error", "Failed to save plant data, please contact support!");
             response.put("outcome",false);
             outcome = 500;
+            return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
         }
         HashMap<String,Object> notificationData = new HashMap<>();
         String userID = SmartHomeHub.collection().where("id", id).getFirst().getUser_id();
@@ -118,8 +119,10 @@ public class SmartHubController {
                 String value=request.getParameter(field);
                 notificationData.put("field",field);
                 notificationData.put("value",value);
-                EmailService.sendAlert(email,firstname,field,value,"namexample");
-
+                notificationData.put("user_id",userID);
+                notificationData.put("timestamp",TimeService.now());
+                notificationData.put("message","");
+//                EmailService.sendAlert(email,firstname,field,value,"namexample");
                 if(Notification.insert("Notification",notificationData)){
                     response.put("outcome",true);
                     outcome = 200;
@@ -288,6 +291,12 @@ public class SmartHubController {
             return new ResponseEntity<>(response, HttpStatusCode.valueOf(500));
         }
 
+        if(!Range.insertDefaults(request.getParameter("id"))){
+            response.put("outcome", false);
+            response.put("errors", "Failed to perform action, please contact support");
+            return new ResponseEntity<>(response, HttpStatusCode.valueOf(500));
+        }
+
         //If the code reached this line, the two previous error check did not generate any errors
         response.put("outcome", true);
         response.put("message", "Smart Hub registered to account");
@@ -384,10 +393,7 @@ public class SmartHubController {
         }else{
 
             //Get all the plant data for the current smart home hub.
-            ArrayList<PlantData> data = PlantData.collection().where("smarthomehub_id",id).get();
-
-            //Delete all the data
-            data.forEach(Model::delete);
+            PlantData.deleteAll("PlantData","smarthub_id",id);
 
             //Delete the smart hub
             smartHomeHub.delete();
