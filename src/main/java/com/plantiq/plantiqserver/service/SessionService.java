@@ -5,6 +5,10 @@ import com.plantiq.plantiqserver.model.Session;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+//---------------------------------Service Class---------------------------------
+//The SessionService class has been created with the scope of generating tokens
+//used for sessions.
+//-------------------------------------------------------------------------------
 public class SessionService {
 
     //Method to create session keys. The key will be equal to a
