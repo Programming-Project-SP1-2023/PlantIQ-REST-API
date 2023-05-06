@@ -3,7 +3,9 @@ package com.plantiq.plantiqserver.core;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-
+//-----------------------------------------------------------------//
+//                          Model Class                            //
+//-----------------------------------------------------------------//
 public class Model {
 
     protected HashMap<String,Object> data;
@@ -12,8 +14,12 @@ public class Model {
         this.data = data;
     }
 
-    //------------------ INSERT INTO METHOD -----------------
+    //------------------------------------------------------|
+    //                  INSERT INTO METHOD                  |
+    //------------------------------------------------------|
 
+    //This method accepts a hash map made up of attributes and values
+    //and will generate an SQL query to insert that data into the database
     public static boolean insert(String table,HashMap<String,Object> data){
     //Create our query string and initialize it to the starting value
         StringBuilder query = new StringBuilder("INSERT INTO [dbo].["+table+"] (");
@@ -45,7 +51,9 @@ public class Model {
     //create, read, update and delete, these are all assigned
     //to a static that and will wrap around any other classes
 
-    //------------------ UPDATE METHOD -----------------
+    //------------------------------------------------------|
+    //                     UPDATE METHOD                    |
+    //------------------------------------------------------|
 
     //This method accepts a hash map of data and will validate
     //that the keys are present in the model object, if so
@@ -81,6 +89,11 @@ public class Model {
         return Database.getAndResetRowsAffected() != 0;
     }
 
+    //------------------------------------------------------|
+    //                     DELETE METHOD                    |
+    //------------------------------------------------------|
+
+    //
     public boolean delete(){
 
         String query = "DELETE FROM [dbo].["+this.data.get("_table")+"] WHERE id='"+this.data.get("id")+"'";
@@ -96,7 +109,16 @@ public class Model {
         Database.query(query);
     }
 
+    //------------------------------------------------------|
+    //                   DELETE ALL METHOD                  |
+    //------------------------------------------------------|
+
+    //This method takes in as parameter the table name, the attribute and the value
+    //to search. If will then move on to delete all the records which have that value
+    //for that specified attribute
     public static boolean deleteAll(String table, String attribute, String value){
+
+        //Creation of the deletion query, which searches for the value under the specified attribute
         String query = "DELETE FROM [dbo].["+table+"] WHERE "+attribute+" = '"+value+"'";
 
         Database.query(query);

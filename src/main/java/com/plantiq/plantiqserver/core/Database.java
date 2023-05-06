@@ -7,12 +7,28 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Database{
 
+//-----------------------------------------------------------------//
+//                        Database Class                           //
+//-----------------------------------------------------------------//
+
+//The database class is one of the core component of the project. It will manage
+//the connection with the database and query the database. This class is also able to
+//keeps track of how many rows have been affected by the query, which is a smart way
+//to deduct if the query worked.
+public class Database{
+    //Integer which will keep track of how many rows have been affected by the query.
     private static int rowsAffected;
 
-    public static ArrayList<HashMap<String, String>> query(String query){
+    //------------------------------------------------------|
+    //                     QUERY METHOD                     |
+    //------------------------------------------------------|
 
+    //This method takes in as a parameter a String which will be the SQL query.
+    //It will initially establish the connection with the database, to then
+    //move on executed the query and retrieving the data.
+    public static ArrayList<HashMap<String, String>> query(String query){
+        //This array will contain each work of the query
         String[] queryData = query.split(" ");
 
         ArrayList<HashMap<String,String>> data = new ArrayList<>();
@@ -22,7 +38,8 @@ public class Database{
 
         try{
 
-            connection = DriverManager.getConnection(PlantIqServerApplication.databasePassword);
+            connection = DriverManager.getConnection("jdbc:sqlserver://db-plantiq.database.windows.net:1433;database=plantiq-backend;user=spring@db-plantiq;password=7p18W%oT9TTr;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30");
+
             Statement statement = connection.createStatement();
 
 
@@ -33,6 +50,7 @@ public class Database{
             }
 
             resultSet = statement.executeQuery(query);
+
 
 
             while(resultSet.next()){
@@ -63,9 +81,17 @@ public class Database{
 
         return data;
     }
+    //------------------------------------------------------|
+    //          GET AND RESET ROWS AFFECTED METHOD          |
+    //------------------------------------------------------|
 
+    //This method gets how many rows have been affected by
+    //the query and resets the public value so that next count
+    //will not be influence by the previous
     public static int getAndResetRowsAffected(){
+        //Variable that will store the number of rowsAffected
         int rows =  Database.rowsAffected;
+        //Reset of the public variable to not alter next count
         Database.rowsAffected = 0;
         return rows;
     }
