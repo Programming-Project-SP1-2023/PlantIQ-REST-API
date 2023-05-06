@@ -341,15 +341,15 @@ public class SmartHubController {
             response.put("outcome",false);
             outcome = 404;
         }else{
-            HashMap<String,Object> data = new HashMap<>();
-
             UpdateSmartHubDetailsRule rule = new UpdateSmartHubDetailsRule();
 
             if(!rule.validate(request)){
                 return rule.abort();
             }
 
-            System.out.println(smartHomeHub.getId());
+            HashMap<String,Object> data = new HashMap<>();
+            data.put("name",request.getParameter("name"));
+            data.put("postFrequency",request.getParameter("postFrequency"));
 
             if(smartHomeHub.update(data)){
                 outcome = 200;
