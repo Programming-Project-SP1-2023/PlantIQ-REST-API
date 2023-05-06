@@ -4,6 +4,34 @@ import com.plantiq.plantiqserver.core.Rule;
 
 import java.util.ArrayList;
 
+// -----------------------------------------------------------------------------------|
+//                                  LIST OF RULES                                     |
+// -----------------------------------------------------------------------------------|
+//                                                                                    |
+//  Limit:                                                                            |
+//  A) Required -> Validates the limit input is present and not null.                 |
+//  B) Integer -> Validates the input is an integer.                                  |
+//  C) Min -> Validates the limit is not less than 10.                                |
+//  D) Max -> Validates the limit is not greater than 100.                            |
+//                                                                                    |
+//  Offset:                                                                           |
+//  A) Required -> Validates the offset input is present and not null.                |
+//  B) Integer -> Validates the input is an integer.                                  |
+//  C) Min -> Validates the offset is not less than 0.                                |
+//  D) Max -> Validates the offset is not greater than 100.                           |
+//                                                                                    |
+//  Sort By:                                                                           |
+//  A) Required -> Validates the sorting value is present and not null.               |
+//  B) min:2 -> Validates the password is at least 2 characters long.                 |
+//  C) max:25 -> Validates the password is no larger than 25 characters long.         |
+//                                                                                    |
+//  Sort:                                                                             |
+//  A) Required -> Validates the email input is present and not null.                 |
+//  B) Enum:Sort -> Validates the input is one of the two values of the Sort enum:    |
+//                  ASC or Desc                                                       |
+//                                                                                    |
+//------------------------------------------------------------------------------------|
+
 public class GetAllRule extends Rule {
     @Override
     protected void setup() {
@@ -21,7 +49,7 @@ public class GetAllRule extends Rule {
 
         offset.add("required");
         offset.add("min:0");
-        limit.add("integer");
+        offset.add("integer");
         offset.add("max:100");
 
         this.rules.put("offset",offset);

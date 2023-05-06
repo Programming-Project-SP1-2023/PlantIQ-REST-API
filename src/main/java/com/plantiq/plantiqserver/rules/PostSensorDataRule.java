@@ -4,6 +4,32 @@ import com.plantiq.plantiqserver.core.Rule;
 
 import java.util.ArrayList;
 
+// -----------------------------------------------------------------------------------|
+//                                  LIST OF RULES                                     |
+// -----------------------------------------------------------------------------------|
+//                                                                                    |
+//  Sensor ID:                                                                        |
+//  A) Required -> Validates the sensorID input is present and not null.              |
+//  B) Min/Max:16 -> Validates the sensorID is exactly 16 characters.                 |
+//                                                                                    |
+//  Temperature:                                                                      |
+//  A) Required -> Validates the temperature input is present and not null.           |
+//  B) Float:16 -> Validates the temperature is a float.                              |
+//                                                                                    |
+//  Humidity:                                                                         |
+//  A) Required -> Validates the humidity input is present and not null.              |
+//  B) Float:16 -> Validates the humidity is a float.                                 |
+//                                                                                    |
+//  Light:                                                                            |
+//  A) Required -> Validates the light input is present and not null.                 |
+//  B) Float:16 -> Validates the light is a float.                                    |
+//                                                                                    |
+//  Moisture:                                                                         |
+//  A) Required -> Validates the moisture input is present and not null.              |
+//  B) Float:16 -> Validates the moisture is a float.                                 |
+//                                                                                    |
+//------------------------------------------------------------------------------------|
+
 public class PostSensorDataRule extends Rule {
 
     @Override
