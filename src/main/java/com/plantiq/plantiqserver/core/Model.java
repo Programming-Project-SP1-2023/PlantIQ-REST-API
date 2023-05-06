@@ -96,6 +96,13 @@ public class Model {
         Database.query(query);
     }
 
+    public static boolean deleteAll(String table, String attribute, String value){
+        String query = "DELETE FROM [dbo].["+table+"] WHERE "+attribute+" = '"+value+"'";
+
+        Database.query(query);
+        return Database.getAndResetRowsAffected() != 0;
+    }
+
     public Object getValue(String column){
         return this.data.get(column);
     }
