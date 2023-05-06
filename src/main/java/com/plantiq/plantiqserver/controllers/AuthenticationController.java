@@ -2,11 +2,10 @@ package com.plantiq.plantiqserver.controllers;
 
 import com.plantiq.plantiqserver.PlantIqServerApplication;
 import com.plantiq.plantiqserver.core.Email;
+import com.plantiq.plantiqserver.model.PasswordResetToken;
 import com.plantiq.plantiqserver.model.Session;
 import com.plantiq.plantiqserver.model.User;
-import com.plantiq.plantiqserver.rules.LoginUserRule;
-import com.plantiq.plantiqserver.rules.RegisterUserRule;
-import com.plantiq.plantiqserver.rules.ValidateSessionRule;
+import com.plantiq.plantiqserver.rules.*;
 import com.plantiq.plantiqserver.service.HashService;
 import com.plantiq.plantiqserver.service.SessionService;
 import com.plantiq.plantiqserver.service.TimeService;
@@ -168,6 +167,138 @@ public class AuthenticationController {
 			response.put("message","Failed to activate account, please contact support");
 			response.put("outcome",true);
 			outcome = 500;
+		}
+
+		return new ResponseEntity<>(response,HttpStatusCode.valueOf(outcome));
+	}
+
+	@PostMapping("/reset")
+	public ResponseEntity<HashMap<String, Object>> generateResetToken(HttpServletRequest request){
+		HashMap<String,Object> response = new HashMap<>();
+
+		PasswordResetRule rule = new PasswordResetRule();
+
+		if(!rule.validate(request)){
+			return rule.abort();
+		}
+
+		User user = User.collection().where("email",request.getParameter("email")).getFirst();
+
+		if(user == null){
+			response.put("outcome",true);
+			response.put("message","If an email address exists for that account you will receive an email shortly.");
+			return new ResponseEntity<>(response,HttpStatusCode.valueOf(200));
+		}
+
+		String data = request.getParameter("email")+TimeService.now();
+
+		HashMap<String, Object> token= new HashMap<>();
+
+		token.put("token",HashService.generateSHA1(data));
+		token.put("email",user.getEmail());
+		token.put("expirationDate",TimeService.nowPlusDays(1).toString());
+		token.put("createdDate",TimeService.now().toString());
+
+		int outcome;
+		if(PasswordResetToken.insert("passwordResetToken",token)){
+
+			response.put("outcome",true);
+			outcome = 200;
+			response.put("message","If an email address exists for that account you will receive an email shortly.");
+
+			//Send email
+			Email email = new Email();
+			email.setSubject("Account Recovery")
+					.setUser(user)
+					.setVariables(token)
+					.setHtmlTemplate("/emails/passwordResetConfirmation.html")
+					.send();
+
+		}else{
+			response.put("outcome",false);
+			outcome = 500;
+			response.put("message","Failed to perform action, please contact support.");
+		}
+
+		return new ResponseEntity<>(response,HttpStatusCode.valueOf(outcome));
+	}
+
+	@GetMapping("/reset/{token}")
+	public ResponseEntity<HashMap<String,Object>> validateResetToken(@PathVariable("token") String token){
+		HashMap<String,Object> response = new HashMap<>();
+
+		PasswordResetToken token1 = PasswordResetToken.collection().where("token",token).orderBy("token").getFirst();
+
+		int outcome;
+		if(token1 == null){
+			response.put("message","Password reset token not found or expired");
+			response.put("outcome",false);
+			outcome = 404;
+		}else{
+			if(TimeService.now() > token1.expirationDate()){
+				token1.delete("token");
+				response.put("message","Password reset token not found or expired");
+				response.put("outcome",false);
+				outcome = 404;
+			}else{
+				response.put("message","Valid password reset token");
+				response.put("outcome",true);
+				outcome = 200;
+			}
+
+		}
+		return new ResponseEntity<>(response,HttpStatusCode.valueOf(outcome));
+	}
+
+	@PatchMapping("/reset")
+	public ResponseEntity<HashMap<String,Object>> consumePasswordResetToken(HttpServletRequest request){
+		HashMap<String,Object> response = new HashMap<>();
+
+		//Validate our HTTP request
+		ConsumePasswordResetTokenRule rule = new ConsumePasswordResetTokenRule();
+
+		if(!rule.validate(request)){
+			return rule.abort();
+		}
+
+		//Get our password reset token from the database
+		PasswordResetToken passwordResetToken = PasswordResetToken.collection().where("token",request.getParameter("token")).orderBy("token").getFirst();
+
+		int outcome;
+
+		if(passwordResetToken == null){
+			outcome = 404;
+			response.put("outcome",false);
+			response.put("error","Password reset token not found or expired");
+			return new ResponseEntity<>(response,HttpStatusCode.valueOf(outcome));
+		}
+		
+		//Check the token expiration date is valid and not expired
+		if(TimeService.now() > passwordResetToken.expirationDate()){
+
+			passwordResetToken.delete("token");
+			outcome = 404;
+			response.put("outcome",false);
+			response.put("error","Password reset token not found or expired");
+			return new ResponseEntity<>(response,HttpStatusCode.valueOf(outcome));
+		}
+		
+		//else if we reach this stage we reset the password
+
+		User user = User.collection().where("email",passwordResetToken.email()).getFirst();
+
+		HashMap<String, Object> data = new HashMap<>();
+		data.put("password",HashService.generateSHA1(PlantIqServerApplication.passwordPepper+request.getParameter("password")));
+
+		if(user.update(data)){
+			outcome = 200;
+			response.put("outcome",true);
+			response.put("message","Password reset");
+			passwordResetToken.delete("token");
+		}else{
+			outcome = 500;
+			response.put("outcome",false);
+			response.put("message","Failed to reset password, please contact support");
 		}
 
 		return new ResponseEntity<>(response,HttpStatusCode.valueOf(outcome));
