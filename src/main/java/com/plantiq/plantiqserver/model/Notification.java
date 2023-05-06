@@ -33,21 +33,25 @@ public class Notification extends Model{
         super(data);
     }
 
-    //Getters
+    //Get ID method
     public String getId(){
         return (String)this.data.get("id");
     }
 
+    //Get user_id method
     public String getUserID(){
         return (String)this.data.get("user_id");
     }
 
+    //Get timestamp method
     public int getTimestamp(){return Integer.parseInt((String)this.data.get("timestamp"));}
 
+    //Get field method
     public String getField(){
         return (String)this.data.get("field");
     }
 
+    //Get value method
     public float getValue(){ return Float.parseFloat((String)this.data.get("value"));}
 
 }

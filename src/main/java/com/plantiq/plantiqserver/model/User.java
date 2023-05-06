@@ -58,11 +58,12 @@ public class User extends Model {
         return (String)this.data.get("password");
     }
 
+    //Method that returns if the user is an administrator or not
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public boolean isAdministrator(){
         return this.data.get("isAdministrator").equals("1");
     }
-
+    //Method that returns if the user's account is activated or not
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public boolean isActivated(){
         return this.data.get("isActivated").equals("1");

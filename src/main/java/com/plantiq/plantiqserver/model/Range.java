@@ -39,27 +39,45 @@ public class Range extends Model {
         super(data);
     }
 
-    //Getters
+    //Get ID method
     public String getId(){
         return (String)this.data.get("id");
     }
 
+    //Get smarthub_id method
     public String getSmartHubId() { return (String)this.data.get("smarthub_id");}
 
+    //Method to get the humidity range
     public String getRangeHumidity(){
         return (String)this.data.get("range_humidity");
     }
 
+    //Method to get the light range
     public String getRangeLight(){
         return (String)this.data.get("range_light");
     }
 
+    //Method to get the temperature range
     public String getRangeTemperature(){
         return (String)this.data.get("range_temperature");
     }
-
+    //Method to get the moisture range
     public String getRangeMoisture(){
         return (String)this.data.get("range_moisture");
+    }
+
+    //Method that inserts the default ranges for each smartHub into the database
+    public static boolean insertDefaults(String smarthub_id){
+        HashMap<String,Object> ranges = new HashMap<>();
+
+        ranges.put("smarthub_id",smarthub_id);
+        ranges.put("range_temperature", DEFAULT_TEMPERATURE_RANGE);
+        ranges.put("range_humidity", DEFAULT_HUMIDITY_RANGE);
+        ranges.put("range_light", DEFAULT_LIGHT_RANGE);
+        ranges.put("range_moisture", DEFAULT_MOISTURE_RANGE);
+        boolean result =Range.insert("Range",ranges);
+        System.out.println("ao +"+result);
+        return result;
     }
 
 }

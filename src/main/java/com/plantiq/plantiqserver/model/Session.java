@@ -34,14 +34,17 @@ public class Session extends Model{
         super(data);
     }
 
+    //Get token method
     public String getToken(){
         return (String)this.data.get("token");
     }
 
+    //Get user_id method
     public String getUserId(){
         return (String)this.data.get("user_id");
     }
 
+    //Get expiry date method
     public int getExpiry(){
         return Integer.parseInt((String)this.data.get("expiry"));
     }

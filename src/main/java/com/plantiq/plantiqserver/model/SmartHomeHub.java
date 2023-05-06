@@ -31,41 +31,43 @@ public class SmartHomeHub extends Model {
     //|                  CLASS METHODS                 |
     //|================================================|
 
-    //Our class methods are used by the child model class
-    //to provide all the functionality to it.
-
-    //The date
-
     //Constructor
     public SmartHomeHub(HashMap<String, Object> data) {
         super(data);
     }
 
+    //Get ID method
     public String getId(){
         return (String)this.data.get("id");
     }
+
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public String getDeviceSpecificPassword(){
        return (String)this.data.get("deviceSpecificPassword");
     }
 
+    //Method to get when the device posted last
     public int getLastPosted(){
         return Integer.parseInt((String)this.data.get("lastPosted"));
     }
 
+    // Get Name Method
     public String getName(){
         return (String)this.data.get("name");
     }
 
+    //Get Post Frequency Method
     public int getPostFrequency(){
         return Integer.parseInt((String)this.data.get("postFrequency"));
     }
 
+    //Method that returns if the smartHomeHub is virtual or not
     public boolean getVirtual(){
         return this.data.get("virtual").equals("true");
     }
 
+    //Get user_id method
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public String getUser_id(){ return (String)this.data.get("user_id");}
 
