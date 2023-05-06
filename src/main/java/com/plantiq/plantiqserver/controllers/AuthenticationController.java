@@ -15,10 +15,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+//---------------------------------Controller Class---------------------------------
+//The AuthenticationController class will be serving all the endpoints that deal
+//with the authentication of the user.
+//----------------------------------------------------------------------------------
 
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {
+	// The @PostMapping("/login") will allow the user to login into their account.
+	// In order to perform this action, the user will need to provide their email and password,
+	//which are served to this method as parameters of the html request.
 	@PostMapping("/login")
 	public ResponseEntity<HashMap<String, Object>> login(HttpServletRequest request) {
 
@@ -38,7 +45,10 @@ public class AuthenticationController {
 		//lookup the user from the database.
 		User user = User.collection().where("email", request.getParameter("email")).where("password", HashService.generateSHA1(PlantIqServerApplication.passwordPepper+request.getParameter("password"))).getFirst();
 		int status;
-
+		//If else statement to check if the user is not null and has an activated account
+		//If they are eligible for a session, this will be created and the html status code
+		// will be set to 200. If not, an error will be returned and the html status code
+		//will be 401
 		if (user != null && user.isActivated()) {
 			response.put("outcome", "true");
 			response.put("session", SessionService.create(user.getId()));
@@ -51,20 +61,23 @@ public class AuthenticationController {
 
 		return new ResponseEntity<>(response, HttpStatusCode.valueOf(status));
 	}
-
+	// The @DeleteMapping("/logout") will allow the user to logout from their account.
+	// This will lead to the deletion of the session code they were using to stay logged in.
 	@DeleteMapping("/logout")
 	public ResponseEntity<HashMap<String, Object>> logout(HttpServletRequest request) {
-
+		//Create our response object, this is returned as JSON.
 		HashMap<String, Object> response = new HashMap<>();
+		//Create our validate session rule. We will validate our request
+		//using this rule.
 		ValidateSessionRule rule = new ValidateSessionRule();
-
+		//Validate our request and return the errors if present.
 		if (!rule.validate(request)) {
 			return rule.abort();
 		}
-
+		//Search for session which has the same token as the one of the user that is trying to log out.
 		Session session = Session.collection().where("token", request.getParameter("token")).orderBy("token").getFirst();
+		//Once the session has been found, this will be deleted, logging out the user.
 		session.delete("token");
-
 		response.put("outcome", true);
 
 		return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
