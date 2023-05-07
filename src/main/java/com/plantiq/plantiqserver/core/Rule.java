@@ -99,9 +99,10 @@ public abstract class Rule {
 
                 boolean others = first =='@';
 
+                boolean option = first =='?';
                 //if not is active then we trim the "!" from the start of
                 //the rule.
-                if(not || others){
+                if(not || others || option){
                     rule = rule.substring(1);
                 }
 
@@ -122,6 +123,8 @@ public abstract class Rule {
 
                 //Next we need to ensure that for any key that has a variable it is valid input.
                 //if they are missing a variable but contain the ":", then
+
+
                 if(rule.equals("min:")){
                     rule = "min";
                 }
@@ -140,199 +143,209 @@ public abstract class Rule {
                     rule = "enum";
                 }
 
+
                 //Now we have performed all our pre-checks and split our data into variable
                 //and rule we can then switch between the rules and perform our checks.
-                switch (rule) {
+                if (option==false || !provided.isBlank()) {
 
-                    //If the rule is required, validate as follows and set the error if false.
-                    case "required" -> {
-                        if (provided.isBlank()) {
-                            ruleErrors.put(rule,"Validation failed for key " + key);
-                            outcome.set(false);
+
+                    switch (rule) {
+
+                        //If the rule is required, validate as follows and set the error if false.
+                        case "required" -> {
+                            if (provided.isBlank()) {
+                                ruleErrors.put(rule, "Validation failed for key " + key);
+                                outcome.set(false);
+                            }
                         }
-                    }
 
-                    //If the rule is min, validate as follows and set the error if false.
-                    //Note: for rules with variables this is where we validate their values.
-                    case "min"-> {
 
-                            if(!Rule.isInteger(provided)){
+                        //If the rule is min, validate as follows and set the error if false.
+                        //Note: for rules with variables this is where we validate their values.
+                        case "min" -> {
+
+                            if (!Rule.isInteger(provided)) {
 
                                 //if the provided value is not an integer run the min length
                                 if (Integer.parseInt(variable) > provided.length()) {
-                                    ruleErrors.put(rule,"Provided value should be at least "+variable+" characters long");
+                                    ruleErrors.put(rule, "Provided value should be at least " + variable + " characters long");
                                     outcome.set(false);
                                 }
-                            }else {
+                            } else {
 
                                 //Else if the provide value is an integer the actual size
-                              if(Integer.parseInt(variable) > Integer.parseInt(provided)){
-                                  ruleErrors.put(rule,"Provided value should be at least "+variable);
-                                  outcome.set(false);
-                              }
-
-                            }
-                    }
-
-                    //If the rule is max, validate as follows and set the error if false.
-                    //Note: for rules with variables this is where we validate their values.
-                    case "max"->{
-                        if(!Rule.isInteger(provided)){
-
-                            //if the provided value is not an integer run the min length
-                            if (Integer.parseInt(variable) < provided.length()) {
-                                ruleErrors.put(rule,"Provided value should be no more than "+variable+" characters long");
-                                outcome.set(false);
-                            }
-                        }else {
-
-                            //Else if the provide value is an integer the actual size
-                            if(Integer.parseInt(variable) < Integer.parseInt(provided)){
-                                ruleErrors.put(rule,"Provided value should not exceed "+variable);
-                                outcome.set(false);
-                            }
-
-                        }
-                    }
-
-                    //If the rule is regex, validate as follows and set the error if false.
-
-                    //Note:
-
-                    //Currently we only have 1 regex validation type called email, more can be added
-                    //as needed by the project.
-                    case "regex"->{
-
-                        if(!variable.equals("email")){
-                            System.out.println("[RULE] Cannot validate 'regex:x', variable must be a valid regex pattern");
-                        }else{
-                            Matcher matcher = emailPattern.matcher(provided);
-                            if(!matcher.matches()){
-                                ruleErrors.put(rule,"Validation failed for key " + key);
-                                outcome.set(false);
-                            }
-                        }
-
-                    }
-
-                    case "range"-> {
-
-                        String var = variable.replace('[', 'S');
-                        String[] type = var.split("S");
-
-                        if(!provided.contains(",")){
-                            ruleErrors.put(rule, "Invalid "+type[0]+" range provided, values must be provided as [x,y]");
-                            outcome.set(false);
-
-                        }else if(provided.split(",").length != 2){
-                            ruleErrors.put(rule, "Invalid "+type[0]+" range provided, values must be provided as [x,y]");
-                            outcome.set(false);
-
-                        }else{
-
-                            switch (type[0]) {
-                                case "float" -> {
-                                    boolean result = Rule.validateRange(provided, "float");
-                                    if (!result) {
-                                        ruleErrors.put(rule, "Invalid "+type[0]+" range provided, values must be of correct type '"+provided+"'");
-                                        outcome.set(false);
-                                    }
+                                if (Integer.parseInt(variable) > Integer.parseInt(provided)) {
+                                    ruleErrors.put(rule, "Provided value should be at least " + variable);
+                                    outcome.set(false);
                                 }
-                                case "integer" -> {
-                                    boolean result = Rule.validateRange(provided, "integer");
-                                    if (!result) {
-                                        ruleErrors.put(rule, "Invalid "+type[0]+" range provided, values must be of correct type '"+provided+"'");
-                                        outcome.set(false);
-                                    }
+
+                            }
+                        }
+
+                        //If the rule is max, validate as follows and set the error if false.
+                        //Note: for rules with variables this is where we validate their values.
+                        case "max" -> {
+                            if (!Rule.isInteger(provided)) {
+
+                                //if the provided value is not an integer run the min length
+                                if (Integer.parseInt(variable) < provided.length()) {
+                                    ruleErrors.put(rule, "Provided value should be no more than " + variable + " characters long");
+                                    outcome.set(false);
+                                }
+                            } else {
+
+                                //Else if the provide value is an integer the actual size
+                                if (Integer.parseInt(variable) < Integer.parseInt(provided)) {
+                                    ruleErrors.put(rule, "Provided value should not exceed " + variable);
+                                    outcome.set(false);
+                                }
+
+                            }
+                        }
+
+                        //If the rule is regex, validate as follows and set the error if false.
+
+                        //Note:
+
+                        //Currently we only have 1 regex validation type called email, more can be added
+                        //as needed by the project.
+                        case "regex" -> {
+
+                            if (!variable.equals("email")) {
+                                System.out.println("[RULE] Cannot validate 'regex:x', variable must be a valid regex pattern");
+                            } else {
+                                Matcher matcher = emailPattern.matcher(provided);
+                                if (!matcher.matches()) {
+                                    ruleErrors.put(rule, "Validation failed for key " + key);
+                                    outcome.set(false);
                                 }
                             }
 
                         }
 
-                    }
+                        case "range" -> {
 
-                    case "enum"->{
+                            String var = variable.replace('[', 'S');
+                            String[] type = var.split("S");
 
-                        if(!Rule.isSortType(provided)){
-                            ruleErrors.put(rule,"Invalid sort type provided, sort must match ASC, DESC");
-                            outcome.set(false);
-                        }
+                            if (!provided.contains(",")) {
+                                ruleErrors.put(rule, "Invalid " + type[0] + " range provided, values must be provided as [x,y]");
+                                outcome.set(false);
 
-                    }
+                            } else if (provided.split(",").length != 2) {
+                                ruleErrors.put(rule, "Invalid " + type[0] + " range provided, values must be provided as [x,y]");
+                                outcome.set(false);
 
-                    //If the rule is integer, validate using our isInteger helper method.
-                    case "integer"->{
+                            } else {
 
-                        if(!Rule.isInteger(provided)){
-                            ruleErrors.put(rule,"Invalid type provided, input must be a valid integer");
-                            outcome.set(false);
-                        }
+                                switch (type[0]) {
+                                    case "float" -> {
+                                        boolean result = Rule.validateRange(provided, "float");
+                                        if (!result) {
+                                            ruleErrors.put(rule, "Invalid " + type[0] + " range provided, values must be of correct type '" + provided + "'");
+                                            outcome.set(false);
+                                        }
+                                    }
+                                    case "integer" -> {
+                                        boolean result = Rule.validateRange(provided, "integer");
+                                        if (!result) {
+                                            ruleErrors.put(rule, "Invalid " + type[0] + " range provided, values must be of correct type '" + provided + "'");
+                                            outcome.set(false);
+                                        }
+                                    }
+                                }
 
-                    }
-
-                    //If the rule is a float, validate using our isFloat helper method.
-                    case "float"->{
-
-                        if(!Rule.isFloat(provided)){
-                            ruleErrors.put(rule,"Invalid type provided, input must be a valid float");
-                            outcome.set(false);
-                        }
-
-                    }
-                    //If the rule is unique, validate using our database to ensure the
-                    //value provided is unique.
-                    case "unique"->{
-
-                        //Check to see if we have a provided value, if not then don't proceed.
-                        if(provided.isEmpty()){
-                            ruleErrors.put(rule,"Validation must have a value that is not null");
-                            outcome.set(false);
-                        }{
-
-                            //declare our column and table name variables
-                            String column = "";
-                            String table = "";
-
-                            //check to ensure we have both provided and split them via the "."
-                            if(variable.contains(".")){
-                                String[] result = variable.split("\\.");
-
-                                column = result[1];
-                                table = result[0];
                             }
 
-                            //query the database for the result
-                            ArrayList<HashMap<String, String>> result = Database.query("SELECT * FROM [dbo].[" + table + "] WHERE " + column + "='" + provided + "'");
+                        }
 
-                            //if the result size is more than 0 then the value is taken, else it's free!
-                            if(!not){
+                        case "enum" -> {
 
-                                if (result.size() > 0) {
+                            if (!Rule.isSortType(provided)) {
+                                ruleErrors.put(rule, "Invalid sort type provided, sort must match ASC, DESC");
+                                outcome.set(false);
+                            }
 
-                                    if(others){
+                        }
 
-                                        if(!result.get(0).get(column).equals(Gate.getCurrentUser().getValue(column))){
+                        //If the rule is integer, validate using our isInteger helper method.
+                        case "integer" -> {
+
+                            if (!Rule.isInteger(provided)) {
+                                ruleErrors.put(rule, "Invalid type provided, input must be a valid integer");
+                                outcome.set(false);
+                            }
+
+                        }
+
+                        //If the rule is a float, validate using our isFloat helper method.
+                        case "float" -> {
+
+                            if (!Rule.isFloat(provided)) {
+                                ruleErrors.put(rule, "Invalid type provided, input must be a valid float");
+                                outcome.set(false);
+                            }
+
+                        }
+                        //If the rule is unique, validate using our database to ensure the
+                        //value provided is unique.
+                        case "unique" -> {
+
+                            //Check to see if we have a provided value, if not then don't proceed.
+                            if (provided.isEmpty()) {
+                                ruleErrors.put(rule, "Validation must have a value that is not null");
+                                outcome.set(false);
+                            }
+                            {
+
+                                //declare our column and table name variables
+                                String column = "";
+                                String table = "";
+
+                                //check to ensure we have both provided and split them via the "."
+                                if (variable.contains(".")) {
+                                    String[] result = variable.split("\\.");
+
+                                    column = result[1];
+                                    table = result[0];
+                                }
+
+                                //query the database for the result
+                                ArrayList<HashMap<String, String>> result = Database.query("SELECT * FROM [dbo].[" + table + "] WHERE " + column + "='" + provided + "'");
+
+                                //if the result size is more than 0 then the value is taken, else it's free!
+                                if (!not) {
+
+                                    if (result.size() > 0) {
+
+                                        if (others) {
+
+                                            if (!result.get(0).get(column).equals(Gate.getCurrentUser().getValue(column))) {
+                                                ruleErrors.put(rule, "value is already taken and is not unique");
+                                                outcome.set(false);
+                                            }
+
+                                        } else {
                                             ruleErrors.put(rule, "value is already taken and is not unique");
                                             outcome.set(false);
                                         }
 
-                                    }else{
-                                        ruleErrors.put(rule, "value is already taken and is not unique");
+                                    }
+                                } else {
+                                    if (result.size() == 0) {
+                                        ruleErrors.put(rule, "value does not exist");
                                         outcome.set(false);
                                     }
+                                }
 
-                                }
-                            }else{
-                                if (result.size() == 0) {
-                                    ruleErrors.put(rule, "value does not exist");
-                                    outcome.set(false);
-                                }
+
                             }
 
                         }
 
                     }
                 }
+
 
                 //Lastly before we return the outcome we check if this key has had
                 //any errors, if no we do nothing, else if an error is present
@@ -342,6 +355,8 @@ public abstract class Rule {
                 }
             });
         });
+
+
 
         //Finally at the end of this process we return the outcome value
         //this will always be true unless a validation rule fails.
