@@ -75,9 +75,7 @@ public class Range extends Model {
         ranges.put("range_humidity", DEFAULT_HUMIDITY_RANGE);
         ranges.put("range_light", DEFAULT_LIGHT_RANGE);
         ranges.put("range_moisture", DEFAULT_MOISTURE_RANGE);
-        boolean result =Range.insert("Range",ranges);
-        System.out.println("ao +"+result);
-        return result;
+        return Range.insert("Range",ranges);
     }
 
 }
