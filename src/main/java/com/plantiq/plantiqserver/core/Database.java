@@ -38,7 +38,7 @@ public class Database{
 
         try{
 
-            connection = DriverManager.getConnection("jdbc:sqlserver://db-plantiq.database.windows.net:1433;database=plantiq-backend;user=spring@db-plantiq;password=7p18W%oT9TTr;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30");
+            connection = DriverManager.getConnection(PlantIqServerApplication.databasePassword);
 
             Statement statement = connection.createStatement();
 
