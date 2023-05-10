@@ -83,20 +83,29 @@ public class AuthenticationController {
 		return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
 	}
 
+	//@GetMapping("/validate/{token}") is where the session is validated. If the session is valid the
+	//user will be able to continue navigating, otherwise an error will be thrown.
 	@GetMapping("/validate/{token}")
 	public ResponseEntity<HashMap<String, Object>> validate(@PathVariable("token") String token) {
-
+		//Create our response object, this is returned as JSON.
 		HashMap<String, Object> response = new HashMap<>();
 
+		//Retrieving the session from the database where the token matches
+		//the token the user is trying to use to access the website.
 		Session session = Session.collection().where("token", token).orderBy("token").getFirst();
-
+		//If no session was found, the token must be invalid.
+		//A false outcome and an error message will be returned
 		if (session == null) {
 			response.put("outcome", false);
 			response.put("errors", "Invalid token provided!");
 			return new ResponseEntity<>(response, HttpStatusCode.valueOf(401));
 		}
+		//Variable that will store the html status code
 		int outcome;
-
+		//If the session found is expired, this session will be deleted from the database.
+		//An error message and a false outcome will then be returned and the status code
+		//will be set to 401. If the session is not expired, a true outcome will be returned,
+		//and the html status code will be 200.
 		if (session.getExpiry() < TimeService.now()) {
 			session.delete("token");
 			response.put("outcome", false);
@@ -138,7 +147,7 @@ public class AuthenticationController {
 		data.put("isAdministrator", "0");
 		data.put("registrationDate", TimeService.now().toString());
 		data.put("isActivated","0");
-
+		//Variable that will store the html status code
 		int outcome;
 		//If statement to check if the user record has been successfully
 		//added to the database. If so, the response will contain a
