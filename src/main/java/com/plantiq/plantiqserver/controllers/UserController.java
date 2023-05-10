@@ -22,7 +22,7 @@ import java.util.HashMap;
 
 //---------------------------------Controller Class---------------------------------
 //The UserController class will be serving all the endpoints that deal user's info.
-//here it will be possible to retrieve the information regarding a single user, a
+//Here it will be possible to retrieve the information regarding a single user, a
 //group of users and modify their data.
 //----------------------------------------------------------------------------------
 
@@ -75,13 +75,13 @@ public class UserController {
             //with null, we need to check if these have been submitted
             //in the request.
             HashMap<String,Object> data = new HashMap<>();
-            if(request.getParameter("email")!=null)
+            if(request.getParameter("email")!=null && request.getParameter("email")!="")
                 data.put("email",request.getParameter("email"));
-            if(request.getParameter("firstname")!=null)
+            if(request.getParameter("firstname")!=null && request.getParameter("firstname")!="")
                 data.put("firstname",request.getParameter("firstname"));
-            if(request.getParameter("surname")!=null)
+            if(request.getParameter("surname")!=null && request.getParameter("surname")!="")
                 data.put("surname",request.getParameter("surname"));
-            if(request.getParameter("password")!=null)
+            if(request.getParameter("password")!=null && request.getParameter("password")!="")
                 data.put("password",HashService.generateSHA1(PlantIqServerApplication.passwordPepper+request.getParameter("password")));
 
             //Updating the entity User with the new data.
