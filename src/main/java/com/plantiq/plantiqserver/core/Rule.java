@@ -93,16 +93,17 @@ public abstract class Rule {
                 //us to detect a not call.
                 char first = rule.charAt(0);
 
-                //now we set a boolean to indicate if we are running in
-                //not mode.
+                //Now we set a boolean to indicate if there is a tag
+
+                //Not Mode Tag
                 boolean not = first == '!';
 
                 boolean others = first =='@';
-
-                boolean option = first =='?';
-                //if not is active then we trim the "!" from the start of
+                //Optional Tag
+                boolean optional = first =='?';
+                //if not is active then we trim the tag from the start of
                 //the rule.
-                if(not || others || option){
+                if(not || others || optional){
                     rule = rule.substring(1);
                 }
 
@@ -123,8 +124,6 @@ public abstract class Rule {
 
                 //Next we need to ensure that for any key that has a variable it is valid input.
                 //if they are missing a variable but contain the ":", then
-
-
                 if(rule.equals("min:")){
                     rule = "min";
                 }
@@ -144,11 +143,11 @@ public abstract class Rule {
                 }
 
 
-                //Now we have performed all our pre-checks and split our data into variable
-                //and rule we can then switch between the rules and perform our checks.
-                if (option==false || !provided.isBlank()) {
-
-
+                //If Statement to check if the field is optional. If it is, the rules will apply only
+                //if the input is not blank, while if not optional, the rule will always apply.
+                if (optional==false || !provided.isBlank()) {
+                    //Now we have performed all our pre-checks and split our data into variable
+                    //and rule we can then switch between the rules and perform our checks.
                     switch (rule) {
 
                         //If the rule is required, validate as follows and set the error if false.
@@ -223,21 +222,25 @@ public abstract class Rule {
 
                         }
 
+                        //If the rule is a range, validate as follows and set the error if false.
                         case "range" -> {
 
                             String var = variable.replace('[', 'S');
                             String[] type = var.split("S");
-
+                            //If there is no ',' the format of the range is invalid.
                             if (!provided.contains(",")) {
                                 ruleErrors.put(rule, "Invalid " + type[0] + " range provided, values must be provided as [x,y]");
                                 outcome.set(false);
 
-                            } else if (provided.split(",").length != 2) {
+                            }
+                            //If there is more lenght is not 2 the ranges has the wrong amount of values.
+                            else if (provided.split(",").length != 2) {
                                 ruleErrors.put(rule, "Invalid " + type[0] + " range provided, values must be provided as [x,y]");
                                 outcome.set(false);
 
                             } else {
-
+                                //The range is in the correct format. Now we need to determine if it is
+                                //an integer or a float range.
                                 switch (type[0]) {
                                     case "float" -> {
                                         boolean result = Rule.validateRange(provided, "float");
@@ -258,9 +261,9 @@ public abstract class Rule {
                             }
 
                         }
-
+                        //If the rule is enum, validate as follows and set the error if false.
                         case "enum" -> {
-
+                            //The sorting type must be one of the two option : ASC or DESC.
                             if (!Rule.isSortType(provided)) {
                                 ruleErrors.put(rule, "Invalid sort type provided, sort must match ASC, DESC");
                                 outcome.set(false);
@@ -418,6 +421,7 @@ public abstract class Rule {
     //                      is Sort Type Method                        //
     //-----------------------------------------------------------------//
 
+    //This method will validate if the input is a valid sorting type.
     public static boolean isSortType(String value){
 
         System.out.println("Checking Sort Value = "+value);
@@ -433,6 +437,11 @@ public abstract class Rule {
         return outcome;
     }
 
+    //-----------------------------------------------------------------//
+    //                     Validate Range Method                       //
+    //-----------------------------------------------------------------//
+
+    //This method will ensure if the inputted range is valid.
     public static boolean validateRange(String value,String type){
         System.out.println(value);
 
@@ -441,7 +450,8 @@ public abstract class Rule {
         }
         String[] split = value.split(",");
         boolean outcome = true;
-
+        //The range can be either integer or float,
+        //so we must validate both.
         switch(type){
             case "integer" ->{
                 if(!Rule.isInteger(split[0])){
@@ -464,7 +474,7 @@ public abstract class Rule {
     }
 
     //-----------------------------------------------------------------//
-    //                          abort method                           //
+    //                          Abort method                           //
     //-----------------------------------------------------------------//
 
     //This method will build the aborted response object and return it

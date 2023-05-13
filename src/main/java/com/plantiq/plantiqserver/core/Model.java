@@ -93,7 +93,10 @@ public class Model {
     //                     DELETE METHOD                    |
     //------------------------------------------------------|
 
-    //
+    //The model class has 3 methods to delete records for the database.
+    //The following delete method is used to delete a record by its ID.
+    //It requires not parameter since the ID will be stored when creating
+    // the object to delete.
     public boolean delete(){
 
         String query = "DELETE FROM [dbo].["+this.data.get("_table")+"] WHERE id='"+this.data.get("id")+"'";
@@ -102,6 +105,12 @@ public class Model {
         return Database.getAndResetRowsAffected() != 0;
     }
 
+    //------------------------------------------------------|
+    //                     DELETE METHOD                    |
+    //------------------------------------------------------|
+
+    //This second delete method is slightly more general. It can be used
+    //to delete
     public void delete(String column){
 
         String query = "DELETE FROM [dbo].["+this.data.get("_table")+"] WHERE "+column+"='"+this.data.get(column)+"'";
