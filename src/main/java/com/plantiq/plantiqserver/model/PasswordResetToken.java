@@ -32,7 +32,6 @@ public class PasswordResetToken extends Model {
         super(data);
     }
 
-
     //Get token method
     public String token(){
         return (String) this.data.get("token");

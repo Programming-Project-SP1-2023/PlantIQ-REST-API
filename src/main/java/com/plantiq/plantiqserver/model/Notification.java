@@ -54,4 +54,8 @@ public class Notification extends Model{
     //Get value method
     public float getValue(){ return Float.parseFloat((String)this.data.get("value"));}
 
+    //Get Sensor ID Method
+    public String  getSensorID(){
+        return (String)this.data.get("sensor_id");
+    }
 }
