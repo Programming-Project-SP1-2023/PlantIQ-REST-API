@@ -3,15 +3,14 @@ package com.plantiq.plantiqserver.rules;
 import com.plantiq.plantiqserver.core.Rule;
 
 import java.util.ArrayList;
-//Class used to determine the Rules of a Session
-
 // -----------------------------------------------------------------------------------|
 //                                  LIST OF RULES                                     |
 // -----------------------------------------------------------------------------------|
 //                                                                                    |
-//  A) IT IS REQUIRED                                                                 |
-//  B) LENGTH OF THE TOKEN MUST BE OF 40 CHARACTERS, NOT MORE NOR LESS                |
-//  C) TOKEN MUST NOT BE UNIQUE, MEANING THAT IT MUST MATCH A HASH IN THE DATABASE    |
+//  A) Required -> Validates that the token is present and not null.                  |
+//  B) Min/Max:40 -> Validates the name is exactly 40 characters long.                |
+//  C) !unique:Session.token -> Validates that the token is not unique but has a match|
+//                              within the database.                                  |
 //                                                                                    |
 //------------------------------------------------------------------------------------|
 

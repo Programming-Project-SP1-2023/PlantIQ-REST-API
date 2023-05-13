@@ -160,7 +160,7 @@ public class SmartHubController {
                         Email email = new Email();
                         email.setUser(User.collection().where("user_id", userID).getFirst())
                                 .setHtmlTemplate("/emails/outOfRangeNotification.html")
-                                .setSubject("Plant out of Range")
+                                .setSubject("Plant Values out of Range")
                                 .setVariables(data)
                                 .send();
                         response.put("outcome", true);
