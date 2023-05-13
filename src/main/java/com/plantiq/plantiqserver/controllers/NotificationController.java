@@ -286,7 +286,7 @@ public class NotificationController {
         data.put("humidity", Range.DEFAULT_HUMIDITY_RANGE);
         data.put("light", Range.DEFAULT_LIGHT_RANGE);
         data.put("moisture", Range.DEFAULT_MOISTURE_RANGE);
-        data.put("smarthub_id", request.getParameter(smarthubID));
+        data.put("smarthub_id", smarthubID);
         //Variable used to store the html status code.
         int outcome;
         //If the operation was successful, a true outcome will be returned
