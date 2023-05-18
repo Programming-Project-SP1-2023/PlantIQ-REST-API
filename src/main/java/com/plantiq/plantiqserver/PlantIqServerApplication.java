@@ -1,6 +1,7 @@
 package com.plantiq.plantiqserver;
 
 
+import com.plantiq.plantiqserver.secuirty.SqlSecurity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -39,8 +40,8 @@ public class PlantIqServerApplication {
 	}
 
 	public PlantIqServerApplication(){
-
 		PlantIqServerApplication.instance = this;
+		SqlSecurity.initialize();
 	}
 
 	public String getEmailUsername(){
