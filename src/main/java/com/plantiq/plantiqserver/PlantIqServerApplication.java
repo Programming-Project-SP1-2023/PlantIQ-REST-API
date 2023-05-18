@@ -43,10 +43,6 @@ public class PlantIqServerApplication {
 		PlantIqServerApplication.instance = this;
 	}
 
-	public String getDatabasePassword(){
-		return this.databaseConnectionLink;
-	}
-
 	public String getEmailUsername(){
 		return this.emailUsername;
 	}
