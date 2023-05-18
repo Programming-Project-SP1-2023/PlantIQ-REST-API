@@ -224,4 +224,83 @@ public class AdminController {
 
         return new ResponseEntity<>(response,HttpStatusCode.valueOf(200));
     }
+
+    @PatchMapping("/user/{id}/promote")
+    public ResponseEntity<HashMap<String,Object>> promoteAccountToAdmin(@PathVariable("id") String id, HttpServletRequest request){
+
+        HashMap<String,Object> response = new HashMap<>();
+
+        if(!Gate.authorizedAsAdmin(request)){
+            return Gate.abortUnauthorized();
+        }
+
+        User user = User.collection().where("id",id).getFirst();
+
+        if(user == null){
+            response.put("outcome",false);
+            response.put("message","User account not found");
+            return new ResponseEntity<>(response, HttpStatusCode.valueOf(404));
+        }
+
+        int outcome = 200;
+
+        if(user.isAdministrator()){
+            response.put("outcome",true);
+            response.put("message","User account is already an administrator");
+        }else{
+            HashMap<String,Object> data = new HashMap<>();
+            data.put("isAdministrator","1");
+
+            if(user.update(data)){
+                response.put("outcome",true);
+                response.put("message","Successfully promoted user to administrator");
+            }else{
+                outcome = 500;
+                response.put("message","Failed to promote user, please contact support");
+            }
+        }
+
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
+    }
+
+
+    @PatchMapping("/user/{id}/demote")
+    public ResponseEntity<HashMap<String,Object>> demoteAdminAccount(@PathVariable("id") String id, HttpServletRequest request){
+
+        HashMap<String,Object> response = new HashMap<>();
+
+        if(!Gate.authorizedAsAdmin(request)){
+            return Gate.abortUnauthorized();
+        }
+
+        User user = User.collection().where("id",id).getFirst();
+
+        if(user == null){
+            response.put("outcome",false);
+            response.put("message","User account not found");
+            return new ResponseEntity<>(response, HttpStatusCode.valueOf(404));
+        }
+
+
+        int outcome = 200;
+
+        if(!user.isAdministrator()){
+            response.put("outcome",true);
+            response.put("message","User account is not currently a administrator");
+        }else{
+            HashMap<String,Object> data = new HashMap<>();
+            data.put("isAdministrator","0");
+
+            if(user.update(data)){
+                response.put("outcome",true);
+                response.put("message","Successfully demoted administrator to user");
+            }else{
+                outcome = 500;
+                response.put("message","Failed to demote user, please contact support");
+            }
+        }
+
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
+    }
+
 }
