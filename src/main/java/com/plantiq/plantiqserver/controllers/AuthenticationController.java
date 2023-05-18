@@ -43,7 +43,7 @@ public class AuthenticationController {
 
 		//Else if we reach this stage of the code then proceed to
 		//lookup the user from the database.
-		User user = User.collection().where("email", request.getParameter("email")).where("password", HashService.generateSHA1(PlantIqServerApplication.passwordPepper+request.getParameter("password"))).getFirst();
+		User user = User.collection().where("email", request.getParameter("email")).where("password", HashService.generateSHA1(PlantIqServerApplication.getInstance().getPasswordPepper()+request.getParameter("password"))).getFirst();
 		int status;
 		//If else statement to check if the user is not null and has an activated account
 		//If they are eligible for a session, this will be created and the html status code
@@ -143,7 +143,7 @@ public class AuthenticationController {
 		data.put("email", request.getParameter("email"));
 		data.put("firstname", request.getParameter("firstname"));
 		data.put("surname", request.getParameter("surname"));
-		data.put("password", HashService.generateSHA1(PlantIqServerApplication.passwordPepper+request.getParameter("password")));
+		data.put("password", HashService.generateSHA1(PlantIqServerApplication.getInstance().getPasswordPepper()+request.getParameter("password")));
 		data.put("isAdministrator", "0");
 		data.put("registrationDate", TimeService.now().toString());
 		data.put("isActivated","0");
@@ -387,7 +387,7 @@ public class AuthenticationController {
 		//Creation of the structure the data must follow to enter the database.
 		//The password is saved after the addition of pepper being hashed.
 		HashMap<String, Object> data = new HashMap<>();
-		data.put("password",HashService.generateSHA1(PlantIqServerApplication.passwordPepper+request.getParameter("password")));
+		data.put("password",HashService.generateSHA1(PlantIqServerApplication.getInstance().getPasswordPepper()+request.getParameter("password")));
 		//If the query successfully updates the record, and 200 html
 		//status code will be set, and a confirmation message will be
 		//returned. If no rows were affected, the html status code will
