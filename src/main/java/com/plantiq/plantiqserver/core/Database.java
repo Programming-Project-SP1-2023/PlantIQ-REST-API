@@ -28,6 +28,7 @@ public class Database{
     //It will initially establish the connection with the database, to then
     //move on executed the query and retrieving the data.
     public static ArrayList<HashMap<String, String>> query(String query){
+
         //This array will contain each work of the query
         String[] queryData = query.split(" ");
 
@@ -37,8 +38,7 @@ public class Database{
         ResultSet resultSet = null;
 
         try{
-
-            connection = DriverManager.getConnection(PlantIqServerApplication.databasePassword);
+            connection = DriverManager.getConnection(PlantIqServerApplication.getInstance().getDatabaseConnectionLink());
 
             Statement statement = connection.createStatement();
 
