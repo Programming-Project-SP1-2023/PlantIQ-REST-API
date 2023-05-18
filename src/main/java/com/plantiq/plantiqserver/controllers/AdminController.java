@@ -137,4 +137,59 @@ public class AdminController {
 
         return new ResponseEntity<>(response,HttpStatusCode.valueOf(outcome));
     }
+
+    @GetMapping("/user/{id}/smarthomehub/all")
+    public ResponseEntity<HashMap<String,Object>> getSmartHubsForUser(HttpServletRequest request, @PathVariable String id){
+
+        HashMap<String,Object> response = new HashMap<>();
+
+        if(!Gate.authorizedAsAdmin(request)){
+            return Gate.abortUnauthorized();
+        }
+
+        User user = User.collection().where("id",id).getFirst();
+
+        if(user == null){
+            response.put("outcome",false);
+            response.put("message","User not found");
+            return new ResponseEntity<>(response,HttpStatusCode.valueOf(404));
+        }
+
+        response.put("outcome",true);
+        response.put("list",SmartHomeHub.collection().where("user_id",id).get());
+
+        return new ResponseEntity<>(response,HttpStatusCode.valueOf(200));
+    }
+    @DeleteMapping("/user/{id}/smarthomehub/{hub_id}")
+    public ResponseEntity<HashMap<String,Object>> deleteSmartHub(HttpServletRequest request, @PathVariable("id") String id, @PathVariable String hub_id){
+        HashMap<String,Object> response = new HashMap<>();
+
+        if(!Gate.authorizedAsAdmin(request)){
+            return Gate.abortUnauthorized();
+        }
+
+        User user = User.collection().where("id",id).getFirst();
+
+        if(user == null){
+            response.put("outcome",false);
+            response.put("message","User not found");
+            return new ResponseEntity<>(response,HttpStatusCode.valueOf(404));
+        }
+
+        SmartHomeHub hub = SmartHomeHub.collection().where("user_id",id).where("id",hub_id).getFirst();
+
+        if(hub == null){
+            response.put("outcome",false);
+            response.put("message","Smart home hub not found");
+            return new ResponseEntity<>(response,HttpStatusCode.valueOf(404));
+        }
+
+        PlantData.deleteAll("PlantData","smarthomehub_id",hub.getId());
+        hub.delete();
+
+        response.put("outcome",true);
+        response.put("message","Smart home hub deleted");
+
+        return new ResponseEntity<>(response,HttpStatusCode.valueOf(200));
+    }
 }
