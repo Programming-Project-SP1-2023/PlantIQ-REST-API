@@ -32,7 +32,12 @@ public class Email {
     public Email(){
         this.variables = new HashMap<>();
         this.message = new MailMessage();
-        this.message.setFrom(new MailAddress("help-plantiq@outlook.com", "PlantIQ Help", false));
+        this.message.setFrom(
+                new MailAddress(
+                        PlantIqServerApplication.getInstance().getEmailUsername(),
+                        PlantIqServerApplication.getInstance().getEmailDisplayName(),
+                false)
+        );
     }
 
     //This method is used to detect the user that will be receiving the email.
@@ -107,10 +112,10 @@ public class Email {
             SmtpClient client = new SmtpClient();
 
             // Specify your mailing host server, Username, Password, Port
-            client.setHost("smtp-mail.outlook.com");
-            client.setUsername("help-plantiq@outlook.com");
-            client.setPassword(PlantIqServerApplication.emailPassword);
-            client.setPort(587);
+            client.setHost(PlantIqServerApplication.getInstance().getEmailHost());
+            client.setUsername(PlantIqServerApplication.getInstance().getEmailUsername());
+            client.setPassword(PlantIqServerApplication.getInstance().getEmailPassword());
+            client.setPort(PlantIqServerApplication.getInstance().getEmailPort());
             client.setSecurityOptions(SecurityOptions.Auto);
 
             try
