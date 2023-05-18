@@ -1,15 +1,21 @@
 package com.plantiq.plantiqserver.controllers;
 
+import com.plantiq.plantiqserver.PlantIqServerApplication;
 import com.plantiq.plantiqserver.core.Gate;
 import com.plantiq.plantiqserver.core.ModelCollection;
 import com.plantiq.plantiqserver.core.Sort;
+import com.plantiq.plantiqserver.model.PlantData;
+import com.plantiq.plantiqserver.model.PlantName;
+import com.plantiq.plantiqserver.model.SmartHomeHub;
 import com.plantiq.plantiqserver.model.User;
 import com.plantiq.plantiqserver.rules.GetAllRule;
+import com.plantiq.plantiqserver.service.HashService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @RestController
@@ -60,7 +66,7 @@ public class AdminController {
     //of the user's entity. It is possible to refine the search by limiting,
     //offsetting and sorting the returned records.
     @GetMapping("/user/all")
-    public ResponseEntity<HashMap<String, Object>> all(HttpServletRequest request) {
+    public ResponseEntity<HashMap<String, Object>> getAllUsers(HttpServletRequest request) {
         //Create our response object, this is returned as JSON.
         HashMap<String, Object> response = new HashMap<>();
         //Authenticate the user with the gate service
@@ -93,4 +99,42 @@ public class AdminController {
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
     }
 
+    @DeleteMapping("/user/{id}")
+    public ResponseEntity<HashMap<String,Object>> deleteUser(HttpServletRequest request,@PathVariable("id") String id){
+
+        HashMap<String, Object> response = new HashMap<>();
+
+        if(!Gate.authorizedAsAdmin(request)){
+            return Gate.abortUnauthorized();
+        }
+
+        if(!HashService.generateSHA1(PlantIqServerApplication.getInstance().getPasswordPepper()+request.getParameter("password")).equals(Gate.getCurrentUser().getPassword())){
+            response.put("outcome",false);
+            response.put("message","Failed to delete user, please enter your correct password");
+            return new ResponseEntity<>(response,HttpStatusCode.valueOf(400));
+        }
+
+        User user = User.collection().where("id",id).getFirst();
+
+        if(user == null){
+            response.put("outcome",false);
+            response.put("message","User not found");
+            return new ResponseEntity<>(response,HttpStatusCode.valueOf(404));
+        }
+
+        ArrayList<SmartHomeHub> hubs = SmartHomeHub.collection().where("user_id",user.getId()).get();
+        hubs.forEach((n)->{
+            PlantData.deleteAll("PlantData","smarthomehub_id",n.getId());
+            n.delete();
+       });
+
+        PlantName.deleteAll("PlantName","user_id",id);
+
+        user.delete();
+        response.put("outcome",true);
+        response.put("message","User account and all data deleted");
+        int outcome = 200;
+
+        return new ResponseEntity<>(response,HttpStatusCode.valueOf(outcome));
+    }
 }
