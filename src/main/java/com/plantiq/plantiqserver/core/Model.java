@@ -1,6 +1,6 @@
 package com.plantiq.plantiqserver.core;
 
-import com.plantiq.plantiqserver.secuirty.Sql;
+import com.plantiq.plantiqserver.secuirty.SqlSecurity;
 
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -26,7 +26,7 @@ public class Model {
 
         //Sanitize Input
         data.forEach((k,v)->{
-            data.put(k, Sql.sanitize(v.toString()));
+            data.put(k, SqlSecurity.sanitize(v.toString()));
         });
 
         //Create our query string and initialize it to the starting value
@@ -70,7 +70,7 @@ public class Model {
 
         //Sanitize Input
         data.forEach((k,v)->{
-            data.put(k, Sql.sanitize(v.toString()));
+            data.put(k, SqlSecurity.sanitize(v.toString()));
         });
 
         //Create our query string and initialize it to the starting value
