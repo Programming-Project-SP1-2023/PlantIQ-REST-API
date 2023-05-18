@@ -1,5 +1,7 @@
 package com.plantiq.plantiqserver.core;
 
+import com.plantiq.plantiqserver.secuirty.Sql;
+
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -21,7 +23,13 @@ public class Model {
     //This method accepts a hash map made up of attributes and values
     //and will generate an SQL query to insert that data into the database
     public static boolean insert(String table,HashMap<String,Object> data){
-    //Create our query string and initialize it to the starting value
+
+        //Sanitize Input
+        data.forEach((k,v)->{
+            data.put(k, Sql.sanitize(v.toString()));
+        });
+
+        //Create our query string and initialize it to the starting value
         StringBuilder query = new StringBuilder("INSERT INTO [dbo].["+table+"] (");
 
         //For each loop to add all the column names of the table into the query, with the correct SQL syntax
@@ -59,6 +67,11 @@ public class Model {
     //that the keys are present in the model object, if so
     //then it will build a query to update then
     public boolean update(HashMap<String,Object> data){
+
+        //Sanitize Input
+        data.forEach((k,v)->{
+            data.put(k, Sql.sanitize(v.toString()));
+        });
 
         //Create our query string and initialize it to the starting value
         StringBuilder query = new StringBuilder("UPDATE [dbo].["+this.data.get("_table")+"] SET");
