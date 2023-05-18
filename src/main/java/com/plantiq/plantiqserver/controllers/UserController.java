@@ -82,7 +82,7 @@ public class UserController {
             if(request.getParameter("surname")!=null && request.getParameter("surname")!="")
                 data.put("surname",request.getParameter("surname"));
             if(request.getParameter("password")!=null && request.getParameter("password")!="")
-                data.put("password",HashService.generateSHA1(PlantIqServerApplication.passwordPepper+request.getParameter("password")));
+                data.put("password",HashService.generateSHA1(PlantIqServerApplication.getInstance().getPasswordPepper()+request.getParameter("password")));
 
             //Updating the entity User with the new data.
             user.update(data);
