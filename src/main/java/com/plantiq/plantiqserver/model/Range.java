@@ -29,6 +29,59 @@ public class Range extends Model {
         return new ModelCollection<>(Range.class);
     }
 
+    public static HashMap<String,Object> evaluateWithSetValuesOrDefault(String id, HttpServletRequest request){
+
+        Range range = Range.collection().where("smarthub_id",id).getFirst();
+
+        if(range == null){
+            HashMap<String,Object> data = new HashMap<>();
+            data.put("range_humidity",Range.DEFAULT_HUMIDITY_RANGE);
+            data.put("range_light",Range.DEFAULT_LIGHT_RANGE);
+            data.put("range_temperature",Range.DEFAULT_TEMPERATURE_RANGE);
+            data.put("range_moisture",Range.DEFAULT_MOISTURE_RANGE);
+            range = new Range(data);
+        }
+
+        float temp = Float.parseFloat(request.getParameter("temperature"));
+        float light = Float.parseFloat(request.getParameter("light"));
+        float humid = Float.parseFloat(request.getParameter("humidity"));
+        float moisture = Float.parseFloat(request.getParameter("moisture"));
+
+        HashMap<String,Object> errors = new HashMap<>();
+
+        if(!range.isWithInRange(range.getRangeTemperature(),temp)){
+            errors.put("temperature",
+                    "<p>Temperature is out of range "+
+                    "<strong>"+temp+"c</strong><br>Its target range is "
+                    +range.getRangeTemperature()+" Celsius</p>");
+        }
+
+        if(!range.isWithInRange(range.getRangeLight(),light)){
+            errors.put("light",
+                    "<p>Light is out of range " +
+                            "<strong>"+light+"lm</strong>" +
+                            "<br>Its target range is "
+                            +range.getRangeLight()+" Luminus</p>");
+        }
+
+        if(!range.isWithInRange(range.getRangeHumidity(),humid)){
+            errors.put("humidity",
+                    "<p>Humidity is out of range " +
+                            "<strong>"+humid+"%</strong>" +
+                            "<br>Its target range is "
+                            +range.getRangeHumidity()+" Percent</p>");
+        }
+
+        if(!range.isWithInRange(range.getRangeHumidity(),humid)){
+            errors.put("moisture",
+                    "<p>Moisture is out of range " +
+                            "<strong>"+moisture+"%</strong>" +
+                            "<br>Its target range is "
+                            +range.getRangeMoisture()+" Percent</p>");
+        }
+
+        return errors;
+    }
 
     //|================================================|
     //|                  CLASS METHODS                 |
