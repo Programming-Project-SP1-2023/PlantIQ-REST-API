@@ -37,6 +37,7 @@ public class AwaitingRegistration extends Model {
     public String getId(){
         return (String)this.data.get("id");
     }
+
     //Get date method
     public int getDate(){
         return Integer.parseInt((String)this.data.get("date"));

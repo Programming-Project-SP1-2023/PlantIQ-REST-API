@@ -20,10 +20,10 @@ import java.util.ArrayList;
 //  C) Min -> Validates the offset is not less than 0.                                |
 //  D) Max -> Validates the offset is not greater than 100.                           |
 //                                                                                    |
-//  Sort By:                                                                           |
+//  Sort By:                                                                          |
 //  A) Required -> Validates the sorting value is present and not null.               |
-//  B) min:2 -> Validates the password is at least 2 characters long.                 |
-//  C) max:25 -> Validates the password is no larger than 25 characters long.         |
+//  B) min:2 -> Validates the sorting value is at least 2 characters long.            |
+//  C) max:25 -> Validates the sorting value is no larger than 25 characters long.    |
 //                                                                                    |
 //  Sort:                                                                             |
 //  A) Required -> Validates the email input is present and not null.                 |

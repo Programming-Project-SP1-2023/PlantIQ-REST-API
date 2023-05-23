@@ -4,6 +4,16 @@ import com.plantiq.plantiqserver.core.Rule;
 
 import java.util.ArrayList;
 
+// -----------------------------------------------------------------------------------|
+//                                  LIST OF RULES                                     |
+// -----------------------------------------------------------------------------------|
+//                                                                                    |
+//  Name:                                                                             |
+//  A) min:3 -> Validates the name is at least 3 characters long.                 |
+//  B) max:25 -> Validates the name is no larger than 25 characters long.         |
+//                                                                                    |
+//------------------------------------------------------------------------------------|
+
 public class UpdatePlantNameRule extends Rule {
     @Override
     protected void setup() {
