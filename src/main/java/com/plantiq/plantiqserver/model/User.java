@@ -62,6 +62,7 @@ public class User extends Model {
     public boolean isAdministrator(){
         return this.data.get("isAdministrator").equals("1");
     }
+
     //Method that returns if the user's account is activated or not
     public boolean isActivated(){
         return this.data.get("isActivated").equals("1");

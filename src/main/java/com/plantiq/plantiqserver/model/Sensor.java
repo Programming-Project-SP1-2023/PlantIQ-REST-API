@@ -39,14 +39,17 @@ public class Sensor extends Model {
     public String getId(){
         return (String)this.data.get("id");
     }
+
     //Get Name Method
     public String getName(){
         return (String)this.data.get("name");
     }
+
     //Get Location Method
     public String getLocation(){
         return (String)this.data.get("location");
     }
+
     //Get Registration Date Method
     public String getRegistrationDate(){
         return (String)this.data.get("registrationDate");

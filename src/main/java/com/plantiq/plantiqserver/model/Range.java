@@ -6,7 +6,7 @@ import com.plantiq.plantiqserver.core.ModelCollection;
 import java.util.HashMap;
 
 public class Range extends Model {
-
+    //Following are the 4 default healthy ranges for each field of a plant.
     public final static String DEFAULT_TEMPERATURE_RANGE = "4-29";
     public final static String DEFAULT_HUMIDITY_RANGE ="40-60";
     public final static String DEFAULT_LIGHT_RANGE ="8-16";
