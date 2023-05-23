@@ -120,9 +120,6 @@ public class Range extends Model {
         return (String)this.data.get("range_moisture");
     }
 
-    //Method that inserts the default ranges for each smartHub into the database
-    public static boolean insertDefaults(String smarthub_id){
-        HashMap<String,Object> ranges = new HashMap<>();
 
     private boolean isWithInRange(String range, float value){
         String[] rangeValues = range.split("-");
