@@ -2,6 +2,7 @@ package com.plantiq.plantiqserver.model;
 
 import com.plantiq.plantiqserver.core.Model;
 import com.plantiq.plantiqserver.core.ModelCollection;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.HashMap;
 
@@ -123,12 +124,14 @@ public class Range extends Model {
     public static boolean insertDefaults(String smarthub_id){
         HashMap<String,Object> ranges = new HashMap<>();
 
-        ranges.put("smarthub_id",smarthub_id);
-        ranges.put("range_temperature", DEFAULT_TEMPERATURE_RANGE);
-        ranges.put("range_humidity", DEFAULT_HUMIDITY_RANGE);
-        ranges.put("range_light", DEFAULT_LIGHT_RANGE);
-        ranges.put("range_moisture", DEFAULT_MOISTURE_RANGE);
-        return Range.insert("Range",ranges);
+    private boolean isWithInRange(String range, float value){
+        String[] rangeValues = range.split("-");
+        float min = Float.parseFloat(rangeValues[0]);
+        float max = Float.parseFloat(rangeValues[1]);
+
+        return value >= min && value <= max;
     }
+
+
 
 }
