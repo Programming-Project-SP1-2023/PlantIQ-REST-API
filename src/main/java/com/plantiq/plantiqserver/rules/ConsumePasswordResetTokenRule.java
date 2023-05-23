@@ -10,7 +10,7 @@ import java.util.ArrayList;
 //                                                                                    |
 //  Token:                                                                            |
 //  A) Required -> Validates the email input is present and not null.                 |
-//  B) min:40/max:40 -> Validates the password exactly 40 characters long             |
+//  B) min:40/max:40 -> Validates the token exactly 40 characters long                |
 //  B) !unique:PasswordResetToken.token -> Validates that the token is not uniques,   |
 //                                  meaning that it matches a token in the database   |
 //                                                                                    |

@@ -16,12 +16,12 @@ import java.util.ArrayList;
 //                          with this email                                           |
 //                                                                                    |
 //  Firstname:                                                                        |
-//  A) min:3 -> Validates the password is at least 3 characters long.                 |
-//  B) max:25 -> Validates the password is no larger than 25 characters long.         |
+//  A) min:3 -> Validates the firstname is at least 3 characters long.                |
+//  B) max:25 -> Validates the firstname is no larger than 25 characters long.        |
 //                                                                                    |
 //  Surname                                                                           |
-//  A) min:2 -> Validates the password is at least 2 characters long.                 |
-//  B) max:25 -> Validates the password is no larger than 25 characters long.         |
+//  A) min:2 -> Validates the surname is at least 2 characters long.                  |
+//  B) max:25 -> Validates the surname is no larger than 25 characters long.          |
 //                                                                                    |
 //  Password:                                                                         |
 //  A) min:8 -> Validates the password is at least 8 characters long.                 |

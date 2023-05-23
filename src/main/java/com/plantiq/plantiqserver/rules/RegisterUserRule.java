@@ -16,13 +16,13 @@ import java.util.ArrayList;
 //                                                                                    |
 //  Firstname:                                                                        |
 //  A) Required -> Validates the firstname input is present and not null.             |
-//  B) min:3 -> Validates the password is at least 3 characters long.                 |
-//  C) max:25 -> Validates the password is no larger than 25 characters long.         |
+//  B) min:3 -> Validates the firstname is at least 3 characters long.                |
+//  C) max:25 -> Validates the firstname is no larger than 25 characters long.        |
 //                                                                                    |
 //  Surname                                                                           |
 //  A) Required -> Validates the surname input is present and not null.               |
-//  B) min:2 -> Validates the password is at least 2 characters long.                 |
-//  C) max:25 -> Validates the password is no larger than 25 characters long.         |
+//  B) min:2 -> Validates the surname is at least 2 characters long.                  |
+//  C) max:25 -> Validates the surname is no larger than 25 characters long.          |
 //                                                                                    |
 //  Password:                                                                         |
 //  A) Required -> Validates the email input is present and not null.                 |
