@@ -6,7 +6,6 @@ import com.plantiq.plantiqserver.rules.GetAllRule;
 import com.plantiq.plantiqserver.rules.RegisterSmartHubRule;
 import com.plantiq.plantiqserver.rules.PostSensorDataRule;
 import com.plantiq.plantiqserver.rules.UpdateSmartHubDetailsRule;
-import com.plantiq.plantiqserver.service.EmailService;
 import com.plantiq.plantiqserver.service.HashService;
 import com.plantiq.plantiqserver.service.TimeService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -100,80 +99,32 @@ public class SmartHubController {
             response.put("outcome", true);
             outcome = 200;
 
+            //If our values saved then evaluate them and with the set range
+            //or the default range and send an email if out of range.
+            HashMap<String,Object> errors = Range.evaluateWithSetValuesOrDefault(smartHomeHub.getId(),request);
+
+
+            if(errors.size() != 0){
+
+                errors.put("content", errors.values().toString() +"<br>");
+                //Insert smart hub info
+                errors.put("smarthomehub_name",smartHomeHub.getName());
+                errors.put("smarthomehub_id",smartHomeHub.getId());
+
+                //Build & Send email
+                Email email = new Email();
+                email.setUser(User.collection().where("id", smartHomeHub.getUser_id()).getFirst());
+                email.setSubject("Plant reports its out of range!");
+                email.setVariables(errors);
+                email.setHtmlTemplate("/emails/outOfRangeNotification.html");
+                email.send();
+            }
+
         } else {
             response.put("error", "Failed to save plant data, please contact support!");
             response.put("outcome", false);
             outcome = 500;
             return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
-        }
-        //Hashmap that will store attributes and values for the notification data that
-        //is going to be inserted into the database.
-        HashMap<String, Object> notificationData = new HashMap<>();
-        //Getting the user_id of the owner of the smarthub.
-        String userID = SmartHomeHub.collection().where("id", id).getFirst().getUser_id();
-        notificationData.put("user_id", userID);
-        notificationData.put("timestamp", TimeService.now());
-        //Retrieving the range associated to the smarthub.
-        Range range = Range.collection().where("smarthub_id", id).getFirst();
-        //Splitting the ranges for the appropriate fields
-        String[] ranges = {range.getRangeTemperature(), range.getRangeMoisture(), range.getRangeLight(), range.getRangeHumidity()};
-        String[] fields = {"temperature", "moisture", "light", "humidity"};
-        //For Loop to ensure value is in range for each field.
-        //If not in range a notification will be created.
-        for (int i = 0; i < 4; i++) {
-            String field = fields[i];
-            String min = "";
-            String max = "";
-            //Splitting the data into the correct variables.
-            // If an error is thrown, an error stating that
-            // the ranges were not saved in the correct format
-            //in the database will bhe returned.
-            try {
-                min = ranges[i].split("-")[0];
-                max = ranges[i].split("-")[1];
-            } catch (NullPointerException e) {
-                response.put("error", "Ranges are not in the right format");
-                response.put("outcome", false);
-                outcome = 500;
-                return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
-            }
-            //If the value is not in range, a notification will be created
-            //containing all the necessary data.
-            if (Float.parseFloat(request.getParameter(field)) < Float.parseFloat(min) && Float.parseFloat(request.getParameter(field)) > Float.parseFloat(max)) {
-                //Retrieving last notification for the specifield field and user
-                Notification lastNotification = Notification.collection().where("field", field).orderBy("timestamp").orderType(Sort.DESC).getFirst();
-                //In order to not spam emails to the user, we have set a cooldown
-                //of 24 hours. This if statement to check if 24 hours have passed
-                //from the last notification for that field. If more than 24 hours
-                //have passed, a new notification can be sent.
-                if (TimeService.nowMinusDays(1) > lastNotification.getTimestamp()) {
-                    String value = request.getParameter(field);
-                    notificationData.put("field", field);
-                    notificationData.put("value", value);
-                    notificationData.put("user_id", userID);
-                    notificationData.put("timestamp", TimeService.now());
-                    notificationData.put("message", "");
-                    //If inserting the notification does affect the database as expected,
-                    //the html statuc code will be set to 200 and the outcome will be true.
-                    //If not,an error message will be returned and the status code will be 500.
-                    if (Notification.insert("Notification", notificationData)) {
-                        Email email = new Email();
-                        email.setUser(User.collection().where("user_id", userID).getFirst())
-                                .setHtmlTemplate("/emails/outOfRangeNotification.html")
-                                .setSubject("Plant Values out of Range")
-                                .setVariables(data)
-                                .send();
-                        response.put("outcome", true);
-                        outcome = 200;
-
-                    } else {
-                        response.put("error", "Failed to save notification data, please contact support!");
-                        response.put("outcome", false);
-                        outcome = 500;
-                    }
-
-                }
-            }
         }
 
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
@@ -341,21 +292,12 @@ public class SmartHubController {
         //Delete the object from the table by its id.
         smartHubAwaitingRegistration.delete("id");
 
-
         //Attempt to insert the smarthub into the database,
         //If successful keep the outcome true, else return false,
         //and an error message
         if (!SmartHomeHub.insert("SmartHomeHub", data)) {
             response.put("outcome", false);
             response.put("errors", "Failed to register smart hub, please contact support!");
-            return new ResponseEntity<>(response, HttpStatusCode.valueOf(500));
-        }
-        //Attempt to insert the default ranges into the database,
-        //If successful keep the outcome true, else return false,
-        //and an error message
-        if (!Range.insertDefaults(request.getParameter("id"))) {
-            response.put("outcome", false);
-            response.put("errors", "Failed to perform action, please contact support");
             return new ResponseEntity<>(response, HttpStatusCode.valueOf(500));
         }
 
