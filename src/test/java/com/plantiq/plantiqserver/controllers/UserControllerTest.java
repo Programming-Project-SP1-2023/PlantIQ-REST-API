@@ -1,10 +1,15 @@
 package com.plantiq.plantiqserver.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 class UserControllerTest {
+	@Mock
+	private HttpServletRequest mockedRequest;
+
 	@Test
-	void all() {
+	public void testGetUserBySession() {
 
 	}
 
@@ -15,5 +20,13 @@ class UserControllerTest {
 	@Test
 	void consumePasswordResetToken() {
 
+	}
+
+	@Test
+	void getUserBySession() {
+	}
+
+	@Test
+	void updateUserBySession() {
 	}
 }
