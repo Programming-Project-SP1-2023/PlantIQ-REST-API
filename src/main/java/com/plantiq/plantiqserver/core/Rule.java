@@ -127,11 +127,9 @@ public abstract class Rule {
                 if(rule.equals("min:")){
                     rule = "min";
                 }
-
                 if(rule.equals("max:")){
                     rule = "max";
                 }
-
                 if(rule.equals("regex:")){
                     rule = "regex";
                 }
@@ -141,12 +139,15 @@ public abstract class Rule {
                 if(rule.equals("enum:")){
                     rule = "enum";
                 }
-
+                if(rule.equals("range:")){
+                    rule = "range";
+                }
 
                 //If Statement to check if the field is optional. If it is, the rules will apply only
                 //if the input is not blank, while if not optional, the rule will always apply.
-                if (optional==false || !provided.isBlank()) {
-                    //Now we have performed all our pre-checks and split our data into variable
+                if (!optional || !provided.isBlank()) {
+
+                        //Now we have performed all our pre-checks and split our data into variable
                     //and rule we can then switch between the rules and perform our checks.
                     switch (rule) {
 
