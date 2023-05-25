@@ -2,6 +2,7 @@ package com.plantiq.plantiqserver.controllers;
 
 import com.plantiq.plantiqserver.PlantIqServerApplication;
 import com.plantiq.plantiqserver.core.Email;
+import com.plantiq.plantiqserver.model.Notification;
 import com.plantiq.plantiqserver.model.PasswordResetToken;
 import com.plantiq.plantiqserver.model.Session;
 import com.plantiq.plantiqserver.model.User;
@@ -213,6 +214,7 @@ public class AuthenticationController {
 		//while a 500 error will be returned if no rows was affected by the query.
 		if(user.update(data)){
 			response.put("message","Account successfully activated, please login");
+			Notification.create(user,"Account successfully activated");
 			response.put("outcome",true);
 			outcome = 200;
 		}else{
@@ -276,6 +278,7 @@ public class AuthenticationController {
 			response.put("outcome",true);
 			outcome = 200;
 			response.put("message","If an email address exists for that account you will receive an email shortly.");
+			Notification.create(user,"Password reset link sent to your email address!");
 
 			//The record is now inserted into the database. The final step
 			//for the user to reset the password of their account is follow
@@ -397,6 +400,7 @@ public class AuthenticationController {
 			response.put("outcome",true);
 			response.put("message","Password reset");
 			passwordResetToken.delete("token");
+			Notification.create(user,"Password successfully reset");
 		}else{
 			outcome = 500;
 			response.put("outcome",false);
