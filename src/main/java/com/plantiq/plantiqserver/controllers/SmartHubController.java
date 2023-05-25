@@ -111,13 +111,16 @@ public class SmartHubController {
                 errors.put("smarthomehub_name",smartHomeHub.getName());
                 errors.put("smarthomehub_id",smartHomeHub.getId());
 
+                User user = User.collection().where("id", smartHomeHub.getUser_id()).getFirst();
                 //Build & Send email
                 Email email = new Email();
-                email.setUser(User.collection().where("id", smartHomeHub.getUser_id()).getFirst());
+                email.setUser(user);
                 email.setSubject("Plant reports its out of range!");
                 email.setVariables(errors);
                 email.setHtmlTemplate("/emails/outOfRangeNotification.html");
                 email.send();
+
+                Notification.create(user,smartHomeHub.getName()+" reports one of its plants is out of range!, please review your recent data.");
             }
 
         } else {
@@ -128,19 +131,6 @@ public class SmartHubController {
         }
 
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(outcome));
-    }
-
-    @DeleteMapping("/{id}/data")
-    public ResponseEntity<HashMap<String, Object>> deletePlantData(@PathVariable("id") String id, HttpServletRequest request) {
-
-        HashMap<String, Object> response = new HashMap<>();
-
-        if (!Gate.authorized(request)) {
-            return Gate.abortUnauthorized();
-        }
-
-        return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
-
     }
 
     //@GetMapping("/{id}/rate") is the endpoint used to retrieve the post frequency of a hub.
@@ -311,6 +301,8 @@ public class SmartHubController {
                 .setSubject("New Smart Hub Registered")
                 .setVariables(data)
                 .send();
+
+        Notification.create(Gate.getCurrentUser(),"New smart home hub registered to account!");
 
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
     }
