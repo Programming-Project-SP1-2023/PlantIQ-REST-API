@@ -123,7 +123,7 @@ public class Model {
     //------------------------------------------------------|
 
     //This second delete method is slightly more general. It can be used
-    //to delete
+    //to delete a record by searching the value of any attribute.
     public void delete(String column){
 
         String query = "DELETE FROM [dbo].["+this.data.get("_table")+"] WHERE "+column+"='"+this.data.get(column)+"'";

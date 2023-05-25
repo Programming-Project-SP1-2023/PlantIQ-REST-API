@@ -76,13 +76,13 @@ public class UserController {
         //with null, we need to check if these have been submitted
         //in the request.
         HashMap<String, Object> data = new HashMap<>();
-        if (request.getParameter("email") != null && request.getParameter("email") != "")
+        if (request.getParameter("email") != null && !request.getParameter("email").isBlank())
             data.put("email", request.getParameter("email"));
-        if (request.getParameter("firstname") != null && request.getParameter("firstname") != "")
+        if (request.getParameter("firstname") != null && !request.getParameter("firstname").isBlank())
             data.put("firstname", request.getParameter("firstname"));
-        if (request.getParameter("surname") != null && request.getParameter("surname") != "")
+        if (request.getParameter("surname") != null && !request.getParameter("surname").isBlank())
             data.put("surname", request.getParameter("surname"));
-        if (request.getParameter("password") != null && request.getParameter("password") != "")
+        if (request.getParameter("password") != null && !request.getParameter("password").isBlank())
             data.put("password", HashService.generateSHA1(PlantIqServerApplication.getInstance().getPasswordPepper() + request.getParameter("password")));
 
         //Updating the entity User with the new data.
