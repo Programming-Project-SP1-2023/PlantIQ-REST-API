@@ -2,6 +2,7 @@ package com.plantiq.plantiqserver.model;
 
 import com.plantiq.plantiqserver.core.Model;
 import com.plantiq.plantiqserver.core.ModelCollection;
+import com.plantiq.plantiqserver.service.TimeService;
 
 import java.util.HashMap;
 public class Notification extends Model{
@@ -23,6 +24,15 @@ public class Notification extends Model{
         return new ModelCollection<>(Notification.class);
     }
 
+    public static void create(User user, String message){
+        HashMap<String, Object> data = new HashMap<>();
+
+        data.put("user_id",user.getId());
+        data.put("message",message);
+        data.put("timestamp", TimeService.now());
+
+        Notification.insert("Notification",data);
+    }
 
     //|================================================|
     //|                  CLASS METHODS                 |
@@ -46,16 +56,7 @@ public class Notification extends Model{
     //Get timestamp method
     public int getTimestamp(){return Integer.parseInt((String)this.data.get("timestamp"));}
 
-    //Get field method
-    public String getField(){
-        return (String)this.data.get("field");
-    }
-
-    //Get value method
-    public float getValue(){ return Float.parseFloat((String)this.data.get("value"));}
-
-    //Get Sensor ID Method
-    public String  getSensorID(){
-        return (String)this.data.get("sensor_id");
+    public String getMessage(){
+        return this.data.get("message").toString();
     }
 }
