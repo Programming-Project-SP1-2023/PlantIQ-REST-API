@@ -108,12 +108,6 @@ public class AdminController {
             return Gate.abortUnauthorized();
         }
 
-        if(!HashService.generateSHA1(PlantIqServerApplication.getInstance().getPasswordPepper()+request.getParameter("password")).equals(Gate.getCurrentUser().getPassword())){
-            response.put("outcome",false);
-            response.put("message","Failed to delete user, please enter your correct password");
-            return new ResponseEntity<>(response,HttpStatusCode.valueOf(400));
-        }
-
         User user = User.collection().where("id",id).getFirst();
 
         if(user == null){
