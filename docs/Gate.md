@@ -6,6 +6,10 @@ user to continue their navigation or to block their access.
 The class has a secondary feature accomplished through the method getCurrentUser(), which returns the User object of the currently 
 logged-in user.  
 
+To use the Gate functionalities, the class must be imported as following:
+```java
+import com.plantiq.plantiqserver.core.Gate;
+```
 
 ##Authorizing Users and Admins
 Each time a user logs in to the webapp, a session token will be generated. This token allows the user to navigate through the various
