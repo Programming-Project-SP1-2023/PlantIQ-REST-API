@@ -1,7 +1,7 @@
 [Back to documentation home](https://github.com/Programming-Project-SP1-2023/Backend-REST-API)
 
 # Creating Queries
-PlantIQ's ModelCollection is a class designed simplify the creation of a query throughout the entire project. 
+PlantIQ's ModelCollection is a class designed to simplify the creation of a query throughout the entire project. 
 Apposite methods have been created for each SQL clause so that the correct SQL language is inserted into the final query.
 ## SQL Clauses available
 - Where

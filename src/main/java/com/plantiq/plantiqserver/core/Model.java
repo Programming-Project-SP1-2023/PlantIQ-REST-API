@@ -136,7 +136,7 @@ public class Model {
     //------------------------------------------------------|
 
     //This method takes in as parameter the table name, the attribute and the value
-    //to search. If will then move on to delete all the records which have that value
+    //to search. It will then move on to delete all the records which have that value
     //for that specified attribute
     public static boolean deleteAll(String table, String attribute, String value){
 

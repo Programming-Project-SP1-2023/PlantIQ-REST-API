@@ -340,7 +340,7 @@ public class SmartHubController {
     }
 
     //@PatchMapping("/{id}") this endpoint will be used to update the post
-    //frequency for a smarthub.
+    //frequency and name of a smarthub.
     @PatchMapping("/{id}")
     public ResponseEntity<HashMap<String, Object>> updateHub(@PathVariable("id") String id, HttpServletRequest request) {
         //Create our response object, this is returned as JSON.
@@ -409,7 +409,7 @@ public class SmartHubController {
             response.put("error", "Smart Home Hub not found, please contact support");
         } else {
 
-            //Delete all the plant data related to the specific smarrthub.
+            //Delete all the plant data related to the specific smarthub.
             PlantData.deleteAll("PlantData", "smarthub_id", id);
 
             //Delete the smart hub

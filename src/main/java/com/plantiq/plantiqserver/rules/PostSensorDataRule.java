@@ -14,19 +14,19 @@ import java.util.ArrayList;
 //                                                                                    |
 //  Temperature:                                                                      |
 //  A) Required -> Validates the temperature input is present and not null.           |
-//  B) Float:16 -> Validates the temperature is a float.                              |
+//  B) Float -> Validates the temperature is a float.                              |
 //                                                                                    |
 //  Humidity:                                                                         |
 //  A) Required -> Validates the humidity input is present and not null.              |
-//  B) Float:16 -> Validates the humidity is a float.                                 |
+//  B) Float -> Validates the humidity is a float.                                 |
 //                                                                                    |
 //  Light:                                                                            |
 //  A) Required -> Validates the light input is present and not null.                 |
-//  B) Float:16 -> Validates the light is a float.                                    |
+//  B) Float -> Validates the light is a float.                                    |
 //                                                                                    |
 //  Moisture:                                                                         |
 //  A) Required -> Validates the moisture input is present and not null.              |
-//  B) Float:16 -> Validates the moisture is a float.                                 |
+//  B) Float -> Validates the moisture is a float.                                 |
 //                                                                                    |
 //------------------------------------------------------------------------------------|
 

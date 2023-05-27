@@ -58,7 +58,7 @@ public class PlantService {
     }
 
     //Method to check if a plant with a specific id exists.
-    public static boolean validPlantId(String id, String user_id) {
+    public static boolean validPlantId(String id) {
         //Attempt to retrieve the plant with the given id from the database.
         PlantData plantData = PlantData.collection().where("sensor_id", id).getFirst();
         //If plantData is not null, the plant is valid, and a true
