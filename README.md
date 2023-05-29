@@ -12,7 +12,9 @@
             <a href="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/blob/main/docs/TimeService.md">TimeService</a> |
   <a href="https://github.com/Programming-Project-SP1-2023/Backend-REST-API/blob/main/docs/ModelCollection.md">Model Collection</a>
 </h3>
-
+<p align="center">
+<img src="https://plantiq.azurewebsites.net/static/media/plantDashboard.171a0a4ed4dffdac28f3.png">
+</p>
 ## Overview
 
 Spring boot application that exposes a REST API to interact with the PlantIQ database.
