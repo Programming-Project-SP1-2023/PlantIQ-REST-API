@@ -3,6 +3,7 @@ package com.plantiq.plantiqserver.rules;
 import com.plantiq.plantiqserver.core.Rule;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 // -----------------------------------------------------------------------------------|
 //                                  LIST OF RULES                                     |
@@ -20,23 +21,25 @@ import java.util.ArrayList;
 //------------------------------------------------------------------------------------|
 
 public class LoginUserRule extends Rule {
+	@Override
+	protected void setup() {
 
-    @Override
-    protected void setup() {
+		ArrayList<String> email = new ArrayList<>();
 
-        ArrayList<String> email = new ArrayList<>();
+		email.add("required");
+		email.add("regex:email");
 
-        email.add("required");
-        email.add("regex:email");
+		ArrayList<String> password = new ArrayList<>();
 
-        ArrayList<String> password = new ArrayList<>();
+		password.add("required");
+		password.add("min:8");
+		password.add("max:25");
 
-        password.add("required");
-        password.add("min:8");
-        password.add("max:25");
+		this.rules.put("email", email);
+		this.rules.put("password", password);
+	}
 
-        this.rules.put("email",email);
-        this.rules.put("password",password);
-
-    }
+	public HashMap<String, ArrayList<String>> getRules() {
+		return this.rules;
+	}
 }

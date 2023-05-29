@@ -3,6 +3,7 @@ package com.plantiq.plantiqserver.rules;
 import com.plantiq.plantiqserver.core.Rule;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 // -----------------------------------------------------------------------------------|
 //                                  LIST OF RULES                                     |
@@ -33,40 +34,44 @@ import java.util.ArrayList;
 //------------------------------------------------------------------------------------|
 
 public class GetAllRule extends Rule {
-    @Override
-    protected void setup() {
+	@Override
+	protected void setup() {
 
-        ArrayList<String> limit = new ArrayList<>();
+		ArrayList<String> limit = new ArrayList<>();
 
-        limit.add("required");
-        limit.add("integer");
-        limit.add("min:10");
-        limit.add("max:100");
+		limit.add("required");
+		limit.add("integer");
+		limit.add("min:10");
+		limit.add("max:100");
 
-        this.rules.put("limit",limit);
+		this.rules.put("limit", limit);
 
-        ArrayList<String> offset = new ArrayList<>();
+		ArrayList<String> offset = new ArrayList<>();
 
-        offset.add("required");
-        offset.add("min:0");
-        offset.add("integer");
-        offset.add("max:100");
+		offset.add("required");
+		offset.add("min:0");
+		offset.add("integer");
+		offset.add("max:100");
 
-        this.rules.put("offset",offset);
+		this.rules.put("offset", offset);
 
-        ArrayList<String> sortBy = new ArrayList<>();
+		ArrayList<String> sortBy = new ArrayList<>();
 
-        sortBy.add("required");
-        sortBy.add("min:3");
-        sortBy.add("max:25");
+		sortBy.add("required");
+		sortBy.add("min:3");
+		sortBy.add("max:25");
 
-        this.rules.put("sortBy",sortBy);
+		this.rules.put("sortBy", sortBy);
 
-        ArrayList<String> sort = new ArrayList<>();
+		ArrayList<String> sort = new ArrayList<>();
 
-        sort.add("required");
-        sort.add("enum:Sort");
+		sort.add("required");
+		sort.add("enum:Sort");
 
-        this.rules.put("sort",sort);
-    }
+		this.rules.put("sort", sort);
+	}
+
+	public HashMap<String, ArrayList<String>> getRules() {
+		return this.rules;
+	}
 }

@@ -1,32 +1,38 @@
 package com.plantiq.plantiqserver.core;
 
+import org.junit.jupiter.api.Test;
+
 class RuleTest {
-//	@Test
-//	void validate() {
-//		MockHttpServletRequest request = new MockHttpServletRequest();
-////		 set parameters
-//		request.addParameter("firstname", "Brian");
-//		request.addParameter("surname", "Cusack");
-//		request.addParameter("email", "bcusack78@gmail.com");
-//		request.addParameter("password", "Admin1234!");
-//
-//		RegisterUserRule rule = new RegisterUserRule();
-//		rule.validate(request);
-//		assert (rule.getErrors().size() == 0);
-//	}
-//
-//	@Test
-//	void getErrors() {
-//		MockHttpServletRequest request = new MockHttpServletRequest();
-//		// set parameters
-//		request.addParameter("firstname", "Brian");
-//		request.addParameter("surname", "Cusack");
-//		request.addParameter("email", "");
-//		request.addParameter("password", "Admin1234!");
-//
-//		RegisterUserRule rule = new RegisterUserRule();
-//		rule.validate(request);
-//		HashMap<String, Object> errors = rule.getErrors();
-//		assert (errors.size() == 1);
-//	}
+	@Test
+	void setup() {
+		
+	}
+
+	@Test
+	void validate() {
+	}
+
+	@Test
+	void getErrors() {
+	}
+
+	@Test
+	void isInteger() {
+	}
+
+	@Test
+	void isFloat() {
+	}
+
+	@Test
+	void isSortType() {
+	}
+
+	@Test
+	void validateRange() {
+	}
+
+	@Test
+	void abort() {
+	}
 }
