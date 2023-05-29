@@ -17,7 +17,10 @@
 
 ## Overview
 
-Spring boot application that exposes a REST API to interact with the PlantIQ database.
-Dev Profile runs on H2 in memory database.
-Default Profile will be setup to Azure SQL Server
-Uses Java JDBC to connect to the database through a Repository interface.
+The PlantIQ backend provides the core functionality to both the frontend and smart home hubs and sensors, it serves as the central glue point that brings the experiance together. This application is written using Java 17 and utlizes Spring Boot to provide its core functionality for interacting with web requests. This app is designed to run on Microsoft Azure web services and should be used only as a backend for clients to connect to.
+
+## Java Version 
+This Application should be ran on Java version 17 or higher.
+
+## Accessing the backend?
+To access the backend for testing or development purposes we recomend the use the HTTP client Insomnia <a href="https://insomnia.rest/">https://insomnia.rest/</a>
