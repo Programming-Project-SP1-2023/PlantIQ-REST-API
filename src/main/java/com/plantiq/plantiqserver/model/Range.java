@@ -1,5 +1,6 @@
 package com.plantiq.plantiqserver.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.plantiq.plantiqserver.core.Model;
 import com.plantiq.plantiqserver.core.ModelCollection;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,10 +9,10 @@ import java.util.HashMap;
 
 public class Range extends Model {
     //Following are the 4 default healthy ranges for each field of a plant.
-    public final static String DEFAULT_TEMPERATURE_RANGE = "4-29";
-    public final static String DEFAULT_HUMIDITY_RANGE ="40-60";
-    public final static String DEFAULT_LIGHT_RANGE ="8-16";
-    public final static String DEFAULT_MOISTURE_RANGE ="21-80";
+    public final static String DEFAULT_TEMPERATURE_RANGE = "4,29";
+    public final static String DEFAULT_HUMIDITY_RANGE ="40,60";
+    public final static String DEFAULT_LIGHT_RANGE ="8,16";
+    public final static String DEFAULT_MOISTURE_RANGE ="21,80";
 
     //|================================================|
     //|              STATIC CRUD METHODS               |
@@ -30,17 +31,22 @@ public class Range extends Model {
         return new ModelCollection<>(Range.class);
     }
 
-    public static HashMap<String,Object> evaluateWithSetValuesOrDefault(String id, HttpServletRequest request){
+    public static Range getDefault(){
+        HashMap<String,Object> data = new HashMap<>();
+        data.put("range_humidity",Range.DEFAULT_HUMIDITY_RANGE);
+        data.put("range_light",Range.DEFAULT_LIGHT_RANGE);
+        data.put("range_temperature",Range.DEFAULT_TEMPERATURE_RANGE);
+        data.put("range_moisture",Range.DEFAULT_MOISTURE_RANGE);
+        return new Range(data);
+    }
+
+    public static HashMap<String,Object> evaluateWithSetValuesOrDefault(String id, HttpServletRequest request)
+    {
 
         Range range = Range.collection().where("smarthub_id",id).getFirst();
 
         if(range == null){
-            HashMap<String,Object> data = new HashMap<>();
-            data.put("range_humidity",Range.DEFAULT_HUMIDITY_RANGE);
-            data.put("range_light",Range.DEFAULT_LIGHT_RANGE);
-            data.put("range_temperature",Range.DEFAULT_TEMPERATURE_RANGE);
-            data.put("range_moisture",Range.DEFAULT_MOISTURE_RANGE);
-            range = new Range(data);
+            range = Range.getDefault();
         }
 
         float temp = Float.parseFloat(request.getParameter("temperature"));
@@ -50,35 +56,35 @@ public class Range extends Model {
 
         HashMap<String,Object> errors = new HashMap<>();
 
-        if(!range.isWithInRange(range.getRangeTemperature(),temp)){
+        if(!range.isWithInRange(range.getTemperature(),temp)){
             errors.put("temperature",
                     "<p>Temperature is out of range "+
                     "<strong>"+temp+"c</strong><br>Its target range is "
-                    +range.getRangeTemperature()+" Celsius</p>");
+                    +range.getTemperature()+" Celsius</p>");
         }
 
-        if(!range.isWithInRange(range.getRangeLight(),light)){
+        if(!range.isWithInRange(range.getLight(),light)){
             errors.put("light",
                     "<p>Light is out of range " +
                             "<strong>"+light+"lm</strong>" +
                             "<br>Its target range is "
-                            +range.getRangeLight()+" Luminus</p>");
+                            +range.getLight()+" Luminus</p>");
         }
 
-        if(!range.isWithInRange(range.getRangeHumidity(),humid)){
+        if(!range.isWithInRange(range.getHumidity(),humid)){
             errors.put("humidity",
                     "<p>Humidity is out of range " +
                             "<strong>"+humid+"%</strong>" +
                             "<br>Its target range is "
-                            +range.getRangeHumidity()+" Percent</p>");
+                            +range.getHumidity()+" Percent</p>");
         }
 
-        if(!range.isWithInRange(range.getRangeHumidity(),humid)){
+        if(!range.isWithInRange(range.getHumidity(),humid)){
             errors.put("moisture",
                     "<p>Moisture is out of range " +
                             "<strong>"+moisture+"%</strong>" +
                             "<br>Its target range is "
-                            +range.getRangeMoisture()+" Percent</p>");
+                            +range.getMoisture()+" Percent</p>");
         }
 
         return errors;
@@ -92,37 +98,37 @@ public class Range extends Model {
     public Range(HashMap<String, Object> data){
         super(data);
     }
-
     //Get ID method
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public String getId(){
         return (String)this.data.get("id");
     }
 
     //Get smarthub_id method
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public String getSmartHubId() { return (String)this.data.get("smarthub_id");}
 
     //Method to get the humidity range
-    public String getRangeHumidity(){
-        return (String)this.data.get("range_humidity");
+    public String getHumidity(){
+        return (String)this.data.get("humidity");
     }
 
     //Method to get the light range
-    public String getRangeLight(){
-        return (String)this.data.get("range_light");
+    public String getLight(){
+        return (String)this.data.get("light");
     }
 
     //Method to get the temperature range
-    public String getRangeTemperature(){
-        return (String)this.data.get("range_temperature");
+    public String getTemperature(){
+        return (String)this.data.get("temperature");
     }
     //Method to get the moisture range
-    public String getRangeMoisture(){
-        return (String)this.data.get("range_moisture");
+    public String getMoisture(){
+        return (String)this.data.get("moisture");
     }
 
-
     private boolean isWithInRange(String range, float value){
-        String[] rangeValues = range.split("-");
+        String[] rangeValues = range.split(",");
         float min = Float.parseFloat(rangeValues[0]);
         float max = Float.parseFloat(rangeValues[1]);
 
