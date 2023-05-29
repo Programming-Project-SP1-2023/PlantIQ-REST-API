@@ -1,6 +1,6 @@
 # PlantIQ REST API (Backend)
 <p align="center">
-<img src="https://plantiq.azurewebsites.net/static/media/plantiq.e10024f2f1e779ff205f.png">
+<img src="https://plantiq.azurewebsites.net/static/media/plantiq.e10024f2f1e779ff205f.png" style="width:256px">
 </p>
 <h3 align="center">
   <b>Documentation:</b><br><br>
