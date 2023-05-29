@@ -1,46 +1,26 @@
-# PlantIQ API
-
+# PlantIQ REST API (Backend)
+<p align="center">
+<img src="https://plantiq.azurewebsites.net/static/media/plantiq.e10024f2f1e779ff205f.png" style="width:256px">
+</p>
 <h3 align="center">
   <b>Documentation:</b><br><br>
   <a href="https://github.com/Programming-Project-SP1-2023/Backend-REST-API/blob/main/docs/Rules.md">Rules</a> |
+    <a href="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/blob/main/docs/Email.md">Email</a> |
+      <a href="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/blob/main/docs/Gate.md">Gate & Authentication</a> |
+        <a href="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/blob/main/docs/HashService.md">Hashing</a> |
+          <a href="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/blob/main/docs/PlantService.md">PlantService</a> |
+          <a href="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/blob/main/docs/SessionService.md">Sessions</a> |
+            <a href="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/blob/main/docs/SqlSecurity.md">SQL Sanitization</a> |
+            <a href="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/blob/main/docs/TimeService.md">TimeService</a> |
   <a href="https://github.com/Programming-Project-SP1-2023/Backend-REST-API/blob/main/docs/ModelCollection.md">Model Collection</a>
 </h3>
 
 ## Overview
 
-Spring boot application that exposes a REST API to interact with the PlantIQ database.
-Dev Profile runs on H2 in memory database.
-Default Profile will be setup to Azure SQL Server
-Uses Java JDBC to connect to the database through a Repository interface.
+The PlantIQ backend provides the core functionality to both the frontend and smart home hubs and sensors, it serves as the central glue point that brings the experiance together. This application is written using Java 17 and utlizes Spring Boot to provide its core functionality for interacting with web requests. This app is designed to run on Microsoft Azure web services and should be used only as a backend for clients to connect to.
 
+## Java Version 
+This Application should be ran on Java version 17 or higher.
 
-## Setup
-
-1. Clone the repository
-2. Run `mvn clean install` to build the application or in the maven tab in your IDE of choice run `clean install`
-3. Select Profile Dev to run the application on H2 in memory database or Default to run on Azure SQL Server (TODO)
-4. Run the application
-5. Enjoy!
-
-## Work Flow
-
-1. Pull the latest code from the repository branch
-2. maven clean install
-3. Run the application in dev profile
-
-## API Documentation
-
-### Endpoints
-
-H2 Console
--
-
-    - http://localhost:8080/api/v1/h2-console
-
-Animal
--
-
-    - GET /api/v1/animal/all
-    - GET /api/v1/animal/{id}
-    - GET /api/v1/animal?name={name}&type={type}&age={age}
-
+## Accessing the backend?
+To access the backend for testing or development purposes we recomend the use the HTTP client Insomnia <a href="https://insomnia.rest/">https://insomnia.rest/</a>
