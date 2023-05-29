@@ -10,8 +10,6 @@
           <a href="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/blob/main/docs/SessionService.md">Sessions</a> |
             <a href="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/blob/main/docs/SqlSecurity.md">SQL Sanitization</a> |
             <a href="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/blob/main/docs/TimeService.md">TimeService</a> |
-
-
   <a href="https://github.com/Programming-Project-SP1-2023/Backend-REST-API/blob/main/docs/ModelCollection.md">Model Collection</a>
 </h3>
 
