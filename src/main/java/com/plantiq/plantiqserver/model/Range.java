@@ -33,10 +33,10 @@ public class Range extends Model {
 
     public static Range getDefault(){
         HashMap<String,Object> data = new HashMap<>();
-        data.put("range_humidity",Range.DEFAULT_HUMIDITY_RANGE);
-        data.put("range_light",Range.DEFAULT_LIGHT_RANGE);
-        data.put("range_temperature",Range.DEFAULT_TEMPERATURE_RANGE);
-        data.put("range_moisture",Range.DEFAULT_MOISTURE_RANGE);
+        data.put("humidity",Range.DEFAULT_HUMIDITY_RANGE);
+        data.put("light",Range.DEFAULT_LIGHT_RANGE);
+        data.put("temperature",Range.DEFAULT_TEMPERATURE_RANGE);
+        data.put("moisture",Range.DEFAULT_MOISTURE_RANGE);
         return new Range(data);
     }
 
