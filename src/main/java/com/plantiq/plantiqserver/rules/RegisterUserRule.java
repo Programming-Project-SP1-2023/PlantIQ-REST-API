@@ -3,6 +3,7 @@ package com.plantiq.plantiqserver.rules;
 import com.plantiq.plantiqserver.core.Rule;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 // -----------------------------------------------------------------------------------|
 //                                  LIST OF RULES                                     |
@@ -31,33 +32,36 @@ import java.util.ArrayList;
 //                                                                                    |
 //------------------------------------------------------------------------------------|
 
-
 public class RegisterUserRule extends Rule {
-    @Override
-    protected void setup() {
-        ArrayList<String> email = new ArrayList<>();
-        email.add("required");
-        email.add("regex:email");
-        email.add("unique:User.email");
-        this.rules.put("email",email);
+	@Override
+	protected void setup() {
+		ArrayList<String> email = new ArrayList<>();
+		email.add("required");
+		email.add("regex:email");
+		email.add("unique:User.email");
+		this.rules.put("email", email);
 
-        ArrayList<String> firstname = new ArrayList<>();
-        firstname.add("required");
-        firstname.add("min:3");
-        firstname.add("max:25");
-        this.rules.put("firstname",firstname);
+		ArrayList<String> firstname = new ArrayList<>();
+		firstname.add("required");
+		firstname.add("min:3");
+		firstname.add("max:25");
+		this.rules.put("firstname", firstname);
 
-        ArrayList<String> surname = new ArrayList<>();
-        surname.add("required");
-        surname.add("min:2");
-        surname.add("max:25");
-        this.rules.put("surname",surname);
+		ArrayList<String> surname = new ArrayList<>();
+		surname.add("required");
+		surname.add("min:2");
+		surname.add("max:25");
+		this.rules.put("surname", surname);
 
-        ArrayList<String> password = new ArrayList<>();
-        password.add("required");
-        password.add("min:8");
-        password.add("max:50");
+		ArrayList<String> password = new ArrayList<>();
+		password.add("required");
+		password.add("min:8");
+		password.add("max:50");
 
-        this.rules.put("password",password);
-    }
+		this.rules.put("password", password);
+	}
+
+	public HashMap<String, ArrayList<String>> getRules() {
+		return this.rules;
+	}
 }
