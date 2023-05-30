@@ -24,3 +24,7 @@ This Application should be ran on Java version 17 or higher.
 
 ## Accessing the backend?
 To access the backend for testing or development purposes we recomend the use the HTTP client Insomnia <a href="https://insomnia.rest/">https://insomnia.rest/</a>
+
+## Do you have API documentation?
+Yes, to view our API documentation simply download the following PDF document, it will outline all our endpoints and any requirements for accessing them. <a href="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/blob/main/docs/PlantIQ-REST-API-Documentation-Single-Pages.pdf">PlantIQ-REST-API-Documentation-Single-Pages.pdf</a>
+
