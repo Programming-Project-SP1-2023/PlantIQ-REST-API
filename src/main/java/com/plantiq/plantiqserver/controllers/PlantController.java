@@ -40,7 +40,7 @@ public class PlantController {
         return new ResponseEntity<>(response,HttpStatusCode.valueOf(200));
     }
 
-    //
+    //@GetMapping("/{id}/name") is the endpoint used to retrieve the name of a plant
     @GetMapping("/{id}/name")
     public ResponseEntity<HashMap<String,Object>> getPlantName(@PathVariable("id") String id, HttpServletRequest request){
         //Create our response object, this is returned as JSON.
