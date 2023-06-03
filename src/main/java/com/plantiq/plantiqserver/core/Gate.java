@@ -101,7 +101,11 @@ public class Gate {
 
 		return new ResponseEntity<>(response, HttpStatusCode.valueOf(401));
 	}
-
+        //-----------------------------------------------------------------//
+	//                      Get Current User Method                    //
+	//-----------------------------------------------------------------//
+	
+	//This method returns the user that is currently logged-in.
 	public static User getCurrentUser() {
 		return Gate.current;
 	}
