@@ -41,7 +41,7 @@ public class SmartHomeHub extends Model {
         return (String)this.data.get("id");
     }
 
-
+    //Get Password method
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public String getDeviceSpecificPassword(){
        return (String)this.data.get("deviceSpecificPassword");
