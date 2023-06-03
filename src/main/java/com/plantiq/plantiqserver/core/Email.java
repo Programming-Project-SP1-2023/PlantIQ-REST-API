@@ -87,19 +87,22 @@ public class Email {
                 e.printStackTrace();
             }
         }else{
-            //If the template is already in the templates map, set the HTML body of the email message to its contents
+            //If the template is already in the templates map, set the HTML body of
+            //the email message to its contents.
             this.message.setHtmlBody(Email.templates.get(template));
         }
 
         return this;
     }
-
+    //The send method is used to deliver the email to the receiver.
+    //Host, client, body and variables will be created and set to 
+    //successfully deliver the message to the user.
     public void send(){
 
         Thread t1 = new Thread(() -> {
             this.message.setHtmlBody(this.message.getHtmlBody().replace("{{user.fullname}}",this.user.getFirstname()+" "+this.user.getSurname()));
             this.message.setHtmlBody(this.message.getHtmlBody().replace("{{user.email}}",this.user.getEmail()));
-
+            //If statement to create the pass the variables to the email.
             if(this.variables != null) {
                 this.variables.forEach((key, value) -> {
                     if (this.message.getHtmlBody().contains("{{" + key + "}}")) {
