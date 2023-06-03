@@ -33,8 +33,12 @@ via sFTP and set the jar.
 ### Step 1) 
 Login to Microsoft Azure and select create a new resource.
 
+<img width="480" alt="step 1" src="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/assets/79836947/c116201e-71a5-4954-83b7-828dc8f29137">
+
 ### Step 2)
 Select "Web App"
+
+<img width="480" alt="step 2" src="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/assets/79836947/61936ebd-fe40-41ba-965e-1ab65596c540">
 
 ### Step 3)
 Name your new web app, in the case of this project we would use PlantIQ REST API but in the
@@ -45,24 +49,36 @@ is the most recent provided so select that from the drop-down list.
 
 Lastly select the region that is most appropriate for you.
 
+<img width="480" alt="Step 3" src="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/assets/79836947/d0c5c656-3c9b-48bf-9872-dae67e39ab8a">
+
 ### Step 4)
 Review the setting you have selected and click create.
 
+<img width="480" alt="step 4" src="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/assets/79836947/296c6e13-d1b5-44ba-a876-a7f555993826">
+
 ### Step 5)
 Microsoft Azure may take a few minutes to deploy your application, wait untill it confirms its completed.
+
+<img width="480" alt="step 5" src="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/assets/79836947/09e0e54a-46bf-4ba7-909b-3796dbc03af6">
 
 ### Step 6)
 Once deployed click into the Application, you will see an overview from this screen.
 
 We can now connect via FTP, on the left hand side menu select "Deployment Center"
 
+<img width="480" alt="step 6" src="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/assets/79836947/99cfc4d2-f505-4b3a-b4d6-b68abe1d5a0b">
+
 ### Step 7)
 Once the deployment center opens select FTP details from its menu, copy these details into your FTP client of choice,
 Our recommendation is File Zilla https://filezilla-project.org/.
 
+<img width="480" alt="step 7" src="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/assets/79836947/006c534f-a219-4853-adbf-bdf50f9b6a8f">
+
 ### Step 8)
 Once connected you will see the current folder is called wwwroot and the hostingstart.html file present.
 This folder is where we upload our runnable builds to, to perform an upload drag the file in and File Zilla will upload it.
+
+<img width="480" alt="step 8" src="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/assets/79836947/74347b68-d029-4aa3-bd5b-0ff6afeb4e94">
 
 ### Step 9)
 Once the file is uploaded close File Zilla and from the left and menu select "Configuration" then from its menu select "General Settings".
@@ -73,6 +89,8 @@ replacing MyJar.jar with the jar name including the extension,
 ```
 java -jar /home/site/wwwroot/MyJar.jar
 ```
+<img width="480" alt="step 9" src="https://github.com/Programming-Project-SP1-2023/PlantIQ-REST-API/assets/79836947/57111cfe-c76a-4dbe-9956-4f9e8d41f3b7">
+
 
 ### Step 10)
 Now we have uploaded our jar and set it as the start-up command, navigate back to the overview screen and click the restart button
@@ -80,3 +98,5 @@ Azure will now use the jar and serve your spring boot application.
 
 If at any point you wish to track the restart and troubleshoot errors simply use the live log provided the "Log Stream" 
 option on the left hand side menu.
+
+Sucess! the application is now deployed to Microsoft Azure!
