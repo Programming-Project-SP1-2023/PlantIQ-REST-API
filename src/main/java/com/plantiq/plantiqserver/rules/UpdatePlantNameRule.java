@@ -9,8 +9,9 @@ import java.util.ArrayList;
 // -----------------------------------------------------------------------------------|
 //                                                                                    |
 //  Name:                                                                             |
-//  A) min:3 -> Validates the name is at least 3 characters long.                 |
-//  B) max:25 -> Validates the name is no larger than 25 characters long.         |
+//  A) Required -> Validates the email input is present and not null.                 |
+//  B) min:3 -> Validates the name is at least 3 characters long.                     |
+//  C) max:25 -> Validates the name is no larger than 25 characters long.             |
 //                                                                                    |
 //------------------------------------------------------------------------------------|
 

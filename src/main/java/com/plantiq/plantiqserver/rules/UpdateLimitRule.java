@@ -10,7 +10,6 @@ import java.util.ArrayList;
 //                                                                                    |
 //  Temperature/Humidity/Moisture/Light                                               |
 //  A) range:float[0,100] -> Must be a float between 0 and 100                        |
-//  B) regex.email -> Validates the input meets the criteria of an email address.     |
 //                                                                                    |
 //------------------------------------------------------------------------------------|
 
