@@ -1,0 +1,67 @@
+PlantIQ REST API
+=======================
+====  Version 1.1  ====
+====   29/05/2023  ====
+====    Week 14    ====
+=======================
+
+CRITICAL BUG FIX
+
+- Fixed bug where the default notification object would
+cause a program crash.
+
+=======================
+====  Version 1.0  ====
+====   29/05/2023  ====
+====  Week 13/14   ====
+=======================
+
+NOTES:
+- Fist feature complete release.
+- This build is our first feature complete production
+build of the PlantIQ API. All features planned have
+reached a completed state.
+- Following releases will only contain critical bug fixes
+prior to submission.
+
+=======================
+==== Version 0.23  ====
+====   21/05/2023  ====
+====    Week 12    ====
+=======================
+
+NOTES:
+
+- Released in alignment with Week 12 video submission.
+- Minor changes from previous version.
+
+
+=======================
+==== Version 0.22  ====
+====   14/05/2023  ====
+====    Week 11    ====
+=======================
+
+Notes:
+
+- Released in alignment with Week 11 final draft submission.
+- Changes extensive since 0.6, not listed due to quality, refer to GitHub commit log.
+
+=======================
+====  Version 0.6  ====
+====   23/03/2023  ====
+====     Week 8    ====
+=======================
+
+MAJOR FUNCTIONAL COMPONENTS COMPLETED
+
+- Session validation endpoint.
+- Smart Home Hub Registration endpoint.
+- Smart Home Hub Rate endpoint.
+- Gate Authentication to protect endpoints.
+- Smart Home Hub Data Posting endpoint.
+- HTTP Rule class to validate HTTP requests.
+- Model & ModelCollection classes completed.
+- Authentication Sessions & SessionService completed.
+- Authentication and registration endpoints completed.
+- User info endpoint completed.
