@@ -23,7 +23,10 @@ public class Notification extends Model{
     public static ModelCollection<Notification> collection(){
         return new ModelCollection<>(Notification.class);
     }
-
+    //This method is used to create notifications. Each time 
+    //it gets called, a record will be saved in the database 
+    //containing the notification message, the user_id and 
+    //the current timestamp.
     public static void create(User user, String message){
         HashMap<String, Object> data = new HashMap<>();
 
