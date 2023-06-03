@@ -33,7 +33,7 @@ public class User extends Model {
     public User(HashMap<String, Object> data) {
         super(data);
     }
-
+    //Get ID method
     public String getId(){
         return (String) this.data.get("id");
     }
