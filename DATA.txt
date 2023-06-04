@@ -4,7 +4,18 @@
 For our database we will be hosting on Microsoft Azure using the standard
 tier with 10 DTU's (Data transfer units) and 40GB of total storage.
 
-Our database is the singal point of stroage or all PlantIQ data.
+Our database is the single point of storage or all PlantIQ data.
+
+Database Type:
+Azure SQL Server Standard S0: 10 DTUs
+
+Database Connection Address:
+db-plantiq.database.windows.net
+
+Azure Portal:
+https://portal.azure.com/#@rmiteduau.onmicrosoft.com/resource/subscriptions/a14562c6-514a-4b3d-b6fb-fb71a15d05dd/resourceGroups/PlantIQ/providers/Microsoft.Sql/servers/db-plantiq/databases/plantiq-backend/overview
+
+Note: Please contact a team member if you are unable to access the Azure Portal resource.
 
 |------------------------------------------------------------------------|
 |                  How To Connect As An Administrator?                   |
