@@ -10,6 +10,10 @@ CRITICAL BUG FIX
 - Fixed bug where the default notification object would
 cause a program crash.
 
+KNOWN ISSUES
+- CORS Policy returning incorrect response headers for some hosts
+- CORS Policy set to allow all
+
 =======================
 ====  Version 1.0  ====
 ====   29/05/2023  ====
